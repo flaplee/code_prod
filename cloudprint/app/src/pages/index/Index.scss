@@ -1,0 +1,188 @@
+@import "../../util/sass/lib/util";
+@import "../../util/sass/salt-ui.css";
+@import "../../util/sass/dd.css";
+@import "../../util/sass/swipers.min.css";
+
+/* printlist */
+#page-index, #page-index .content, #page-index .content > div{
+  width: 100%;
+  height: 100%;
+}
+
+.print-list{
+  background-color: #f2f8ff;
+  width: 100%;
+  height: 100%;
+  display: block;
+  .container {
+      margin: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: auto;
+  }
+
+  .container .t-scroll-view {
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+  }
+  .list-item{
+    background-color:#ffffff;
+    display:-moz-flexbox;
+    display:-ms-flexbox;
+    display:-webkit-flex;
+    display:flex;
+    -webkit-flex-direction:column;
+    flex-direction:column;
+    -ms-flex:1;
+    -webkit-flex:1;
+    flex:1;
+    position: relative;
+    &:active{
+      background-color: rgba(0,0,0,.1);
+    }
+    &.list-item:first-child{
+      margin-top: 1rem;
+    }
+    .list-item-wrap{
+      margin: 0 1rem;
+      border-bottom: 1px solid #ccc;
+      &:last-child{
+        border-bottom: 1px solid #ccc;
+      }
+      .list-item-info{
+        position: relative;
+        .info-img{
+          margin: 2rem 0 2rem 3rem;
+          width: 8rem;
+          height: 8rem;
+          background-color: #ffffff;
+          border:1px solid #ccc;
+          border-radius: 50%;
+          img{
+            width: 6rem;
+            height: 6rem;
+            margin: 1rem;
+            display: inline-block;
+          }
+        } 
+        .info-text{
+          position: absolute;
+          left: 13rem;
+          top: 1rem;
+          width: auto;
+          height: 8rem;
+          .title,.title-sub{
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .title{
+            width: auto;
+            height: 3rem;
+            line-height: 3rem;
+            font-size: 2.5rem;
+            color: $fontColor;
+            margin-bottom: 1rem;
+          }
+          .title-sub{
+            width: auto;
+            height: 2rem;
+            line-height: 2rem;
+            font-size: 2rem;
+            color: $fontSubColor;
+          }
+        }
+      }
+    
+      .list-item-status{
+        position: absolute;
+        top: 4rem;
+        right: 3rem;
+        width: 8rem;
+        height: 4rem;
+        line-height: 4rem;
+        color:rgba(153,153,153,1);
+        text-align: center;
+        border-radius: 2rem;
+        &.status-online{color: $successColor; border:1px solid $successColor;}
+        &.status-offline{color: $offColor;border:1px solid $offColor;}
+        &.status-fault{color: $errorColor;border:1px solid $errorColor;}
+        span{
+          width: 4.17rem;
+          height: 2.08rem;
+          font-size: 2.17rem;
+        }
+      }
+    }
+  }
+
+  .t-refresh-control{
+    height: 7rem;
+    &.refreshing{
+      .refresh-svg-icon{
+        width: 5rem;
+        height: 5rem;
+      }
+    }
+    .refresh-text{
+      font-size: 1.6rem;
+    }
+  }
+
+  .t-infinity-scroll{
+    height: 7rem;
+    .loading-icon{
+      width: 5rem;
+      height: 5rem;
+      .loading-text{
+        font-size: 1.6rem;
+      }
+    }
+  }
+}
+
+.print-index-task{
+  .task-list-item{
+    padding: 2rem 3rem;
+    height: 10rem;
+    .task-list-item-wrap {
+      font-size: 2.5rem;
+      display: block;
+      color: #333333;
+      .list-item-text-content{
+        height: 6rem;
+        line-height: 6rem;
+        .list-item-title {
+          font-size: 2.5rem;
+          color: #222;
+          height: 3rem;
+          line-height: 3rem;
+          margin-bottom: 1rem;
+        }
+        .list-item-text {
+          color : #999;
+          font-size : 2rem;
+          height: 2rem;
+          line-height : 2rem;
+        }
+      }
+      .list-item-status{
+        color: #222;
+        font-size : 2rem;
+        height: 2rem;
+        line-height : 2rem;
+      }
+      &.task-list-item-wrap-success{
+        color: #FFFF534D;
+      }
+    }
+  }
+  .task-list-item-tap:active{
+    background: rgba(31,56,88,0.1);
+  }
+}

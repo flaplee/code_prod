@@ -1,0 +1,285 @@
+@import "../../util/sass/lib/util";
+
+.print-manage{
+    .manage-title {
+        font-size : 2rem;
+        height : 5rem;
+        line-height : 5rem;
+        padding-left : 2rem;
+    }
+
+    .print-list-wrap {
+        padding : 2rem;
+    }
+
+    .print-list-wrap-single {
+        display : block;
+        padding : 2.5rem 2rem;
+    }
+
+    .print-list-wrap-single-tap:active{
+        background: rgba(31,56,88,0.1);
+    }
+
+    .print-list-img {
+        width : 2rem;
+        height : 2rem;
+        border-radius : 50%;
+        margin-right : 2rem;
+        margin-left : .5rem;
+    }
+
+    .print-list-text-content {
+        margin-right : 2rem;
+    }
+
+    .print-list-text-content-single {
+        line-height : 3rem;
+    }
+
+    .print-list-arrow{
+        position: relative;
+        right: -2rem;
+    }
+
+    .print-list-status{
+        font-size: 2.17rem;
+        color: #5D85E0;
+        width: 8rem;
+        height: 4rem;
+        line-height: 4rem;
+        border: 1px solid #5D85E0;
+        border-radius: 2rem;
+        text-align: center;
+        &.status-online{color: $successColor; border:1px solid $successColor;}
+        &.status-offline{color: $offColor;border:1px solid $offColor;}
+        &.status-fault{color: $errorColor;border:1px solid $errorColor;}
+    }
+
+    .print-list-status-update{
+        display: inline-block;
+        color:#fff;
+        background-color: #5D85E0;
+        border: 1px solid #fff;
+    }
+
+    .print-list-title {
+        color : #222;
+        font-size : 2rem;
+        line-height : 2rem;
+    }
+
+    .print-list-title-single {
+        font-size : 2.5rem;
+        color : #222;
+        padding-bottom : 0;
+    }
+
+    .print-list-text {
+        color : #999;
+        font-size : 2rem;
+        line-height : 18px;
+    }
+}
+
+.print-task{
+    .task-title {
+        font-size : 2rem;
+        height : 5rem;
+        line-height : 5rem;
+        padding-left : 2rem;
+    }
+
+    .print-list-wrap {
+        padding : 2rem;
+    }
+
+    .print-list-wrap-single {
+        display : block;
+        padding : 2.5rem 2rem;
+    }
+
+    .print-list-wrap-single-tap:active{
+        background: rgba(31,56,88,0.1);
+    }
+
+    .print-list-wrap-single-success{
+        p{
+            color: #5D85E0;
+        }
+    }
+
+    .print-list-img {
+        width : 2rem;
+        height : 2rem;
+        border-radius : 50%;
+        margin-right : 2rem;
+        margin-left : .5rem;
+    }
+
+    .print-list-text-content {
+        margin-right : 2rem;
+    }
+
+    .print-list-text-content-single {
+        line-height : 3rem;
+    }
+
+    .print-img-status{
+        width: 3rem;
+        height: 3rem;
+        &.print-status-success, &.print-status-error, &.print-status-offline, &.print-status-empty{
+            width: 3rem;
+            height: 3rem;
+            display:block;
+            margin:0 auto;
+            background-repeat:no-repeat;
+            background-size:100% 100%;
+        }
+        &.print-status-success{
+            background-image:url(../../images/check.png)
+        }
+        &.print-status-error{
+            background-image:url(../../images/Notice.png)
+        }
+        &.print-status-empty{
+            background-image:url(../../images/Notice.png)
+        }
+        &.print-status-offline{
+            background-image:url(../../images/off_line.png)
+        }
+    }
+
+    .print-list-title {
+        color : #222;
+        font-size : 2rem;
+        line-height : 2rem;
+    }
+
+    .print-list-title-single {
+        font-size : 2.5rem;
+        color : #222;
+        padding-bottom : 0;
+    }
+
+    .print-list-text-info {
+        font-size : 2rem;
+        color : #222;
+        padding-bottom : 0;
+    }
+    .print-list-status{
+        width: 3rem;
+        height: 3rem;
+        display:block;
+        margin:0 auto;
+        background-repeat:no-repeat;
+        background-size:100% 100%;
+        &.print-status-waiting{
+            width: 3rem;
+            height: 4rem;
+            background-image:url(../../images/wait.png)
+        }
+        &.print-status-printing{
+            width: 4rem;
+            height: 4rem;
+            background-image:url(../../images/management01.png)
+        }
+        &.print-status-success{
+            width: 3rem;
+            height: 3rem;
+            background-image:url(../../images/check2.png)
+        }
+        &.print-status-error{
+            width: 3rem;
+            height: 3rem;
+            background-image:url(../../images/Notice.png)
+        }
+        
+        &.print-status-waiting-mine{
+            width: 3rem;
+            height: 4rem;
+            background-image:url(../../images/wait.png)
+        }
+        &.print-status-printing-mine{
+            width: 4rem;
+            height: 4rem;
+            background-image:url(../../images/Printer_management02.png)
+        }
+        &.print-status-success-mine{
+            width: 3rem;
+            height: 3rem;
+            background-image:url(../../images/check2.png)
+        }
+        &.print-status-error-mine{
+            width: 3rem;
+            height: 3rem;
+            background-image:url(../../images/Notice.png)
+        }
+    }
+
+    .print-list-text {
+        color : #999;
+        font-size : 2rem;
+        line-height : 18px;
+    }
+    html, body{
+        background-color: #f2f2f2;
+        height: 100%;
+    }
+    .demo-item {
+        height: 80px;
+        line-height: 80px;
+        text-align: center;
+        margin-bottom: 10px;
+        background-color: #e2e2e2;
+    }
+
+    .demo-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .other1 {
+        background-color: green;
+    }
+
+    .other2 {
+        background-color: #666;
+    }
+}
+
+.print-ink{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f2f8ff;
+    .print-ink-chart{
+        width:100%;
+    }
+    .print-ink-title{
+        font-size: 4rem;
+        margin-top: 3rem;
+        color: #333333;
+    }
+}
+
+.demoItem {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.setting-item{
+    height: 8rem;
+    line-height: 8rem;
+    background-color: white;
+    text-align: center;
+    font-size: 3rem;
+    border: 1px solid rgb(234, 234, 234);
+}
+
+.setting-item:active{
+    background: rgba(228, 237, 255, 1);
+}

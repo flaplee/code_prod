@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="format-detection" content="telephone=no"/>
+  <meta name="format-detection" content="email=no"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" name="viewport">
+  <script src="./js/src/mobile.js"></script>
+  <title>共享翻页笔</title>
+  <link rel="stylesheet" href="./css/weui.min.css?v=2018061309">
+  <link rel="stylesheet" href="./css/jquery-weui.min.css?v=2018061309">
+  <link rel="stylesheet" href="./css/main.css?v=2018061309" media="all"/>
+  <link rel="stylesheet" href="./css/style.css?v=2018061309" media="all"/>
+  <style>
+    #page{
+      visibility: visible;
+    }
+    #page.loading{
+      visibility: visible;
+      height: 100%;
+      -background-image: url(./images/loading.svg);
+      -background-size: 20% auto;
+      -background-repeat: no-repeat;
+      -background-position: 50% 50%;
+    }
+    #page > div.content{
+      visibility: visible;
+      display: block;
+    }
+    #page.loading > div.content{
+      visibility: hidden;
+      display: none;
+    }
+    #home-page-skeleton{
+      visibility: hidden;
+    }
+    #home-page-skeleton.loading{
+      visibility: visible;
+    }
+    </style>
+</head>
+<body class="dl-body-index">
+<div id="page" class="loading">
+  <div class="header" style="display: none;">
+    <div class="title">智能翻页笔</div>
+    <a class="back"></a>
+    <a class="leftMenuBtn"></a>
+    <a class="rightMenuBtn">搜索</a>
+  </div>
+  <div class="content">
+    <div id="boardat-index-list" class="boardat-index">
+      <div class="boardat-index-wrap" style="display: none;">
+        <div class="wrap-top clear">
+          <div class="wrap-title">
+            <p class="title">当前会议:<span></span></p>
+          </div>
+          <div class="wrap-next">
+            <a id="play" class="play" href="javascript:;">
+              <i class="iconapp iconapp-play-white"></i>
+            </a>
+            <a id="stop" class="stop" style="display: none;" href="javascript:;">
+              <i class="iconapp iconapp-stop-white"></i>
+            </a>
+            <a id="quit" class="quit" href="javascript:;">
+              <i class="iconapp iconapp-quit-white"></i>
+            </a>
+          </div>
+        </div>
+        <div class="wrap-live">
+          <div class="live-content">
+            <div class="live-empty">
+              <div class="empty-text meeting-ongoing">
+                <p class="empty-text-top">当前会议未开始</p>
+              </div>
+              <div class="empty-text ppt-ongoing">
+                <p class="empty-text-top">当前会议未开始直播</p><!-- 正在加载直播内容... -->
+                <p class="empty-text-bottom">(只支持直播ppt或者keynote)</p>
+              </div>
+            </div>
+            <article class="live-article live-article-loading">
+              <section data-bespoke-fx-transition="room" data-bespoke-fx-direction="horizontal" data-bespoke-fx-reverse="false"><img class="live-img" src="./images/loading2.svg" width="100%" height="180" /></section>
+            </article>
+            <a id="navMenuFullscreen" class="fullscreen" href="./live.html">
+              <i class="iconapp iconapp-fullscreen"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="boardat-index-datum">
+        <a class="boardat-index-title clear" href="./datum.html">
+          <div class="datum-title left">
+            <p class="title">最新资料</p>
+          </div>
+          <div class="title-next right">全部<span></span><i class="iconapp iconapp-arrow-right-grey"></i></div>
+        </a>
+        <div class="datum-index-list-inner dl-index-list-inner clear"></div>
+      </div>
+      <div class="boardat-index-folder">
+        <a class="boardat-index-title clear" href="./folder.html">
+          <div class="folder-title left">
+            <p class="title">文件夹</p>
+          </div>
+          <div class="title-next right">全部<span></span><i class="iconapp iconapp-arrow-right-grey"></i></div>
+        </a>
+        <div class="folder-index-list-inner dl-index-list-inner clear" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+  <div class="navMenu flexfixed">
+    <a href="javascript:;" class="nav-item nav-meeting selected"><i class="iconapp iconapp-menu1 iconapp-menu1-light"></i>会议笔记</a>
+    <a href="javascript:;" class="nav-add"><div class="nav-add-new nav-at-new"><div class="new-text"><i class="iconapp"></i><span></span></div></div></a>
+    <a href="javascript:;" class="nav-item nav-compere"><i class="iconapp iconapp-menu3"></i>会议主持人</a>
+  </div>
+</div>
+<div id="home-page-skeleton" class="shimmer loading"> 
+  <div id="home-container-skeleton"> 
+    <div id="shelves">
+      <div class="shelf-skeleton">
+        <div class="shelf-title text-shell skeleton-bg-color"></div>
+        <div class="shelf-datums">
+         <div class="datum-skeleton"> 
+          <div class="datum-details">
+           <div class="thumbnail skeleton-bg-color"></div>
+           <div class="thumbnail skeleton-bg-color"></div>
+           <div class="thumbnail skeleton-bg-color"></div>
+           <div class="thumbnail skeleton-bg-color"></div>
+           <div class="thumbnail skeleton-bg-color"></div>
+           <div class="thumbnail skeleton-bg-color"></div>
+           <div class="thumbnail skeleton-bg-color"></div>
+           <div class="thumbnail skeleton-bg-color"></div>
+          </div>
+         </div> 
+        </div> 
+        <div class="shelf-title text-shell skeleton-bg-color"></div>
+      </div> 
+    </div> 
+  </div> 
+</div>
+<script src="http://t.static.delicloud.com/h5/sdk/delicloud.min.js?v=2018061309"></script>
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js?v=2018061309"></script>
+<script src="./js/src/jquery-weui.min.js?v=2018061309"></script>
+<script src='./js/src/bespoke/modernizr.custom.js?v=2018061309'></script>
+<script src='./js/src/bespoke/bespoke.js?v=2018061309'></script>
+<script src='./js/src/bespoke/bespoke-fx.min.js?v=2018061309'></script>
+<script src='./js/src/sea.js?v=2018061309'></script>
+<script src='./js/index.js?v=2018061309'></script>
+</body>
+</html>

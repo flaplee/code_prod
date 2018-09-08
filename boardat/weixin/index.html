@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="format-detection" content="email=no"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" name="viewport">
+<script src="./js/mobile.js"></script>
+<title>会议记录报告</title>
+<link rel="stylesheet" href="https://cdn.bootcss.com/weui/1.1.2/style/weui.min.css">
+<link rel="stylesheet" href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+<link rel="stylesheet" href="./css/index.css?v=2018042701" media="all"/>
+</head>
+<body>
+<div id="page">
+  <!-- house search begin  -->
+  <div class="house-wrap-search" style="display:block;">
+    <div class="house-auto-search">
+      <div class="weui-search-bar" id="searchBar">
+          <form class="weui-search-bar__form" action="#" onsubmit="return false;">
+              <div class="weui-search-bar__box">
+                  <i class="weui-icon-search"></i>
+                  <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="根据名称搜索" required="">
+                  <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+              </div>
+              <label class="weui-search-bar__label" id="searchText">
+                  <i class="weui-icon-search"></i>
+                  <span>根据名称搜索</span>
+              </label>
+          </form>
+          <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
+      </div>
+      <div id="house-search-list" class="dl-list house-search-list" style="height: 100%;">
+        <div class="house-search-list-inner house-list-inner-result weui-cells searchbar-result iosScrollFix hScroll infinite" id="searchResult" style="height:100%;overflow: scroll;">
+          <div class="dl-list-data"></div>
+          <div class="dl-list-loading loading loading_bottom" style="display:none;">
+            <!--没有数据-->
+            <p style="display:none;">没有更多了</p>
+            <!--还有数据-->
+            <div class="refresh" style="display:none">
+              <div class="bounce1"></div>
+              <div class="bounce2"></div>
+              <div class="bounce3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- house search end  -->
+  <!--house index content begin-->
+  <div class="house-outer" id="page-list" data-extend="true">
+    <div class="house-box">
+      <div class="active">
+        <section class="dl-scroll" id="accurate-scroll" style="height:100%;">
+          <!--list begin-->
+          <div class="dl-list house-index-list" style="height:100%;">
+            <div id="house-index-list" style="height:100%;">
+              <div class="house-index-list-inner house-list-inner-result iosScrollFix hScroll infinite" style="height:100%;overflow: scroll;">
+                <div class="dl-list-data"></div>
+                <div class="dl-list-loading loading loading_bottom" style="display:none;">
+                  <!--没有数据-->
+                  <p style="display:none;">没有更多了</p>
+                  <!--还有数据-->
+                  <div class="refresh" style="display:none">
+                    <div class="bounce1"></div>
+                    <div class="bounce2"></div>
+                    <div class="bounce3"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--list end-->
+        </section>
+      </div>
+    </div>
+  </div>
+  <!-- sidebar begin-->
+    <div class="dl-sidebar">
+      <a href="javascript:;" class="server-phone" id="dl-share"><span class="icon-phone"></span></a>
+      <div class="back-top" id="dl-back-top"></div>
+    </div>
+  <!-- sidebar end--> 
+</div>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+<script src="./js/src/jquery-weui.min.js"></script>
+<script src='./js/wx/photos.js'></script>
+<script src='./js/sea.js'></script>
+<script src='./js/index.js?v=20180612'></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="format-detection" content="telephone=no"/>
+  <meta name="format-detection" content="email=no"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" name="viewport">
+  <script src="./js/src/mobile.js"></script>
+  <title>主持人会议数据</title>
+  <link rel="stylesheet" href="./css/weui.min.css?v=2018061309">
+  <link rel="stylesheet" href="./css/jquery-weui.min.css?v=2018061309">
+  <link rel="stylesheet" href="./css/style.css?v=2018061309" media="all"/>
+</head>
+<body>
+<div id="page">
+  <div class="header" style="display: none;">
+    <div class="title">主持人会议数据</div>
+    <a class="back"></a>
+    <a class="leftMenuBtn"></a>
+    <a class="rightMenuBtn"></a>
+  </div>
+  <div class="content">
+    <div id="boardat-meeting-list" class="boardat-meeting-list iosScrollFix">
+      <div class="meeting-list-data"></div>
+      <div class="loading loading_bottom" style="display:none;">
+        <!--没有数据-->
+        <p style="display:none;">没有更多了</p>
+        <!--还有数据-->
+        <!-- <div class="refresh" style="display:none">
+          <div class="bounce1"></div>
+          <div class="bounce2"></div>
+          <div class="bounce3"></div>
+        </div> -->
+      </div>
+    </div>
+  </div>
+  <div class="navMenu flexfixed">
+    <a href="./" class="nav-item nav-meeting"><i class="iconapp iconapp-menu1"></i>会议笔记</a>
+    <a href="javascript:;" class="nav-add"><div class="nav-add-new nav-at-new"><div class="new-text"><i class="iconapp"></i><span></span></div></div></a>
+    <a href="javascript:;" class="nav-item nav-compere selected"><i class="iconapp iconapp-menu3 iconapp-menu3-light"></i>会议主持人</a>
+  </div>
+</div>
+<script src="http://t.static.delicloud.com/h5/sdk/delicloud.min.js?v=2018061309"></script>
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js?v=2018061309"></script>
+<script src="./js/src/jquery-weui.min.js?v=2018061309"></script>
+<script src='./js/src/sea.js?v=2018061309'></script>
+<script src='./js/meeting.js?v=2018061309'></script>
+</body>
+</html>

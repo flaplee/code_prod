@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="format-detection" content="email=no"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" name="viewport">
+<script src="./js/src/mobile.js"></script>
+<title>文件夹列表</title>
+<link rel="stylesheet" href="./css/weui.min.css?v=2018061309">
+<link rel="stylesheet" href="./css/jquery-weui.min.css?v=2018061309">
+<link rel="stylesheet" href="./css/style.css?v=2018061309" media="all"/>
+</head>
+<body>
+<div id="page">
+  <div class="header" style="display: none;">
+    <div class="title">文件夹列表</div>
+    <a class="back"></a>
+    <a class="leftMenuBtn" href="./">返回</a>
+    <a class="rightMenuBtn" href="./folder-select.html">选择</a>
+  </div>
+  <div class="content">
+    <div id="boardat-o-folder" class="folder-o-operate">
+      <!-- folder search begin  -->
+      <div class="folder-wrap-search" style="display:block;">
+        <div class="folder-auto-search">
+          <div class="weui-search-bar" id="searchBar">
+              <form class="weui-search-bar__form" action="#" onsubmit="return false;">
+                  <div class="weui-search-bar__box">
+                      <i class="weui-icon-search"></i>
+                      <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="根据会议名称搜索" required="">
+                      <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+                  </div>
+                  <label class="weui-search-bar__label" id="searchText">
+                      <i class="weui-icon-search"></i>
+                      <span>搜索</span>
+                  </label>
+              </form>
+              <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
+          </div>
+          <div id="folder-search-list" class="dl-list folder-search-list" style="height: 100%;">
+            <div class="folder-search-list-inner folder-list-inner-result weui-cells searchbar-result" id="searchResult" style="height:100%;overflow: scroll;">
+              <div class="dl-list-data folder-list-data"></div>
+              <div class="dl-list-loading loading loading_bottom" style="display:none;">
+                <!--没有数据-->
+                <p style="display:none;">没有更多了</p>
+                <!--还有数据-->
+                <div class="refresh" style="display:none">
+                  <div class="bounce1"></div>
+                  <div class="bounce2"></div>
+                  <div class="bounce3"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- folder search end  -->
+      <div class="folder-o-list iosScrollFix">
+        <div class="folder-list-data"></div>
+        <div class="loading loading_bottom" style="display:none;">
+          <!--没有数据-->
+          <p style="display:none;">没有更多了</p>
+          <!--还有数据-->
+          <div class="refresh" style="display:none">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="http://t.static.delicloud.com/h5/sdk/delicloud.min.js?v=2018061309"></script>
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js?v=2018061309"></script>
+<script src="./js/src/jquery-weui.min.js?v=2018061309"></script>
+<script src='./js/src/sea.js?v=2018061309'></script>
+<script src='./js/folder.js?v=2018061309'></script>
+</body>
+</html>

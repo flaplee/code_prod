@@ -1,0 +1,40 @@
+/* loading */
+#loading{
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
+	visibility: hidden;
+	background-color: rgba(0,0,0,0.3);
+}
+
+#loading > div {
+	position: absolute;
+	margin: auto;
+	border-radius: 2rem;
+	background-color: #ffffff;
+	color: #ffffff;
+}
+
+#loading > div {
+	right: 0;
+	left: 0;
+	bottom: 0;
+	top: 0;
+	width: 45rem;
+	height: 25rem;
+	text-align: center;
+	font-size: 0;
+	line-height: 1;
+	white-space: pre-wrap;
+	>.ico {
+		margin: 5rem auto 3rem;
+		width: 10rem;
+		height: 10rem;
+	}
+	>.text{
+		font-size:3rem;
+		color: #333333;
+	}
+}

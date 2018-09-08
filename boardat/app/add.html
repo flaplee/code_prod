@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="format-detection" content="telephone=no"/>
+  <meta name="format-detection" content="email=no"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" name="viewport">
+  <script src="./js/src/mobile.js"></script>
+  <title>加入会议</title>
+  <link rel="stylesheet" href="./css/weui.min.css?v=2018061309">
+  <link rel="stylesheet" href="./css/jquery-weui.min.css?v=2018061309">
+  <link rel="stylesheet" href="./css/style.css?v=2018061309" media="all"/>
+  <style>
+    *{
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="dl-body-add">
+  <div id="page">
+    <div class="header" style="display: none;">
+      <div class="title">加入会议</div>
+      <a class="back"></a>
+      <a class="leftMenuBtn">返回</a>
+      <a class="rightMenuBtn">扫码</a>
+    </div>
+    <div class="content">
+      <div id="boardat-meeting-form" class="boardat-meeting-form iosScrollFix">
+        <form id="meetingForm">
+          <div class="add-logo"><i class="iconapp iconapp-meeting"></i></div>
+          <p class="title">请输入会议号</p>
+          <div id="meetingNum" class="formInput">
+            <input type="text" name="meeting" placeholder="12345" class="text-meeting" required />
+            <div class="text-occupied"><span>@</span></div>
+          </div>
+          <div id="meetingPwd" class="formInput">
+            <i class="iconapp iconapp-eyespwd "></i>
+            <input type="password" name="password" placeholder="如为加密会议，请输入会议密码" class="text-password" required/>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="navMenu navmenu-meeting">
+      <div class="btns">
+        <a class="btn-add" href="javascript:;">加入会议</a>
+      </div>
+    </div>
+  </div>
+  <script src="http://t.static.delicloud.com/h5/sdk/delicloud.min.js?v=2018061309"></script>
+  <script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js?v=2018061309"></script>
+  <script src="./js/src/jquery-weui.min.js?v=2018061309"></script>
+  <script src='./js/src/sea.js?v=2018061309'></script>
+  <script src='./js/add.js?v=2018061309'></script>
+</body>
+</html>

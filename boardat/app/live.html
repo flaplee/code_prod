@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="format-detection" content="telephone=no"/>
+  <meta name="format-detection" content="email=no"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" name="viewport">
+  <title>会议直播</title>
+  <link rel="stylesheet" href="./css/weui.min.css?v=2018061309">
+  <link rel="stylesheet" href="./css/jquery-weui.min.css?v=2018061309">
+  <link rel="stylesheet" href="./css/main.css?v=2018061309" media="all"/>
+  <link rel="stylesheet" href="./css/style.css?v=2018061309" media="all"/>
+  <style>
+  :-webkit-full-screen #live-img{width: 100%;height: 100%;}
+  @media not screen and (orientation:portrait){}
+  @media not screen and (orientation:landscape){}
+  </style>
+</head>
+<body>
+<div id="page" style="width:100%;height: 100%;">
+  <div class="content">
+    <div id="boardat-live" class="boardat-live">
+      <div id="live-img" class="live-content">
+        <a id="navBack" class="fullback" href="javascript:;">
+          <i class="iconapp iconapp-arrow-left-grey"></i>
+        </a>
+        <div class="live-empty">
+          <div class="empty-text meeting-ongoing">
+            <p class="empty-text-top">当前会议未开始</p>
+          </div>
+          <div class="empty-text ppt-ongoing">
+            <p class="empty-text-top">当前会议未开始直播</p>
+            <p class="empty-text-bottom">(只支持直播ppt或者keynote)</p>
+          </div>
+        </div>
+        <article class="live-article live-article-loading">
+          <section data-bespoke-fx-transition="room" data-bespoke-fx-direction="horizontal" data-bespoke-fx-reverse="false"><img class="live-img" src="./images/loading2.svg" width="100%" height="180" /></section>
+        </article>
+        <a id="navScreenShot" class="screenshot" href="javascript:;">
+          <i class="iconapp iconapp-at-live"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="http://t.static.delicloud.com/h5/sdk/delicloud.min.js?v=2018061309"></script>
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js?v=2018061309"></script>
+<script src="./js/src/jquery-weui.min.js?v=2018061309"></script>
+<script src='./js/src/bespoke/modernizr.custom.js?v=2018061309'></script>
+<script src='./js/src/bespoke/bespoke.min.js?v=2018061309'></script>
+<script src='./js/src/bespoke/bespoke-fx.min.js?v=2018061309'></script>
+<script src='./js/src/sea.js?v=2018061309'></script>
+<script src='./js/live.js?v=2018061309'></script>
+</body>
+</html>

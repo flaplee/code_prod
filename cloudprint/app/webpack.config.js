@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const htmlWebpackPlugin = new HtmlWebpackPlugin({ template: '../public/index.html' });
+const htmlWebpackPlugin = new HtmlWebpackPlugin({ template: '../src/index.html' });
 
 const definePlugin = new webpack.DefinePlugin({
   __DEV__: JSON.stringify(JSON.parse(process.env.NODE_ENV === 'development' || 'true'))
@@ -81,6 +81,17 @@ module.exports = {
         loader: 'file-loader'
       },
       {
+        test: /\.(jpe?g|png|gif|svg|ico)$/i,
+        use: [
+            {
+                loader: "file-loader",
+                options: {
+                    outputPath: "assets/"
+                }
+            }
+        ]
+      },
+      {
         test: /\.scss$/,
         use: [{
           loader: "style-loader"
@@ -102,7 +113,7 @@ module.exports = {
     ]
   },
   devServer: {
-    host: '192.168.0.110',
+    host: '127.0.0.1',
     port: '3000',
     historyApiFallback: true,
     compress: true,

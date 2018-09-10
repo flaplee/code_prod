@@ -15,7 +15,7 @@ const stylesheetsLoaders = [{
 ];
 
 const stylesheetsPlugin = new ExtractTextPlugin('[hash].css');
-const htmlWebpackPlugin = new HtmlWebpackPlugin({ template: './public/index.html', filename: "./index.html" });
+const htmlWebpackPlugin = new HtmlWebpackPlugin({ template: './src/index.html', filename: "./index.html" });
 const definePlugin = new webpack.DefinePlugin({
   'process.env': {
     NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'production')

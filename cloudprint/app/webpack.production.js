@@ -1,8 +1,10 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require("clean-webpack-plugin");
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
+const tinypngCompress = require("webpack-tinypng-compress");
 
 const stylesheetsLoaders = [{
   loader: 'css-loader',
@@ -15,27 +17,60 @@ const stylesheetsLoaders = [{
 ];
 
 const stylesheetsPlugin = new ExtractTextPlugin('[hash].css');
-const htmlWebpackPlugin = new HtmlWebpackPlugin({ template: './src/index.html', filename: "./index.html" });
 const definePlugin = new webpack.DefinePlugin({
   'process.env': {
     NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'production')
   }
 });
+
+const settings = {
+  distPath: path.join(__dirname, "dist"),
+  srcPath: path.join(__dirname, "src")
+};
+
+// the path(s) that should be cleaned
+let pathsToClean = [
+  'dist',
+  'build'
+]
+
+function srcPathExtend(subpath) {
+  return path.join(settings.srcPath, subpath)
+}
+
 const uglifyPlugin = new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } });
 const compressionPlugin = new CompressionPlugin();
 
 module.exports = {
-  context: path.join(__dirname, 'src'),
+  devtool: 'source-map',
+  context: path.join(__dirname, '/'),
   entry: './index',
   output: {
-    publicPath: '/dist',
+    path: path.join(__dirname, 'dist'),
+    publicPath : "/",
     filename: '[hash].js',
-    path: path.join(__dirname, 'dist')
+    chunkFilename : "[id].[hash].bundle.chunk.js"
   },
-  devtool: 'cheap-source-map',
+  externals: {
+    'react': 'React'
+  },
   plugins: [
     stylesheetsPlugin,
-    htmlWebpackPlugin,
+    new CleanWebpackPlugin([settings.distPath], {
+        verbose: true
+    }),
+    new HtmlWebpackPlugin({
+        template: srcPathExtend("index.html")
+    }),
+    new CleanWebpackPlugin(pathsToClean, {
+      root: __dirname,
+      verbose: true,
+      dry: false,           
+      watch: false,
+      exclude: [ 'files', 'to', 'ignore' ],
+      allowExternal: false,
+      beforeEmit: false
+    }),
     definePlugin,
     uglifyPlugin,
     compressionPlugin
@@ -51,7 +86,12 @@ module.exports = {
         loader: 'babel-loader'
       }, {
         test: /\.html$/,
-        loader: 'html-loader'
+        use: [ {
+          loader: 'html-loader',
+          options: {
+            minimize: true
+          }
+        }],
       }, {
         test: /\.css$/,
         use: ExtractTextPlugin.extract({
@@ -91,5 +131,8 @@ module.exports = {
   node: {
     fs: 'empty',
     child_process: 'empty',
+  },
+  performance: {
+    hints: false
   }
 };

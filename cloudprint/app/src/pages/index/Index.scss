@@ -185,4 +185,25 @@
   .task-list-item-tap:active{
     background: rgba(31,56,88,0.1);
   }
+  .task-list-empty{
+      display: block;
+      text-align: center;
+      margin: 26rem auto 0;
+      .task-list-empty-img{
+        width: 19rem;
+        height: 19rem;
+        background-image: url(../../images/blank.png);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        display: block;
+        text-align: center;
+        margin: 0 auto;
+      }
+      .task-list-empty-text{
+        font-size: 3rem;
+        color: #999999;
+        margin-top: 3rem;
+        text-align: center;
+      }
+    }
 }

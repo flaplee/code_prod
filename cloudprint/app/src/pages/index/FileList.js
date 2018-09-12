@@ -19,6 +19,7 @@ class FileList extends Component {
             page: props.pages,
             loading: false,
             refreshing: false,
+            isEmpty: false,
             fileList: []
         };
         console.log("fileList props", props)
@@ -41,8 +42,9 @@ class FileList extends Component {
 
     //获取列表数据
     getListPage(data) {
+        console.log("data~~~~~~~~~~~~", data)
         const self = this
-        let pages = self.state.fileList
+        let pages = self.state.fileList;
         let appData = new FormData();
         appData.append('pageNo', data.pageNo);
         appData.append('pageSize', data.pageLimit);
@@ -61,10 +63,17 @@ class FileList extends Component {
                 }
                 response.json().then(function (json) {
                     if (json.code === 0) {
-                        self.setState({
-                            fileList: json.data.rows
-                        }, function () {
-                        })
+                        if(data.pageNo == 1 && json.data.total == 0){
+                            self.setState({
+                                fileList: [],
+                                isEmpty: true
+                            }, function () {})
+                        }else{
+                            let rows = self.state.fileList
+                            self.setState({
+                                fileList: rows.concat(json.data.rows)
+                            }, function () {})
+                        }
                     }
                 });
             }
@@ -102,8 +111,10 @@ class FileList extends Component {
     }
 
     render() {
-        let fileItems;
-        if (this.state.fileList) {
+        let fileItems, fileItemEmpty;
+        if (this.state.isEmpty == true){
+            fileItemEmpty = <div className="task-list-empty"><div className="task-list-empty-img"></div><p className="task-list-empty-text">暂无更多打印记录</p></div>
+        }else{
             console.log("this.props.fileList", this.state.fileList)
             fileItems = this.state.fileList.map((file, index) => {
                 return (
@@ -111,6 +122,7 @@ class FileList extends Component {
                 );
             });
         }
+
         return (
             <ScrollView
                 infiniteScroll
@@ -127,7 +139,7 @@ class FileList extends Component {
             >
                 <Group className="list-item">
                     <Group.List lineIndent={15}>
-                        {fileItems}
+                        {this.state.isEmpty == true ? fileItemEmpty : fileItems}
                     </Group.List>
                 </Group>
             </ScrollView>

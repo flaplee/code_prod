@@ -1,8 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require("clean-webpack-plugin");
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
+const tinypngCompress = require("webpack-tinypng-compress");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const stylesheetsLoaders = [{
   loader: 'css-loader',
@@ -15,33 +18,83 @@ const stylesheetsLoaders = [{
 ];
 
 const stylesheetsPlugin = new ExtractTextPlugin('[hash].css');
-const htmlWebpackPlugin = new HtmlWebpackPlugin({ template: './src/index.html', filename: "./index.html" });
 const definePlugin = new webpack.DefinePlugin({
   'process.env': {
     NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'production')
   }
 });
-const uglifyPlugin = new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } });
+
+const settings = {
+  distPath: path.join(__dirname, "dist"),
+  srcPath: path.join(__dirname, "src")
+};
+
+// the path(s) that should be cleaned
+let pathsToClean = [
+  'dist',
+  'build'
+]
+
+function srcPathExtend(subpath) {
+  return path.join(settings.srcPath, subpath)
+}
+
+//const uglifyPlugin = new webpack.optimize.UglifyJsPlugin({ minimize: true });
 const compressionPlugin = new CompressionPlugin();
 
 module.exports = {
+  devtool: 'false',
   context: path.join(__dirname, 'src'),
-  entry: './index',
-  output: {
-    publicPath: '/dist',
-    filename: '[hash].js',
-    path: path.join(__dirname, 'dist')
+  entry: {
+    vendor: ['react','react-dom','react-router-dom'], //在此处配置
+    bundle :__dirname + "/src/index.js"               //已多次提及的唯一入口文件
   },
-  devtool: 'cheap-source-map',
+  output: {
+    path: path.resolve(__dirname, 'build'),
+    publicPath: "./",
+    filename: '[name].js',
+    chunkFilename : "[id].[name].bundle.chunk.js"
+  },
+  /* externals: {
+    'react': 'React'
+  }, */
   plugins: [
     stylesheetsPlugin,
-    htmlWebpackPlugin,
+    new CleanWebpackPlugin([settings.distPath], {
+        verbose: true
+    }),
+    new HtmlWebpackPlugin({
+        template: srcPathExtend("index.html")
+    }),
+    new CleanWebpackPlugin(pathsToClean, {
+      root: __dirname,
+      verbose: true,
+      dry: false,           
+      watch: false,
+      exclude: [ 'files', 'to', 'ignore' ],
+      allowExternal: false,
+      beforeEmit: false
+    }),
     definePlugin,
-    uglifyPlugin,
+    //uglifyPlugin,
     compressionPlugin
   ],
   resolve: {
     modules: ['node_modules', path.join(__dirname, 'src')]
+  },
+  optimization:{
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /node_modules/,
+          chunks: 'all',
+          name: 'vendor',
+          priority: 10,
+          enforce: true
+        }
+      }
+    },
+    runtimeChunk: true
   },
   module: {
     rules: [
@@ -51,7 +104,12 @@ module.exports = {
         loader: 'babel-loader'
       }, {
         test: /\.html$/,
-        loader: 'html-loader'
+        use: [ {
+          loader: 'html-loader',
+          options: {
+            minimize: true
+          }
+        }],
       }, {
         test: /\.css$/,
         use: ExtractTextPlugin.extract({
@@ -61,10 +119,8 @@ module.exports = {
       }, {
         test: /\.scss$/,
         use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [...stylesheetsLoaders, {
-            loader: 'sass-loader'
-          }]
+          fallback: "style-loader",
+          use: "css-loader!sass-loader"
         })
       }, {
         test: /\.sass$/,
@@ -85,11 +141,30 @@ module.exports = {
             loader: 'less-loader'
           }]
         })
-      }
+      },
+      {
+        test: /\.(ttf|eot|svg|gif)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'file-loader'
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg|ico)$/i,
+        use: [
+            {
+                loader: "file-loader",
+                options: {
+                    outputPath: "assets/"
+                }
+            }
+        ]
+      },
     ]
   },
+  watch: true,
   node: {
     fs: 'empty',
     child_process: 'empty',
+  },
+  performance: {
+    hints: false
   }
 };

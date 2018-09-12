@@ -18,8 +18,9 @@ class FileList extends Component {
             sn: props.sn,
             page: props.pages,
             loading: false,
-            refreshing: false,
             isEmpty: false,
+            noMore: false, 
+            force: true,
             fileList: []
         };
         console.log("fileList props", props)
@@ -32,18 +33,11 @@ class FileList extends Component {
         this.props.transFiler(filer)
     }
 
-    onRefresh() {
-        this.setState({ refreshing: true });
-
-        setTimeout(() => {
-            this.setState({ refreshing: false });
-        }, 2000);
-    }
-
     //获取列表数据
     getListPage(data) {
         console.log("data~~~~~~~~~~~~", data)
         const self = this
+        self.setState({ loading: true });
         let pages = self.state.fileList;
         let appData = new FormData();
         appData.append('pageNo', data.pageNo);
@@ -63,40 +57,43 @@ class FileList extends Component {
                 }
                 response.json().then(function (json) {
                     if (json.code === 0) {
+                        self.setState({ loading: false });
                         if(data.pageNo == 1 && json.data.total == 0){
                             self.setState({
                                 fileList: [],
-                                isEmpty: true
+                                isEmpty: true,
+                                loading: false
                             }, function () {})
                         }else{
-                            let rows = self.state.fileList
-                            self.setState({
-                                fileList: rows.concat(json.data.rows)
-                            }, function () {})
+                            if(json.data.total > (data.pageLimit * data.pageNo)){
+                                let rows = self.state.fileList
+                                self.setState({
+                                    fileList: rows.concat(json.data.rows)
+                                }, function () {})
+                            }else{
+                                self.setState({
+                                    force: false,
+                                    noMore: true
+                                }, function () {})
+                            }
                         }
                     }
                 });
             }
         ).catch(function (err) {
             console.log("错误:" + err);
+            self.setState({ loading: false });
         });
     }
 
     onLoad() {
-        this.setState({ loading: true });
-        this.getListPage({pageNo : this.state.page, pageLimit: 10, sn: this.state.sn})
-        /* setTimeout(() => {
-            this.setState({ page: this.state.page + 1, loading: false });
-        }, 2000); */
-    }
-
-    onRefresh(){
         this.setState({ page: this.state.page + 1, loading: false }, function(){
             console.log("page", this.state.page)
-            this.getListPage({ pageNo: this.state.page, pageLimit: 10, sn: this.state.sn })
+            this.getListPage({ pageNo: this.state.page, pageLimit: 12, sn: this.state.sn })
         });
     }
 
+    //加载元素
     renderItems() {
         const { page } = this.state;
         const pages = [];
@@ -125,12 +122,7 @@ class FileList extends Component {
 
         return (
             <ScrollView
-                infiniteScroll
-                refreshControl
-                refreshControlOptions={{
-                    refreshing: this.state.refreshing,
-                    onRefresh: this.onRefresh.bind(this),
-                }}
+                infiniteScroll={this.state.force}
                 infiniteScrollOptions={{
                     loading: this.state.loading,
                     onLoad: this.onLoad.bind(this),
@@ -140,6 +132,7 @@ class FileList extends Component {
                 <Group className="list-item">
                     <Group.List lineIndent={15}>
                         {this.state.isEmpty == true ? fileItemEmpty : fileItems}
+                        <div className="task-list-more" style={{ display: (this.state.noMore == true) ? 'block' : 'none' }}><p>没有更多了</p></div>
                     </Group.List>
                 </Group>
             </ScrollView>

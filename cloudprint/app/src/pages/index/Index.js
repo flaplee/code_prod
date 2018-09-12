@@ -45,9 +45,16 @@ class PrintIndex extends Component{
     componentWillUpdate(props, state) {
     }
 
-    componentWillMount(){}
+    componentWillMount(){
+    }
     
     componentDidMount() {
+        // 屏蔽触摸移动
+        document.getElementById('print-index').addEventListener("touchmove", (e) => {
+            this.unableTouchMove(e)
+        }, {
+            passive: false
+        })
         const self = this
         if (self.state.sn != '') { Cookies.save('sn', self.state.sn, { path: '/' });}
         let signPrint;
@@ -150,11 +157,17 @@ class PrintIndex extends Component{
             });
         });
     }
+
+    // 屏蔽触摸移动
+    unableTouchMove(e) {
+        e.preventDefault();
+    }
     
     //监听Printer变化状态
     transPrinter(printer) {
         console.log("printer", printer);
     }
+
     
     renderPrinter() {
         const user = this.state.user;
@@ -351,7 +364,9 @@ class PrintIndex extends Component{
 
     render(){
         return(
-            <div className="print-index">
+            <div className="print-index"
+            id="print-index"
+            onTouchMove={this.unableTouchMove.bind(this)}>
                 <Printer user={this.state.user} printer={this.state.printer} printer={this.state.printer} inkbox={this.state.inkbox} transPrinter={printer => this.transPrinter(printer)}></Printer>
                 <Nav navlist={this.state.navlist} printer={this.state.printer} transPrinter={printer => this.transPrinter(printer)}></Nav>
             </div>

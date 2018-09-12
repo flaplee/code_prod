@@ -47,8 +47,13 @@ class PrintManage extends React.Component {
         this.getPrinterData(this.state.sn)
     }
 
-    
     componentDidMount() {
+        // 屏蔽触摸移动
+        document.getElementById('print-manage').addEventListener("touchmove", (e) => {
+            this.unableTouchMove(e)
+        }, {
+            passive: false
+        })
         deli.common.navigation.setTitle({
             "title": "打印机管理"
         }, function (data) {}, function (resp) {});
@@ -57,7 +62,11 @@ class PrintManage extends React.Component {
             "text": ""
         }, function (data) {}, function (resp) {});
     }
-    
+
+    // 屏蔽触摸移动
+    unableTouchMove(e) {
+        e.preventDefault();
+    }
 
     //更新
     handleOnUpdate(){
@@ -144,6 +153,7 @@ class PrintManage extends React.Component {
             },function(data){},function(resp){});
         });
     }
+
     render() {
         if (this.state.taskListRedirect) {
             const sn = this.state.sn
@@ -170,7 +180,7 @@ class PrintManage extends React.Component {
             }, function (data) { }, function (resp) { });
             //return <Redirect push to="/printclean" />;
         }
-        return (<div className="print-manage">
+        return (<div className="print-manage" id="print-manage" onTouchMove={this.unableTouchMove.bind(this)}>
             <Group className="print-list">
                 <Group.List lineIndent={15}>
                     <div>

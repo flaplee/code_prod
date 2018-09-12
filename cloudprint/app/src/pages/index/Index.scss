@@ -206,4 +206,15 @@
         text-align: center;
       }
     }
+  /* loading */
+  .task-list-more{
+    display: none;
+    color:#9b9b9b;
+    text-align:center;
+    margin: 1.5rem auto;
+    p{
+      font-size:2rem;
+      color:#9B9B9B;
+    }
+  }
 }

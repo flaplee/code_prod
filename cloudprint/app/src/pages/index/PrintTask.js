@@ -15,7 +15,7 @@ class PrintTask extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            page: 1,
+            page: 0,
             loading: false,
             refreshing: false,
             statusInfo:{
@@ -84,6 +84,10 @@ class PrintTask extends React.Component {
         }, function (data) {}, function (resp) {});
     }
 
+    componentDidMount(){
+        
+    }
+
     onLoad(){
     }
 
@@ -97,6 +101,7 @@ class PrintTask extends React.Component {
     handleprintTask(item) {
         console.log("重新打印~~~~~~~~~~~~")
         const self = this
+        self.setState({ layerView: false });
         fetch(mpURL + '/app/printerTask/restart/' + item.taskCode, {
             method: 'GET',
             headers: {
@@ -122,12 +127,10 @@ class PrintTask extends React.Component {
                             //self.renderListItems();
                         })
                     } else {
-                        self.setState({ layerView: false });
                     }
                 });
             }
         ).catch(function (err) {
-            self.setState({ layerView: false });
             console.log("错误:" + err);
         });
     }
@@ -136,6 +139,7 @@ class PrintTask extends React.Component {
     handleDeleteTask(item) {
         console.log("删除任务~~~~~~~~~~~~")
         const self = this
+        self.setState({ layerView: false });
         let delData = new FormData()
         delData.append('id', item.id)
         fetch(mpURL + '/app/printerTask/delete', {
@@ -164,10 +168,8 @@ class PrintTask extends React.Component {
                                 "text": "删除任务成功",
                                 "duration": 2
                             },function(data){},function(resp){});
-                            self.setState({ layerView: false });
                         })
                     } else {
-                        self.setState({ layerView: false });
                         deli.common.notification.prompt({
                             "type": 'error',
                             "text": data.msg,
@@ -177,7 +179,6 @@ class PrintTask extends React.Component {
                 });
             }
         ).catch(function (err) {
-            this.setState({ layerView: false });
             deli.common.notification.prompt({
                 "type": 'error',
                 "text": "网络错误,请重试",
@@ -190,6 +191,7 @@ class PrintTask extends React.Component {
     handleQueryTask(item) {
         console.log("查询任务详情~~~~~~~~~~~~")
         const self = this
+        self.setState({ layerView: false, redirect: { previewNav: true } });
         fetch(mpURL + '/app/printerTask/queryDetais/' + item.taskCode, {
             method: 'GET',
             headers: {
@@ -204,24 +206,22 @@ class PrintTask extends React.Component {
                 response.json().then(function (data) {
                     console.log("data", data)
                     if (data.code == 0 ) {
-                        
-                        self.setState({ layerView: false, redirect: { previewNav: true } });
+                        self.setState({redirect: { previewNav: true } });
                     } else {
-                        self.setState({ layerView: false });
+
                     }
                 });
             }
         ).catch(function (err) {
-            this.setState({ layerView: false });
             console.log("错误:" + err);
         });
-        self.setState({ layerView: false, redirect: { previewNav: true } });
     }
 
     //取消任务
     handleCancelTask(item) {
         console.log("取消任务~~~~~~~~~~~~")
         const self = this
+        self.setState({ layerView: false });
         fetch(mpURL + '/app/printerTask/cancel/' + item.taskCode, {
             method: 'GET',
             headers: {
@@ -251,7 +251,6 @@ class PrintTask extends React.Component {
                             }, function (data) { }, function (resp) { });
                         })
                     } else {
-                        self.setState({ layerView: false });
                         deli.common.notification.prompt({
                             "type": 'error',
                             "text": data.msg,
@@ -261,7 +260,6 @@ class PrintTask extends React.Component {
                 });
             }
         ).catch(function (err) {
-            self.setState({ layerView: false });
             console.log("错误:" + err);
         });
     }
@@ -270,6 +268,7 @@ class PrintTask extends React.Component {
     handleQrcodeTask(item) {
         console.log("扫码指定打印机~~~~~~~~~~~~")
         const self = this
+        self.setState({ layerView: false });
         deli.app.code.scan({
             app_id: ''
         }, function (data) {
@@ -317,35 +316,28 @@ class PrintTask extends React.Component {
                                                 "text": data.msg,
                                                 "duration": 2
                                             },function(data){},function(resp){});
-                                            self.setState({ layerView: false });
                                         }
                                     });
                                 }
                             ).catch(function (err) {
-                                self.setState({ layerView: false });
                                 console.log("错误:" + err);
                             });
                         } else {
-                            self.setState({ layerView: false });
+                            
                         }
                     });
                 }
             ).catch(function (err) {
-                self.setState({ layerView: false });
+                
                 console.log("错误:" + err);
             });
 
         }, function (resp) {
-            self.setState({ layerView: false });
+            
         });
     }
 
     onLoad() {
-        /* this.setState({ loading: true });
-
-        setTimeout(() => {
-            this.setState({ page: this.state.page + 1, loading: false });
-        }, 2000); */
     }
 
     //打印菜单
@@ -412,7 +404,7 @@ class PrintTask extends React.Component {
             }/>;
         }
         return (
-            <div className="print-index-task print-list">
+            <div className="print-index-task print-list" id="print-index-task">
                 <FileList pages={this.state.page} files={this.state.fileList} transFiler={filer => this.transFiler(filer)}></FileList>
                 <Layer bottom="0" visible={this.state.layerView} maskCloseable>
                     {this.renderlayerItems(this.state.layerViewData, this.state.fileItemData)}

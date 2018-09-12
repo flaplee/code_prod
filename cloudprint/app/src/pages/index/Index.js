@@ -43,7 +43,6 @@ class PrintIndex extends Component{
     };
 
     componentWillUpdate(props, state) {
-        
     }
 
     componentWillMount(){}
@@ -143,12 +142,12 @@ class PrintIndex extends Component{
             });
 
             // 调试
-            /* self.setState({ "user": { "token": Cookies.load('token') } })
+            self.setState({ "user": { "token": Cookies.load('token') } })
             self.getLocalData({
                 user_id: Cookies.load('userId'),
                 org_id: Cookies.load('orgId'),
                 token: Cookies.load('loginToken')
-            }); */
+            });
         });
     }
     

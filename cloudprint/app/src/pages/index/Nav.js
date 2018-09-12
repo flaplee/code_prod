@@ -8,6 +8,7 @@ import fileimg from '../../images/file.png'
 import taskimg from '../../images/Print_task.png'
 import manage01 from '../../images/management01.png'
 import manage02 from '../../images/Printer_management02.png'
+import { Layer } from 'saltui';
 import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL } from '../../configs/config'
 class Nav extends Component {
     constructor(props) {
@@ -25,7 +26,20 @@ class Nav extends Component {
                 width: 0,
                 height: 0
             },
-            previewList:[]
+            previewList:[],
+            taskItemData: {},
+            layerView: false,
+            layerViewData: [],
+            menuList: [{
+                value: 1,
+                text: '本地文件'
+            }, {
+                value: 2,
+                text: '网盘文件'
+            }, {
+                value: 3,
+                text: '取消'
+            }]
         }
         console.log("props", props)
     }
@@ -255,14 +269,18 @@ class Nav extends Component {
                 //this.setState({ redirect: { imgNav: true } });
                 break;
             case 'imgNav':
-                if (this.fileImgInput) {
-                    this.fileImgInput.click()
-                }
+                deli.common.image.choose({
+                    types: ["photo"],
+                    multiple: true,
+                    max: 9
+                }, function (data) {
+                    alert(JSON.stringify(data));
+                }, function (resp) {
+                    alert(JSON.stringify(resp));
+                });
                 break;
             case 'fileNav':
-                if (this.fileInput) {
-                    this.fileInput.click()
-                }
+                this.setState({ layerView: true }, function () {})
                 break;
             case 'taskNav':
                 this.setState({ redirect: { taskNav: true }});
@@ -275,6 +293,57 @@ class Nav extends Component {
             default:
                 break;
         }
+    }
+
+    //打印菜单
+    handleLayerClick(value, task) {
+        console.log("value", value);
+        console.log("task", task);
+        switch (value) {
+            case 1:
+                deli.common.file.choose({
+                    types: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'pdf']
+                }, function (data) {
+                    alert(JSON.stringify(data));
+                }, function (resp) {
+                    alert(JSON.stringify(resp));
+                });
+                this.setState({ layerView: false });
+                break;
+            case 2:
+                deli.app.disk.choose({
+                    types: ['png', 'jpg', 'gif', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'pdf']
+                }, function (data) {
+                    alert(JSON.stringify(data));
+                }, function (resp) {
+                    alert(JSON.stringify(resp));
+                });
+                this.setState({ layerView: false });
+                break;
+            case 3:
+                this.setState({ layerView: false });
+                break;
+            default:
+                this.setState({ layerView: false });
+                break;
+        }
+    }
+
+    // 显示菜单
+    renderlayerItems(viewData, taskData) {
+        const pages = this.state.menuList;
+        const result = [];
+        console.log("viewData", viewData);
+        console.log("taskData", taskData);
+        console.log("pages", pages);
+        for (let i = 0; i < pages.length; i++) {
+            let valueItem = pages[i].value;
+            let textItem = pages[i].text;
+            console.log("valueItem", valueItem)
+            console.log("textItem", textItem)
+            result.push(<div key={`page-${i}`} className="setting-item" onClick={this.handleLayerClick.bind(this, valueItem, taskData)}>{textItem}</div>);
+        }
+        return result;
     }
 
     render() {
@@ -307,14 +376,12 @@ class Nav extends Component {
                         <div className="item-img"><img src={pictureimg} /></div>
                         <div className="item-title">选择图片打印</div>
                     </a>
-                    <form id="print-img" className="item-form" encType="multipart/form-data" method="post" onSubmit={this.handleUploadImgSubmit.bind(this)} style={{ display: (this.state.isShowFooter == true) ? '' : 'none' }}><input className="item-form-img" type="file" accept="image/*" ref={(input) => { this.fileImgInput = input }} onChange={this.handleUploadImgChange.bind(this)} /></form>
                 </div>
                 <div className="nav-item">
                     <a className="item" onClick={this.handleOnClick.bind(this, 'fileNav')} href="javascript:;">
                         <div className="item-img"><img src={fileimg} /></div>
                         <div className="item-title">选择文件打印</div>
                     </a>
-                    <form id="print-file" className="item-form" encType="multipart/form-data" method="post" onSubmit={this.handleUploadFileSubmit.bind(this)} style={{ display: (this.state.isShowFooter == true) ? '' : 'none' }}><input className="item-form-file" type="file" accept="application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/msword,text/plain" ref={(input) => { this.fileInput = input }} onChange={this.handleUploadFileChange.bind(this)} /></form>
                 </div>
                 <div className="nav-item">
                     <a className="item" onClick={this.handleOnClick.bind(this, 'taskNav')}  href="javascript:;">
@@ -328,6 +395,9 @@ class Nav extends Component {
                         <div className="item-title">打印机管理</div>
                     </a>
                 </div>
+                <Layer bottom="0" visible={this.state.layerView} maskCloseable>
+                    {this.renderlayerItems(this.state.layerViewData, this.state.taskItemData)}
+                </Layer>
             </div>
         );
     }

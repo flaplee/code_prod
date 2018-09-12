@@ -45,20 +45,19 @@ const compressionPlugin = new CompressionPlugin();
 module.exports = {
   devtool: 'false',
   context: path.join(__dirname, 'src'),
-  entry: './index',
-  /* entry: {
+  entry: {
     vendor: ['react','react-dom','react-router-dom'], //在此处配置
     bundle :__dirname + "/src/index.js"               //已多次提及的唯一入口文件
-  }, */
+  },
   output: {
-    path: path.join(__dirname, 'build'),
-    publicPath : "./",
+    path: path.resolve(__dirname, 'build'),
+    publicPath: "./",
     filename: '[name].js',
     chunkFilename : "[id].[name].bundle.chunk.js"
   },
-  externals: {
+  /* externals: {
     'react': 'React'
-  },
+  }, */
   plugins: [
     stylesheetsPlugin,
     new CleanWebpackPlugin([settings.distPath], {
@@ -83,7 +82,7 @@ module.exports = {
   resolve: {
     modules: ['node_modules', path.join(__dirname, 'src')]
   },
-  /* optimization:{
+  optimization:{
     splitChunks: {
       cacheGroups: {
         vendor: {
@@ -96,7 +95,7 @@ module.exports = {
       }
     },
     runtimeChunk: true
-  }, */
+  },
   module: {
     rules: [
       {
@@ -120,10 +119,8 @@ module.exports = {
       }, {
         test: /\.scss$/,
         use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [...stylesheetsLoaders, {
-            loader: 'sass-loader'
-          }]
+          fallback: "style-loader",
+          use: "css-loader!sass-loader"
         })
       }, {
         test: /\.sass$/,
@@ -146,36 +143,6 @@ module.exports = {
         })
       },
       {
-        test: /\.(gif|png|jpe?g|svg)$/i,
-        use: [
-          'file-loader',
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              mozjpeg: {
-                progressive: true,
-                quality: 65
-              },
-              // optipng.enabled: false will disable optipng
-              optipng: {
-                enabled: false,
-              },
-              pngquant: {
-                quality: '65-90',
-                speed: 4
-              },
-              gifsicle: {
-                interlaced: false,
-              },
-              // the webp option will enable WEBP
-              webp: {
-                quality: 75
-              }
-            }
-          },
-        ]
-      },
-      {
         test: /\.(ttf|eot|svg|gif)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: 'file-loader'
       },
@@ -192,6 +159,7 @@ module.exports = {
       },
     ]
   },
+  watch: true,
   node: {
     fs: 'empty',
     child_process: 'empty',

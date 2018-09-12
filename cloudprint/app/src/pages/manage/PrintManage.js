@@ -17,7 +17,7 @@ class PrintManage extends React.Component {
             inkRedirect: false,
             helpRedirect: false,
             cleanRedirect: false,
-            sn: props.location.state.sn || props.location.search.sn,
+            sn: props.location.search.sn,
             isShowUpdate: false,
             printer:{}
         };

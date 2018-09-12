@@ -113,7 +113,7 @@ class PrintTask extends React.Component {
                     if (data.code == 0 ) {
                         let fileList = self.state.fileList
                         let index = fileList.findIndex(element => element.taskCode === item.taskCode)
-                        fileList[index].task_status = '20'
+                            fileList[index].task_status = '20'
                         self.setState({
                             fileList: fileList,
                             layerView: false

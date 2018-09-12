@@ -44,7 +44,7 @@
     "testing": "webpack --config ./webpack.testing.config.js",
     "build": "webpack --mode production -p --config ./webpack.production.js",
     "dev": "webpack-dev-server --mode development --open --hot",
-    "product": "./node_modules/.bin/webpack --mode production -p"
+    "product": "./node_modules/.bin/webpack --mode production -p --progress --colors"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

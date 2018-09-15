@@ -5,10 +5,9 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  NavLink
 } from 'react-router-dom'
-
-import { NavLink } from 'react-router-dom'
 import { withRouter } from 'react-router'
 import PrintIndex from './pages/index/Index';
 import PrintList from './pages/index/PrintList';
@@ -24,6 +23,7 @@ import printimgNone from './images/Printer_management01.png';
 import { ScrollList, Icon, Group, Boxs, List } from 'saltui';
 import Header from './pages/components/header/Header'
 import Footer from './pages/components/footer/Footer'
+import { globalData } from './configs/config'
 // 引入路由
 import createHistory from 'history/createBrowserHistory'
 import Loading from './util/component/Loading.js';
@@ -35,7 +35,7 @@ class App extends Component {
     this.state = {
       print: [],
       printCurrent: 0,
-      pageLoading: false
+      pageLoading: globalData.printLoading
     }
   };
   
@@ -73,7 +73,6 @@ class App extends Component {
               </Switch>
             </div>
           </Router>
-        <Loading pageLoading={false}></Loading>
       </div>
     );
   }

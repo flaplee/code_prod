@@ -16,7 +16,7 @@ class TaskList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            sn: props.sn,
+            printer: props.printer,
             page: props.pages,
             loading: false,
             isEmpty: false,
@@ -55,21 +55,24 @@ class TaskList extends Component {
                 }
                 response.json().then(function (json) {
                     if (json.code === 0) {
-                        self.setState({ loading: false });
                         if(data.pageNo == 1 && json.data.total == 0){
                             self.setState({
                                 taskList: [],
                                 isEmpty: true,
-                                loading: false
+                                loading: false,
+                                force: false
                             }, function () {})
                         }else{
                             if(json.data.total > (data.pageLimit * data.pageNo)){
                                 let rows = self.state.taskList
                                 self.setState({
+                                    force: true,
+                                    loading: false,
                                     taskList: rows.concat(json.data.rows)
                                 }, function () {})
                             }else{
                                 self.setState({
+                                    loading: false,
                                     force: false,
                                     noMore: true
                                 }, function () {})
@@ -86,7 +89,7 @@ class TaskList extends Component {
     onLoad() {
         this.setState({ page: this.state.page + 1, loading: false }, function(){
             console.log("page", this.state.page)
-            this.getListPage({ pageNo: this.state.page, pageLimit: 10, sn: this.state.sn })
+            this.getListPage({ pageNo: this.state.page, pageLimit: 10, sn: this.state.printer.sn })
         });
     }
 
@@ -130,7 +133,7 @@ class TaskList extends Component {
                     loading: this.state.loading,
                     onLoad: this.onLoad.bind(this),
                 }}
-                className="scroll-view-demo"
+                className={this.state.isEmpty == true ? 'scroll-view-empty' : 'scroll-view-demo'}
             >
                 {this.state.isEmpty == true ? taskItemEmpty : taskItems}
                 <div className="task-list-more" style={{ display: (this.state.noMore == true) ? 'block' : 'none' }}><p>没有更多了</p></div>

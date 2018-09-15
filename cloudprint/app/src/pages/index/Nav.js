@@ -26,7 +26,11 @@ class Nav extends Component {
                 width: 0,
                 height: 0
             },
-            previewList:[],
+            previewData:{
+                previewList: [],
+                previewCount: 0
+            },
+            printImgList:[],
             taskItemData: {},
             layerView: false,
             layerViewData: [],
@@ -39,7 +43,9 @@ class Nav extends Component {
             }, {
                 value: 3,
                 text: '取消'
-            }]
+            }],
+            fileNum : 0,
+            fileList : []
         }
         console.log("props", props)
     }
@@ -65,7 +71,7 @@ class Nav extends Component {
         console.log("state", state)
     }
 
-    // 转换完成直接预览
+    // 文件转换完成直接预览
     handleUploadPreview(data){
         const self = this
         let pageLoad = data.pdfPageCount
@@ -89,14 +95,15 @@ class Nav extends Component {
     }
 
     // 下载预览图片
-    loadPreviewImg(data, space, callback){
+    loadPreviewFile(data, type, callback){
+        alert("test~~~~~~~~")
         const self = this
         //PDF 文件预览接口
         let previewData = new FormData();
-        previewData.append('fileId', data.fileId); // this.state.file.fileId 486971115692883968
+        previewData.append('taskId', data.taskId);
         previewData.append('fileType', data.fileType);
         previewData.append('checkedPage', data.pdfPageCount);
-        previewData.append('width', (space ? space : 560));
+        previewData.append('width', 560);
         previewData.append('height', 790);
         fetch(convertURL + '/h5/converter/preview', {
             method: 'POST',
@@ -112,18 +119,44 @@ class Nav extends Component {
                 response.json().then(function (json) {
                     console.log("json", json)
                     if (json.code === 0) {
-                        if(self.getPreviewImg()[0] == 1){
-                            self.loadPreviewImg(data, space, function(){
-                                callback()
-                            })
-                        }else{
-                            const tmpImg = self.state.previewList
-                            const tmpImgs = tmpImg.push(json.data)
-                            self.setState({
-                                previewList: tmpImgs
-                            }, function () {
-                                callback();
-                            })
+                        if (json.code === 0) {
+                            if(typeof callback === 'function'){
+                                callback(json.data);
+                            }
+                        }
+                    }
+                });
+            }
+        ).catch(function (err) {
+            console.log("错误:" + err);
+        });
+    }
+
+    // 图片转换,下载预览图片
+    loadPreviewImgSingle(data, type, callback) {
+        const self = this
+        //PDF 文件预览接口
+        let previewData = new FormData();
+        previewData.append('taskId', data.taskId);
+        previewData.append('fileType', data.fileType);
+        previewData.append('checkedPage', data.pdfPageCount);
+        previewData.append('width', 560);
+        previewData.append('height', 790);
+        fetch(convertURL + '/h5/converter/preview', {
+            method: 'POST',
+            headers: {
+                token: Cookies.load('token')
+            },
+            body: previewData
+        }).then(
+            function (response) {
+                if (response.status !== 200) {
+                    return;
+                }
+                response.json().then(function (json) {
+                    if (json.code === 0) {
+                        if(typeof callback === 'function'){
+                            callback(json.data);
                         }
                     }
                 });
@@ -264,6 +297,7 @@ class Nav extends Component {
     }
 
     handleOnClick(type, status) {
+        const self = this
         switch (type) {
             case 'upload':
                 //this.setState({ redirect: { imgNav: true } });
@@ -274,13 +308,111 @@ class Nav extends Component {
                     multiple: true,
                     max: 9
                 }, function (data) {
-                    alert(JSON.stringify(data));
+                    if(data.length > 0){
+                        let imgFileNum = 0
+                        let imgFileList = []
+                        function imgFileGet(data, i){
+                            deli.common.file.upload({
+                                url: 'http://convert.delicloud.xin/h5/converter/local', //文件转化接口
+                                file: data[i].file_path
+                            }, function (json) {
+                                if (data.length == 1) {
+                                    imgFileNum++
+                                    self.loadPreviewImgSingle(json, 'image', function(inner){
+                                        imgFileList.push({
+                                            'fileSuffix': json.fileType,
+                                            'fileSourceName': json.sourceName,
+                                            'fileSourceUrl': inner
+                                        })
+                                        self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList });
+                                    })
+                                } else {
+                                    imgFileNum++
+                                    self.loadPreviewImgSingle(json, 'image', function (inner) {
+                                        imgFileList.push({
+                                            'fileSuffix': json.fileType,
+                                            'fileSourceName': json.sourceName,
+                                            'fileSourceUrl': inner
+                                        })
+                                        if (imgFileNum == data.length) {
+                                            self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {});
+                                        } else {
+                                            self.setState({ fileType: 'image', fileList: imgFileList })
+                                        }
+                                    })
+                                }
+                            }, function (resp) {});
+                        }
+                        for (let i = 0; i < data.length; i++){
+                            imgFileGet(data, i)
+                        }
+                    }
                 }, function (resp) {
                     alert(JSON.stringify(resp));
                 });
                 break;
             case 'fileNav':
-                this.setState({ layerView: true }, function () {})
+                deli.common.file.choose({
+                    types: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'pdf'],
+                    max_size: 5242880
+                }, function(data) {
+                    if(data.length > 0){
+                        let docFileNum = 0
+                        let docFileList = []
+                        for (let i = 0; i < data.length; i++) {
+                            docFileGet(data, i)
+                        }
+                        function docFileGet(data, i) {
+                            deli.common.file.upload({
+                                url: 'http://convert.delicloud.xin/h5/converter/local',
+                                file: data[i].file_path
+                            }, function (json) {
+                                if (data.length == 1) {
+                                    docFileNum++
+                                    self.loadPreviewFile(json, 'file', function (inner) {
+                                        docFileList.push({
+                                            'fileSuffix': json.fileType,
+                                            'fileSourceName': json.sourceName,
+                                            'fileSourceUrl': inner
+                                        })
+                                        /* if (self.getPreviewImg()[0] == 1) {
+                                            self.loadPreviewImg(data, space, function () {
+                                                callback()
+                                            })
+                                        } else {
+                                            const tmpImg = self.state.previewList
+                                            const tmpImgs = tmpImg.push(json.data)
+                                            self.setState({
+                                                previewData: {
+                                                    previewList: tmpImgs,
+                                                    previewCount: data.pdfPageCount
+                                                }
+                                            }, function () {
+                                                callback();
+                                            })
+                                        } */
+                                        self.setState({ layerView: true, redirect: { fileNav: true }, fileType: 'file', fileList: docFileList });
+                                    })
+                                } else {
+                                    docFileNum++
+                                    self.loadPreviewFile(json, 'file', function (inner) {
+                                        docFileList.push({
+                                            'fileSuffix': json.fileType,
+                                            'fileSourceName': json.sourceName,
+                                            'fileSourceUrl': inner
+                                        })
+                                        if (imgFileNum == data.length) {
+                                            self.setState({ layerView: true, redirect: { fileNav: true }, fileType: 'file', fileList: docFileList }, function () { });
+                                        } else {
+                                            self.setState({ fileType: 'file', fileList: docFileList })
+                                        }
+                                    })
+                                }
+
+                            }, function (resp) {});
+                        }
+                    }
+                });
                 break;
             case 'taskNav':
                 this.setState({ redirect: { taskNav: true }});
@@ -349,14 +481,17 @@ class Nav extends Component {
     render() {
         const sn = this.state.printer.printerSn
         const file = this.state.file
+        const fileList = this.state.fileList
+        const fileType = this.state.fileType
         if (this.state.redirect.imgNav) {
             return <Redirect push to={
-                { pathname: "/previewindex", search: "?sn=" + sn + "", state: { "sn": sn, "file": file }  }
+                { pathname: "/previewindex", search: "?sn=" + sn + "", state: { "sn": sn, "file": file, "fileList": fileList, "fileType": fileType }  }
             } />;
         }
         if (this.state.redirect.fileNav) {
+            alert(JSON.stringify(fileList))
             return <Redirect push to={
-                { pathname: "/previewindex", search: "?sn=" + sn + "", state: { "sn": sn, "file": file }  }
+                { pathname: "/previewindex", search: "?sn=" + sn + "", state: { "sn": sn, "file": file, "fileList": fileList, "fileType": fileType  }  }
             } />;
         }
         if (this.state.redirect.taskNav) {

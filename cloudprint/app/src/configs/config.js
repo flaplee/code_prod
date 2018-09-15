@@ -10,6 +10,9 @@ let _convertURL = 'http://convert.delicloud.xin'
 let _baseURL = `${_serverIp}:${_port}`
 let _mockURL = 'http://192.168.0.88:9201'
 let _jssdkURL = 'http://static-pretest.deli/h5/sdk/delicloud.min.js?v=202'
+let _globalData = {
+  printLoading: false
+}
 
 if (process.env.NODE_ENV === 'testing') { // 测试环境
   _serverIp = 'https://eapp.delicloud.xin/cloudprint'
@@ -36,3 +39,4 @@ export const convertURL = _convertURL
 export const baseURL = _baseURL
 export const mockURL = _mockURL
 export const jssdkURL = _jssdkURL
+export const globalData = _globalData

@@ -83,11 +83,37 @@
 }
 
 .print-task{
+    background-color: #ffffff;
+    
+    .print-task-list{}
+
     .task-title {
+        background-color: #f2f8ff;
         font-size : 2rem;
         height : 5rem;
         line-height : 5rem;
         padding-left : 2rem;
+    }
+
+    .task-list{}
+
+    .scroll-view-empty{
+        .t-scroll-view-inner{
+            height: 100%;
+            .list-item{
+                height: 100%;
+                background-color: #f2f8ff;
+                .t-group-list{
+                    background-color: #f2f8ff;
+                    border: 0;
+                    .t-group-list-item{
+                        &:after{
+                            border-bottom: 0;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     .print-list-wrap {
@@ -101,6 +127,28 @@
 
     .print-list-wrap-single-tap:active{
         background: rgba(31,56,88,0.1);
+    }
+
+    .task-list-empty{
+        display: block;
+        text-align: center;
+        margin: 26rem auto 0;
+        .task-list-empty-img{
+            width: 19rem;
+            height: 19rem;
+            background-image: url(../../images/blank.png);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            display: block;
+            text-align: center;
+            margin: 0 auto;
+        }
+        .task-list-empty-text{
+            font-size: 2.5rem;
+            color: #999999;
+            margin-top: 3rem;
+            text-align: center;
+        }
     }
 
     .print-list-wrap-single-success{
@@ -167,6 +215,7 @@
         color : #222;
         padding-bottom : 0;
     }
+
     .print-list-status{
         width: 3rem;
         height: 3rem;
@@ -222,10 +271,12 @@
         font-size : 2rem;
         line-height : 18px;
     }
+
     html, body{
         background-color: #f2f2f2;
         height: 100%;
     }
+
     .demo-item {
         height: 80px;
         line-height: 80px;
@@ -278,6 +329,9 @@
     text-align: center;
     font-size: 3rem;
     border: 1px solid rgb(234, 234, 234);
+    &.setting-current{
+        background: rgba(228, 237, 255, 1);
+    }
 }
 
 .setting-item:active{

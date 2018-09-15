@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom';
+import { hasHistory } from 'react-router'
 import { Group, Boxs, List, Layer} from 'saltui';
 import Icon from 'salt-icon';
 import Cookies from 'react-cookies';
@@ -64,8 +65,8 @@ class PreviewSetup extends React.Component {
         }
     }
 
-    
     componentDidMount() {
+        const self = this
         deli.common.navigation.setTitle({
             "title": "设置"
         }, function (data) {}, function (resp) {});
@@ -73,15 +74,11 @@ class PreviewSetup extends React.Component {
         deli.common.navigation.setRight({
             "text": "确认"
         }, function (data) {
-            
-            this.setState({PrintSetupData: tmpPrintData }, function () {
-
-            })
-
+            alert(JSON.stringify(self.state.PrintSetupData))
+            self.setState({ PrintSetupData: self.state.PrintSetupData }, function () {})
         }, function (resp) {});
     }
     
-
     handleChildChange(range) {
         if (range) {
             this.setState({ range: { value: range } }, function () {
@@ -135,13 +132,15 @@ class PreviewSetup extends React.Component {
     }
 
     renderItems(type) {
-        const pages = this.state[type].data;
+        const self = this
+        const pages = self.state[type].data;
+        const current = self.state[type].current;
         const result = [];
         for (let i = 0; i < pages.length; i++) {
             let valueItem = pages[i].value;
             let textItem = pages[i].text;
             let indexItem = i;
-            result.push(<div key={`page-${i}`} className="setting-item" onClick={this.handleLayerClick.bind(this, `${indexItem}`, `${valueItem}`, `${type}`)}>{textItem}</div>);
+            result.push(<div key={`page-${indexItem}`} className={(current == indexItem) ? 'setting-item setting-current' : 'setting-item'} onClick={this.handleLayerClick.bind(this, `${indexItem}`, `${valueItem}`, `${type}`)}>{textItem}</div>);
         }
         return result;
     }

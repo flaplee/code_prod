@@ -19,6 +19,12 @@ class PrintInk extends React.Component {
     }
 
     componentDidMount() {
+        // 屏蔽触摸移动
+        document.getElementById('print-ink').addEventListener("touchmove", (e) => {
+            this.unableTouchMove(e)
+        }, {
+                passive: false
+            })
         deli.common.navigation.setTitle({
             "title": "墨水信息"
         }, function (data) {}, function (resp) {});
@@ -26,6 +32,11 @@ class PrintInk extends React.Component {
         deli.common.navigation.setRight({
             "text": ""
         }, function (data) {}, function (resp) {});
+    }
+
+    // 屏蔽触摸移动
+    unableTouchMove(e) {
+        e.preventDefault();
     }
     
     getChartData() {
@@ -64,7 +75,7 @@ class PrintInk extends React.Component {
 
     render() {
         return (
-            <div className="print-ink">
+            <div className="print-ink" id="print-ink">
                 <PrintChart chartData={this.state.chartData} percent={this.state.percent} displayLegend="true" location="墨盒信息" borderWidth="100" cutoutPercentage="86" rotation={2.5 * Math.PI} width="44rem" height="44rem" legendPosition="bottom" />
                 <div className="print-ink-title">墨盒信息</div>
             </div>

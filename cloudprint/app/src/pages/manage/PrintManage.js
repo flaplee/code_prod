@@ -17,10 +17,11 @@ class PrintManage extends React.Component {
             inkRedirect: false,
             helpRedirect: false,
             cleanRedirect: false,
-            sn: props.location.search.sn,
+            sn: (new URLSearchParams(props.location.search)).get('sn'),
             isShowUpdate: false,
             printer:{}
         };
+        console.log("props.location.query.sn", this.state.sn)
     }
 
     handleOnClick(type) {

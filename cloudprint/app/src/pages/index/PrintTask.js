@@ -63,12 +63,18 @@ class PrintTask extends React.Component {
                 value: 6,
                 text: '取消'
             }],
+            printer:{
+                sn: (new URLSearchParams(props.location.search)).get('sn'),
+                name: '' || (new URLSearchParams(props.location.search)).get('sn'),
+                status: '' || (new URLSearchParams(props.location.search)).get('sn'),
+            },    
             fileList: [],
             fileItemData:{},
             layerView: false,
             layerViewData:[],
             redirect: {
-                previewNav: false
+                previewNav: false,
+                manageNav: false
             }
         };
     }
@@ -85,7 +91,6 @@ class PrintTask extends React.Component {
     }
 
     componentDidMount(){
-        
     }
 
     onLoad(){
@@ -101,8 +106,8 @@ class PrintTask extends React.Component {
     handleprintTask(item) {
         console.log("重新打印~~~~~~~~~~~~")
         const self = this
-        self.setState({ layerView: false });
-        fetch(mpURL + '/app/printerTask/restart/' + item.taskCode, {
+        self.setState({ layerView: false, redirect: { previewNav: true } });
+        /* fetch(mpURL + '/app/printerTask/restart/' + item.taskCode, {
             method: 'GET',
             headers: {
                 token: Cookies.load('token')
@@ -132,7 +137,7 @@ class PrintTask extends React.Component {
             }
         ).catch(function (err) {
             console.log("错误:" + err);
-        });
+        }); */
     }
 
     //删除任务
@@ -190,23 +195,23 @@ class PrintTask extends React.Component {
     //查询任务详情
     handleQueryTask(item) {
         console.log("查询任务详情~~~~~~~~~~~~")
+        console.log("item", item)
         const self = this
-        self.setState({ layerView: false, redirect: { previewNav: true } });
+        self.setState({ layerView: false});
         fetch(mpURL + '/app/printerTask/queryDetais/' + item.taskCode, {
             method: 'GET',
             headers: {
                 token: Cookies.load('token')
-            },
-            body: {}
+            }
         }).then(
             function (response) {
                 if (response.status !== 200) {
                     return;
                 }
                 response.json().then(function (data) {
-                    console.log("data", data)
+                    console.log("~~~~~~~~~~data", data)
                     if (data.code == 0 ) {
-                        self.setState({redirect: { previewNav: true } });
+                        self.setState({ printer: { sn: data.data.printerSn, name: data.data.printerName, status: data.data.onlineStatus }, redirect: { manageNav: true } });
                     } else {
 
                     }
@@ -337,8 +342,7 @@ class PrintTask extends React.Component {
         });
     }
 
-    onLoad() {
-    }
+    onLoad() {}
 
     //打印菜单
     handleLayerClick(value, file) {
@@ -391,27 +395,42 @@ class PrintTask extends React.Component {
     }
 
     render() {
-        if (this.state.redirect.previewNav) {
+        if (this.state.redirect.manageNav) {
             const file = {
                 fileId: this.state.fileItemData.id,
                 fileUrl: this.state.fileItemData.pdfUrl,
                 fileName: this.state.fileItemData.sourceName,
                 fileExt: this.state.fileItemData.fileType
             }
-            const sn = this.state.fileItemData.printerSn
+            const sn = this.state.printer.sn
+            const name = this.state.printer.sn
+            const status = this.state.printer.status
             return <Redirect push to={
-                { pathname: "/previewindex", search: "?sn=" + sn + "", state: { "sn": sn, "file": file }  }
+                { pathname: "/managetask", search: "?sn=" + sn + "&name=" + name + "&status=" + status +"", state: { "sn": sn, "file": file }  }
             }/>;
+        }
+        if(this.state.redirect.previewNav){
+            const file = {
+                fileId: this.state.fileItemData.id,
+                fileUrl: this.state.fileItemData.pdfUrl,
+                fileName: this.state.fileItemData.sourceName,
+                fileExt: this.state.fileItemData.fileType
+            }
+            const sn = this.state.printer.sn
+            const name = this.state.printer.sn
+            const status = this.state.printer.status
+            return <Redirect push to={
+                { pathname: "/previewindex", search: "?sn=" + sn + "&name=" + name + "&status=" + status + "", state: { "sn": sn, "file": file } }
+            } />;
         }
         return (
             <div className="print-index-task print-list" id="print-index-task">
-                <FileList pages={this.state.page} files={this.state.fileList} transFiler={filer => this.transFiler(filer)}></FileList>
+                <FileList pages={this.state.page} files={this.state.fileList} printer={this.state.printer} transFiler={filer => this.transFiler(filer)}></FileList>
                 <Layer bottom="0" visible={this.state.layerView} maskCloseable>
                     {this.renderlayerItems(this.state.layerViewData, this.state.fileItemData)}
                 </Layer>
             </div>);
     }
 }
-
 
 export default PrintTask;

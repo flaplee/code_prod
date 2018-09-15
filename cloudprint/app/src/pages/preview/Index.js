@@ -7,31 +7,10 @@ import Icon from 'salt-icon';
 import ReactSwipe from 'react-swipes'
 import './Index.scss'
 import photo01 from '../../images/photo01.png';
-import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL } from '../../configs/config'
+import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL, globalData } from '../../configs/config'
+import Loading from '../../util/component/Loading.js';
 
 const { HBox, Box } = Boxs;
-
-// swipes 的配置
-let opt = {
-    distance: 600, // 每次移动的距离，卡片的真实宽度
-    currentPoint: 0,// 初始位置，默认从0即第一个元素开始
-    autoPlay: false, // 是否开启自动播放
-    swTouchstart: (ev) => {
-
-    },
-    swTouchmove: (ev) => {
-
-    },
-    swTouchend: (ev) => {
-        let data = {
-            moved: ev.moved,
-            originalPoint: ev.originalPoint,
-            newPoint: ev.newPoint,
-            cancelled: ev.cancelled
-        }
-        console.log("data", data);
-    }
-}
 
 class Index extends React.Component {
     constructor(props) {
@@ -39,19 +18,27 @@ class Index extends React.Component {
         this.state = {
             redirectPrintSetup:false,
             redirectPrinter: false,
+            redirectPrintTask: false,
             printCount: 1,
             printCurrent: 1,
+            printLoading: false,
             photo: 'https://file.delicloud.xin/oss-1535626446061-2048.jpg',
-            sn: props.location.state.sn,
-            file: props.location.state.file,
+            sn: props.location.state && props.location.state.sn,
+            file: props.location.state && props.location.state.file,
+            fileList: props.location.state && props.location.state.fileList,
+            printer:{
+                sn: (new URLSearchParams(props.location.search)).get('sn'),
+                name: (new URLSearchParams(props.location.search)).get('name'),
+                status: (new URLSearchParams(props.location.search)).get('status')
+            },
             printData: {
                 'fileSource': 'CLOUD',
                 'duplexMode': 1,
-                'fileSourceUrl': props.location.state.file.url,
-                'fileSuffix': props.location.state.file.fileExt,
+                'fileSourceUrl': '',
+                'fileSuffix': '',
+                'fileSourceName': '',
                 'taskSource': 'WBE',
                 'printDirection': 1,
-                'fileSourceName': props.location.state.file.fileName,
                 'printEndPage': 1,
                 'pagesPre': 1,
                 'copyCount': 1,
@@ -62,11 +49,30 @@ class Index extends React.Component {
                 'isPrintWhole': 0,
                 'printStartPage': 0
             },
-            printImg: [],
             printertData:{},
-            pageData: props.location.state
+            pageData: props.location.state,
+            // swipes 的配置
+            opt : {
+                distance: 600, // 每次移动的距离，卡片的真实宽度
+                currentPoint: 0,// 初始位置，默认从0即第一个元素开始
+                autoPlay: false, // 是否开启自动播放
+                swTouchstart: (ev) => {
+                },
+                swTouchmove: (ev) => {
+                },
+                swTouchend: (ev) => {
+                    let data = {
+                        moved: ev.moved,
+                        originalPoint: ev.originalPoint,
+                        newPoint: ev.newPoint,
+                        cancelled: ev.cancelled
+                    }
+                    this.setState({ printCurrent: (ev.newPoint + 1)})
+                    console.log("data", data);
+                }
+            }
         };
-        console.log("previewindex props", props.location.state.file);
+        console.log("previewindex props",  props.location.state);
     }
 
     componentWillMount(){
@@ -90,6 +96,7 @@ class Index extends React.Component {
     }
 
     componentDidMount() {
+        const self = this
         deli.common.navigation.setTitle({
             "title": "打印预览"
         }, function (data) {}, function (resp) {});
@@ -97,7 +104,7 @@ class Index extends React.Component {
         deli.common.navigation.setRight({
             "text": "设置"
         }, function (data) {
-            this.setState({ redirectPrintSetup: true });
+            self.setState({ redirectPrintSetup: true });
         }, function (resp) {});
     }
 
@@ -108,9 +115,13 @@ class Index extends React.Component {
 
     // 打印
     handlePrintClick(){
+        this.setState({printLoading: true}, function(){})
         const self = this
         let printData = new FormData();
         let printItems = self.state.printData;
+        printItems.fileSourceUrl = this.state.fileList[0].fileSourceUrl
+        printItems.fileSuffix = this.state.fileList[0].fileSuffix
+        printItems.fileSourceName = this.state.fileList[0].fileSourceName
         if (printItems) {
             Object.keys(printItems).map(print => {
                 printData.append(print, printItems[print]);
@@ -160,11 +171,23 @@ class Index extends React.Component {
                 response.json().then(function (json) {
                     console.log("setPrinterToPrint", json)
                     if (json.code == 0) {
-
+                        self.setState({ printLoading: false, redirectPrintTask: true }, function () { })
+                    }else{
+                         deli.common.notification.toast({
+                            "text": json.msg,
+                            "duration": 1.5
+                        },function(data){},function(resp){});
+                        self.setState({ printLoading: false }, function () { })
                     }
                 });
             }
         ).catch(function (err) {
+            deli.common.notification.prompt({
+                "type": 'error',
+                "text": "网络错误,请重试",
+                "duration": 1.5
+            },function(data){},function(resp){});
+            this.setState({ printLoading: false }, function () { })
             console.log("错误:" + err);
         });
     }
@@ -181,10 +204,10 @@ class Index extends React.Component {
 
     // 渲染图片
     rederPrintImgItem(){
-        const imgItem = this.state.printImg;
+        const imgItem = this.state.fileList;
         const result = [];
         for (let i = 0; i < imgItem.length; i++) {
-            result.push(<div key={`page-img-${i}`} className="swiper-slide"><div className="swiper-slide-img"><img src={imgItem[i]} /></div></div>);
+            result.push(<div key={`page-img-${i}`} className="swiper-slide"><div className="swiper-slide-img"><img src={imgItem[i].fileSourceUrl} /></div></div>);
         }
         return result;
     }
@@ -199,6 +222,12 @@ class Index extends React.Component {
                 { pathname: "/printmanage", search: "?sn=" + sn + "", state: { "sn": sn } }
             } />;
         }
+
+        if (this.state.redirectPrintTask) {
+            return <Redirect push to={
+                { pathname: "/printtask", search: "?sn=" + sn + "", state: { "sn": sn } }
+            } />;
+        }
         return (
             <div className="print-preview">
                 <Group className="preview-title">
@@ -211,6 +240,9 @@ class Index extends React.Component {
                                             <p className="print-list-title-single omit">打印机</p>
                                         </Box>
                                     </HBox>
+                                    <Box className="print-list-text-content-single" flex={1}>
+                                        <div className={(this.state.status == 0 ? 'print-img-status print-status-error' : (this.state.status == 1 ? 'print-img-status print-status-success' : 'print-img-status print-status-offline'))}></div>
+                                    </Box>
                                     <Box>
                                         <Box className="print-list-text-content-single">
                                             <p className="print-list-title-single omit left">{this.state.printertData.printerName}</p>
@@ -240,19 +272,20 @@ class Index extends React.Component {
                 </Group>
                 <div className="preview-box">
                     <div className="preview swiper-container">
-                        <ReactSwipe className="preview-inner swiper-wrapper" options={opt}>
+                        <ReactSwipe className="preview-inner swiper-wrapper" options={this.state.opt}>
                             {this.rederPrintImgItem()}
                         </ReactSwipe>
                     </div>
                     <div className="preview-nav">
                         <div className="preview-reference">
-                            <span className="preview-before">{this.state.printCurrent}</span>/<span className="preview-after">{this.state.printCount}</span>
+                            <span className="preview-before">{this.state.printCurrent}</span>/<span className="preview-after">{this.state.fileList.length}</span>
                         </div>
                         <div className="preview-print">
                             <a className="preview-btn" onClick={this.handlePrintClick.bind(this)} href="javascript:;">打印</a>
                         </div>
                     </div>
                 </div>
+                {(this.state.printLoading == true) ? <Loading pageLoading={true}></Loading> : ''}
             </div>
         );
     }

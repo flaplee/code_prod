@@ -19,7 +19,7 @@ class PrintIndex extends Component{
                 org_id: '',
                 token: ''
             },
-            sn: '' || props.location.search.sn,
+            sn: '' || (new URLSearchParams(props.location.search)).get('sn'),
             printer:{},
             printerList:{},
             inkbox:{},

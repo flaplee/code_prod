@@ -15,7 +15,7 @@ class FileList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            sn: props.sn,
+            printer: props.printer,
             page: props.pages,
             loading: false,
             isEmpty: false,
@@ -62,13 +62,15 @@ class FileList extends Component {
                             self.setState({
                                 fileList: [],
                                 isEmpty: true,
-                                loading: false
+                                loading: false,
+                                force: false
                             }, function () {})
                         }else{
                             if(json.data.total > (data.pageLimit * data.pageNo)){
                                 let rows = self.state.fileList
                                 self.setState({
-                                    fileList: rows.concat(json.data.rows)
+                                    fileList: rows.concat(json.data.rows),
+                                    force: true
                                 }, function () {})
                             }else{
                                 self.setState({
@@ -89,7 +91,7 @@ class FileList extends Component {
     onLoad() {
         this.setState({ page: this.state.page + 1, loading: false }, function(){
             console.log("page", this.state.page)
-            this.getListPage({ pageNo: this.state.page, pageLimit: 12, sn: this.state.sn })
+            this.getListPage({ pageNo: this.state.page, pageLimit: 12, sn: this.state.printer.sn })
         });
     }
 
@@ -127,7 +129,7 @@ class FileList extends Component {
                     loading: this.state.loading,
                     onLoad: this.onLoad.bind(this),
                 }}
-                className="scroll-view-demo"
+                className={this.state.isEmpty == true ? 'scroll-view-empty' : 'scroll-view-demo'}
             >
                 <Group className="list-item">
                     <Group.List lineIndent={15}>

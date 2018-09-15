@@ -72,11 +72,11 @@ class Nav extends Component {
     }
 
     // 文件转换完成直接预览
-    handleUploadPreview(data){
+    handleUploadPreview(data, limit){
         const self = this
         let pageLoad = data.pdfPageCount
-        for(let i = 1 ;i <= ((pageLoad <= 5) ? pageLoad : 5); i++){
-            self.loadPreviewImg(data, false, function(){
+        for(let i = 1 ;i <= ((pageLoad <= limit) ? pageLoad : limit); i++){
+            self.loadPreviewFile(data, 'file', function(){
                 pageLoad++;
             })
         }
@@ -187,7 +187,7 @@ class Nav extends Component {
                 response.json().then(function (json) {
                     console.log("json", json)
                     if (json.code == 0) {
-                        self.handleUploadPreview(json.data)
+                        self.handleUploadPreview(json.data, 5)
                         //const localFile = json.data
                         //self.setState({ file: { url: '', id: localFile.fileId, fileExt: localFile.fileType, fileName: localFile.sourceName, count: localFile.pdfPageCount}, redirect: { imgNav: true } });
                     }
@@ -369,14 +369,17 @@ class Nav extends Component {
                             }, function (json) {
                                 if (data.length == 1) {
                                     docFileNum++
-                                    self.loadPreviewFile(json, 'file', function (inner) {
+                                    alert(JSON.stringify(json))
+                                    self.handleUploadPreview(json, 5)
+
+                                    /* self.loadPreviewFile(json, 'file', function (inner) {
                                         docFileList.push({
                                             'fileSuffix': json.fileType,
                                             'fileSourceName': json.sourceName,
                                             'fileSourceUrl': inner
                                         })
-                                        /* if (self.getPreviewImg()[0] == 1) {
-                                            self.loadPreviewImg(data, space, function () {
+                                        if (self.getPreviewImg()[0] == 1) {
+                                            self.loadPreviewFile(data, 'file', function () {
                                                 callback()
                                             })
                                         } else {
@@ -390,12 +393,13 @@ class Nav extends Component {
                                             }, function () {
                                                 callback();
                                             })
-                                        } */
+                                        }
                                         self.setState({ layerView: true, redirect: { fileNav: true }, fileType: 'file', fileList: docFileList });
-                                    })
+                                    }) */
                                 } else {
                                     docFileNum++
-                                    self.loadPreviewFile(json, 'file', function (inner) {
+                                    
+                                    /* self.loadPreviewFile(json, 'file', function (inner) {
                                         docFileList.push({
                                             'fileSuffix': json.fileType,
                                             'fileSourceName': json.sourceName,
@@ -406,7 +410,7 @@ class Nav extends Component {
                                         } else {
                                             self.setState({ fileType: 'file', fileList: docFileList })
                                         }
-                                    })
+                                    }) */
                                 }
 
                             }, function (resp) {});

@@ -26,6 +26,7 @@ class Index extends React.Component {
             sn: props.location.state && props.location.state.sn,
             file: props.location.state && props.location.state.file,
             fileList: props.location.state && props.location.state.fileList,
+            fileOuter: props.location.state && props.location.state.fileOuter,
             printer:{
                 sn: (new URLSearchParams(props.location.search)).get('sn'),
                 name: (new URLSearchParams(props.location.search)).get('name'),

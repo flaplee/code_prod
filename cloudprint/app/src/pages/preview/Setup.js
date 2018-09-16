@@ -6,12 +6,15 @@ import Icon from 'salt-icon';
 import Cookies from 'react-cookies';
 import './Index.scss';
 import SelectField from '../components/selectfield/SelectField';
+// 引入路由
+import { History, createHashHistory } from "history";
 const { HBox, Box } = Boxs;
 class PreviewSetup extends React.Component {
     constructor(props){
         super(props)
         const t = this
         t.state = {
+            tranPreview: props.location.state,
             paper: { data: [{ value: 'A4', text: 'A4' }, { value: 'A5', text: 'A5' }], current: 0},
             direction: { data: [{ value: 1, text: '横向' }, { value: 2, text: '纵向' }], current: 0},
             mode: { data: [{ value: 0, text: '单面' }, { value: 1, text: '双面' }, { value: 2, text: '双面短边' }], current: 0},
@@ -47,12 +50,12 @@ class PreviewSetup extends React.Component {
             PrintSetupData:{
                 'fileSource': 'CLOUD',
                 'duplexMode': 1,
-                'fileSourceUrl': 'http://file.delicloud.xin/deli_POT_Manual.pdf',
-                'fileSuffix': 'pdf',
+                'fileSourceUrl': '',
+                'fileSuffix': '',
                 'taskSource': 'WBE',
-                'printerSn':  'DL-M2500ADNW_0000000000000000',
+                'printerSn':  '',
                 'printDirection': 1,
-                'fileSourceName': 'deli_POT_Manual',
+                'fileSourceName': '',
                 'printEndPage': 1,
                 'pagesPre': 1,
                 'copyCount':  1,
@@ -61,7 +64,8 @@ class PreviewSetup extends React.Component {
                 'printColorMode': 'black',
                 'isPrintWhole':  0,
                 'printStartPage': 0
-            }
+            },
+            redirectBack: false
         }
     }
 
@@ -74,8 +78,8 @@ class PreviewSetup extends React.Component {
         deli.common.navigation.setRight({
             "text": "确认"
         }, function (data) {
-            alert(JSON.stringify(self.state.PrintSetupData))
-            self.setState({ PrintSetupData: self.state.PrintSetupData }, function () {})
+            Cookies.save('setupData', self.state.PrintSetupData, { path: '/' });
+            self.setState({ PrintSetupData: self.state.PrintSetupData, redirectBack: true }, function () {})
         }, function (resp) {});
     }
     
@@ -145,6 +149,17 @@ class PreviewSetup extends React.Component {
         return result;
     }
     render() {
+        const hashHistory = createHashHistory()
+        //this.setState({tranPreview : {printData : this.state.PrintSetupData}})
+        if (this.state.redirectBack) {
+            const data = this.state.tranPreview
+            const sn = data.sn
+            hashHistory.push({
+                pathname: '/previewindex',
+                search: "?sn=" + sn + "",
+                state: data
+            })
+        }
         return (<div className="print-setup">
             <Group className="print-setup-content">
                 <Group.List lineIndent={15}>

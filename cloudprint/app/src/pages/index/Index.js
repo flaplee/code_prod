@@ -6,7 +6,6 @@ import {
     BrowserRouter as Router,
     Route
 } from 'react-router-dom'
-
 import Nav from './Nav'
 import Printer from './Printer'
 import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL } from '../../configs/config'

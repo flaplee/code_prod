@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { render } from 'react-dom'
+import { Redirect } from 'react-router-dom'
 import Cookies from 'react-cookies';
 import 'whatwg-fetch'
 import { Group, Boxs, List, NumberPicker, Context } from 'saltui';
@@ -73,6 +74,7 @@ class Index extends React.Component {
                 }
             }
         };
+        alert(JSON.stringify(props.location))
         console.log("previewindex props",  props.location.state);
     }
 
@@ -214,9 +216,12 @@ class Index extends React.Component {
     }
     
     render() {
+        const tranData = this.state
         const sn = this.state.sn
         if (this.state.redirectPrintSetup) {
-            return <Redirect push to="/previewsetup" />;
+            return <Redirect push to={
+                { pathname: "/previewsetup", search: "?sn=" + sn + "", state: tranData }
+            } />;
         }
         if(this.state.redirectPrinter){
             return <Redirect push to={

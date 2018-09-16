@@ -2,7 +2,7 @@ import './util/js/rem.js';
 import './util/sass/index.scss';
 import React, { Component } from 'react';
 import {
-  HashRouter as Router,
+  Router,
   Switch,
   Route,
   Link,
@@ -25,9 +25,8 @@ import Header from './pages/components/header/Header'
 import Footer from './pages/components/footer/Footer'
 import { globalData } from './configs/config'
 // 引入路由
-import createHistory from 'history/createBrowserHistory'
+import { History, createHashHistory } from "history";
 import Loading from './util/component/Loading.js';
-const history = createHistory()
 
 class App extends Component {
   constructor(){
@@ -56,10 +55,12 @@ class App extends Component {
   }
   
   render() {
+    const hashHistory = createHashHistory()
+    console.log("hashHistory", hashHistory)
     return (
       <div className="App" id="page-index">
         <Header></Header>
-          <Router>
+          <Router history={hashHistory}>
             <div className="content">
               <Switch>
                 <Route path="/" exact component={PrintIndex} />

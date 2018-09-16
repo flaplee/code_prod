@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Redirect } from 'react-router-dom'
-import Cookies from 'react-cookies';
-import { FileUpload } from 'react-fileupload'
+import Cookies from 'react-cookies'
 import pictureimg from '../../images/picture.png'
 import fileimg from '../../images/file.png'
 import taskimg from '../../images/Print_task.png'
@@ -97,6 +96,7 @@ class Nav extends Component {
 
     // 文件转换,下载预览图片
     loadPreviewFile(data, type, callback){
+        //alert(JSON.stringify(data))
         const self = this
         //PDF 文件预览接口
         let previewData = new FormData();
@@ -138,6 +138,7 @@ class Nav extends Component {
 
     // 图片转换,下载预览图片
     loadPreviewImg(data, type, callback) {
+        //alert(JSON.stringify(data))
         const self = this
         //PDF 文件预览接口
         let previewData = new FormData();
@@ -162,10 +163,18 @@ class Nav extends Component {
                         if(typeof callback === 'function'){
                             callback(json.data);
                         }
+                    }else{
+                        deli.common.notification.hidePreloader();
+                        deli.common.notification.prompt({
+                            "type": "error",
+                            "text": json.msg,
+                            "duration": 2
+                        },function(data){},function(resp){});
                     }
                 });
             }
         ).catch(function (err) {
+            deli.common.notification.hidePreloader();
             console.log("错误:" + err);
         });
     }
@@ -193,10 +202,18 @@ class Nav extends Component {
                 response.json().then(function (json) {
                     if (json.code == 0) {
                         self.startConvertPoll(json.data, callback)
+                    }else{
+                        deli.common.notification.hidePreloader();
+                        deli.common.notification.prompt({
+                            "type": "error",
+                            "text": json.msg,
+                            "duration": 2
+                        },function(data){},function(resp){});
                     }
                 });
             }
         ).catch(function (err) {
+            deli.common.notification.hidePreloader();
             console.log("错误:" + err);
         });
     }
@@ -216,19 +233,24 @@ class Nav extends Component {
                     return;
                 }
                 response.json().then(function (resp) {
-                    if (resp.code == 0) {
-                        if(resp.data && resp.data.converterStatus) {
+                    if (resp.code == 0 && resp.data && resp.data.converterStatus) {
                             self.stopConvertPoll(self.state.timer)
                             const taskData = resp.data
                             if(typeof callback === 'function'){
                                 callback(taskData)
                             }
-                            //self.setState({ file: { fileId: taskData.taskId, fileUrl: taskData.pdfUrl, fileName: taskData.sourceName, fileExt: taskData.fileType }, redirect: { fileNav: true } });
-                        }
+                    }else{
+                        deli.common.notification.hidePreloader();
+                        deli.common.notification.prompt({
+                            "type": "error",
+                            "text": resp.msg,
+                            "duration": 2
+                        },function(data){},function(resp){});
                     }
                 });
             }
         ).catch(function (err) {
+            deli.common.notification.hidePreloader();
             console.log("错误:" + err);
         });
     }
@@ -261,6 +283,7 @@ class Nav extends Component {
                     max: 9
                 }, function (data) {
                     if(data.length > 0){
+                        deli.common.notification.showPreloader();
                         let imgFileNum = 0
                         let imgFileList = []
                         function imgFileGet(data, i){
@@ -276,7 +299,9 @@ class Nav extends Component {
                                             'fileSourceName': json.sourceName,
                                             'fileSourceUrl': inner
                                         })
-                                        self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList });
+                                        self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList },function(){
+                                            deli.common.notification.hidePreloader();
+                                        });
                                     })
                                 } else {
                                     imgFileNum++
@@ -287,9 +312,13 @@ class Nav extends Component {
                                             'fileSourceUrl': inner
                                         })
                                         if (imgFileNum == data.length) {
-                                            self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {});
+                                            self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {
+                                                deli.common.notification.hidePreloader();
+                                            });
                                         } else {
-                                            self.setState({ fileType: 'image', fileList: imgFileList })
+                                            self.setState({ fileType: 'image', fileList: imgFileList }, function(){
+                                                deli.common.notification.hidePreloader();
+                                            })
                                         }
                                     })
                                 }
@@ -332,6 +361,7 @@ class Nav extends Component {
                     max_size: 5242880
                 }, function(data) {
                     if(data.length > 0){
+                        deli.common.notification.showPreloader();
                         let docFileNum = 0
                         let docFileList = []
                         for (let i = 0; i < data.length; i++) {
@@ -350,7 +380,9 @@ class Nav extends Component {
                                             'fileSourceName': json.sourceName,
                                             'fileSourceUrl': inner
                                         })
-                                        self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList, fileOuter: outer  });
+                                        self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList, fileOuter: outer  }, function(){
+                                            deli.common.notification.hidePreloader();
+                                        });
                                     })
                                 } else {
                                     docFileNum++
@@ -361,9 +393,13 @@ class Nav extends Component {
                                             'fileSourceUrl': inner
                                         })
                                         if (docFileNum == data.length) {
-                                            self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList, fileOuter: outer }, function () {});
+                                            self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList, fileOuter: outer }, function () {
+                                                deli.common.notification.hidePreloader();
+                                            });
                                         } else {
-                                            self.setState({ fileType: 'file', fileList: docFileList, fileOuter: outer })
+                                            self.setState({ fileType: 'file', fileList: docFileList, fileOuter: outer }, function(){
+                                                deli.common.notification.hidePreloader();
+                                            })
                                         }
                                     })
                                 }
@@ -377,6 +413,7 @@ class Nav extends Component {
                 deli.app.disk.choose({
                     types: ['png', 'jpg', 'gif', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'pdf']
                 }, function (data) {
+                    deli.common.notification.showPreloader();
                         let urlFileNum = 0
                         let urlFileList = []
                         for (let i = 0; i < data.length; i++) {
@@ -384,14 +421,16 @@ class Nav extends Component {
                         }
                         function urlFileGet(data, i) {
                             self.loadPreviewUrl(data[i], 'url', function(json){
-                                alert(JSON.stringify(json))
+                                //alert(JSON.stringify(json))
                                 self.loadPreviewFile(json, 'url', function(inner, outer){
                                     urlFileList.push({
                                         'fileSuffix': json.fileType,
                                         'fileSourceName': json.sourceName,
                                         'fileSourceUrl': inner
                                     })
-                                    self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: urlFileList, fileOuter: outer  });
+                                    self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: urlFileList, fileOuter: outer  }, function(){
+                                        deli.common.notification.hidePreloader();
+                                    });
                                 })
                             })
                         }
@@ -436,7 +475,7 @@ class Nav extends Component {
             } />;
         }
         if (this.state.redirect.fileNav) {
-            alert(JSON.stringify(fileList))
+            //alert(JSON.stringify(fileList))
             return <Redirect push to={
                 { pathname: "/previewindex", search: "?sn=" + sn + "", state: { "sn": sn, "file": file, "fileList": fileList, "fileType": fileType  }  }
             } />;

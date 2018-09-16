@@ -5,6 +5,8 @@ import { ScrollList, Icon } from 'saltui';
 import './Index.scss';
 import printimg from '../../images/L1000DNW.png'
 import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL } from '../../configs/config'
+// 引入路由
+import { History, createHashHistory } from "history";
 
 class PrintList extends React.Component {
 
@@ -121,11 +123,14 @@ class PrintList extends React.Component {
     }
 
     render() {
+        const hashHistory = createHashHistory()
         if(this.state.redirectIndexNav){
             const sn = this.state.sn
-            return <Redirect push to={
-                { pathname: "/", search: "?sn=" + sn + "", state: { "sn": sn } }
-            } />;
+            hashHistory.push({
+                pathname: '/',
+                search: "?sn=" + sn + "",
+                state: { "sn": sn }
+            })
         }
         const Item = (props) =>
             <a className="list-item" href="javascript:;" onClick={this.handlePrinterClick.bind(this, props)}>

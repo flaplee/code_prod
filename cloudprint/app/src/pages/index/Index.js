@@ -147,6 +147,13 @@ class PrintIndex extends Component{
                 console.log("deli.error")
             });
 
+            // 调试
+            self.setState({ "user": { "token": Cookies.load('token') } })
+            self.getLocalData({
+                user_id: Cookies.load('userId'),
+                org_id: Cookies.load('orgId'),
+                token: Cookies.load('loginToken')
+            });
         });
     }
 

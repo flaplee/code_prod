@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom'
 import Cookies from 'react-cookies';
 import { ScrollList, Icon } from 'saltui';
 import './Index.scss';
-import printimg from '../../images/L1000DNW.png'
+import printimg from '../../images/L1000DNW@3x.png'
 import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL } from '../../configs/config'
 // 引入路由
 import { History, createHashHistory } from "history";

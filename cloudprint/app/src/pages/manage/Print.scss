@@ -136,7 +136,7 @@
         .task-list-empty-img{
             width: 19rem;
             height: 19rem;
-            background-image: url(../../images/blank.png);
+            background-image: url(../../images/blank@3x.png);
             background-repeat: no-repeat;
             background-size: 100% 100%;
             display: block;
@@ -185,16 +185,16 @@
             background-size:100% 100%;
         }
         &.print-status-success{
-            background-image:url(../../images/check.png)
+            background-image:url(../../images/check@3x.png)
         }
         &.print-status-error{
-            background-image:url(../../images/Notice.png)
+            background-image:url(../../images/Notice@3x.png)
         }
         &.print-status-empty{
-            background-image:url(../../images/Notice.png)
+            background-image:url(../../images/Notice@3x.png)
         }
         &.print-status-offline{
-            background-image:url(../../images/off_line.png)
+            background-image:url(../../images/off_line@3x.png)
         }
     }
 
@@ -226,43 +226,43 @@
         &.print-status-waiting{
             width: 3rem;
             height: 4rem;
-            background-image:url(../../images/wait.png)
+            background-image:url(../../images/wait@3x.png)
         }
         &.print-status-printing{
             width: 4rem;
             height: 4rem;
-            background-image:url(../../images/management01.png)
+            background-image:url(../../images/management01@3x.png)
         }
         &.print-status-success{
             width: 3rem;
             height: 3rem;
-            background-image:url(../../images/check2.png)
+            background-image:url(../../images/check2@3x.png)
         }
         &.print-status-error{
             width: 3rem;
             height: 3rem;
-            background-image:url(../../images/Notice.png)
+            background-image:url(../../images/Notice@3x.png)
         }
         
         &.print-status-waiting-mine{
             width: 3rem;
             height: 4rem;
-            background-image:url(../../images/wait.png)
+            background-image:url(../../images/wait@3x.png)
         }
         &.print-status-printing-mine{
             width: 4rem;
             height: 4rem;
-            background-image:url(../../images/Printer_management02.png)
+            background-image:url(../../images/Printer_management02@3x.png)
         }
         &.print-status-success-mine{
             width: 3rem;
             height: 3rem;
-            background-image:url(../../images/check2.png)
+            background-image:url(../../images/check2@3x.png)
         }
         &.print-status-error-mine{
             width: 3rem;
             height: 3rem;
-            background-image:url(../../images/Notice.png)
+            background-image:url(../../images/Notice@3x.png)
         }
     }
 

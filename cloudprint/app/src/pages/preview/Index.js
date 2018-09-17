@@ -7,7 +7,7 @@ import { Group, Boxs, List, NumberPicker, Context } from 'saltui';
 import Icon from 'salt-icon';
 import ReactSwipe from 'react-swipes'
 import './Index.scss'
-import photo01 from '../../images/photo01.png';
+import photo01 from '../../images/photo01@3x.png';
 import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL, globalData } from '../../configs/config'
 import Loading from '../../util/component/Loading.js';
 
@@ -24,14 +24,18 @@ class Index extends React.Component {
             printCurrent: 1,
             printLoading: false,
             photo: 'https://file.delicloud.xin/oss-1535626446061-2048.jpg',
-            sn: props.location.state && props.location.state.sn,
-            file: props.location.state && props.location.state.file,
-            fileList: props.location.state && props.location.state.fileList,
-            fileOuter: props.location.state && props.location.state.fileOuter,
+            sn: '',//(new URLSearchParams(props.location.search)).get('sn'),
+            file: '',//props.location.state && props.location.state.file,
+            fileList: [{
+                'fileSuffix': 'pptx',
+                'fileSourceName': 'Android四大组件解析(1).pptx',
+                'fileSourceUrl': 'https://file.delicloud.xin/oss-1537198999181-11264.jpg',
+            }],//props.location.state && props.location.state.fileList,
+            fileOuter: '',//props.location.state && props.location.state.fileOuter,
             printer:{
-                sn: (new URLSearchParams(props.location.search)).get('sn'),
-                name: (new URLSearchParams(props.location.search)).get('name'),
-                status: (new URLSearchParams(props.location.search)).get('status')
+                sn: '',//(new URLSearchParams(props.location.search)).get('sn'),
+                name: '',//(new URLSearchParams(props.location.search)).get('name'),
+                status: '',//(new URLSearchParams(props.location.search)).get('status')
             },
             printData: {
                 'fileSource': 'CLOUD',
@@ -52,15 +56,24 @@ class Index extends React.Component {
                 'printStartPage': 0
             },
             printertData:{},
-            pageData: props.location.state,
+            pageData: {},//props.location.state,
             // swipes 的配置
             opt : {
-                distance: 600, // 每次移动的距离，卡片的真实宽度
+                distance: 50 * window.rem, // 每次移动的距离，卡片的真实宽度
                 currentPoint: 0,// 初始位置，默认从0即第一个元素开始
                 autoPlay: false, // 是否开启自动播放
                 swTouchstart: (ev) => {
+                    console.log("swTouchstart ev", ev);
+                    const fileList = this.state.fileList
+                    fileList.push({
+                        'fileSuffix': 'pptx',
+                        'fileSourceName': 'Android四大组件解析(1).pptx',
+                        'fileSourceUrl': 'https://file.delicloud.xin/oss-1537198999181-11264.jpg',
+                    })
+                    this.setState({ fileList:fileList})
                 },
                 swTouchmove: (ev) => {
+                    console.log("swTouchmove ev", ev);
                 },
                 swTouchend: (ev) => {
                     let data = {
@@ -69,11 +82,21 @@ class Index extends React.Component {
                         newPoint: ev.newPoint,
                         cancelled: ev.cancelled
                     }
-                    this.setState({ printCurrent: (ev.newPoint + 1)})
+                    const fileList = this.state.fileList
+                    fileList.push({
+                        'fileSuffix': 'pptx',
+                        'fileSourceName': 'Android四大组件解析(1).pptx',
+                        'fileSourceUrl': 'https://file.delicloud.xin/oss-1537198999181-11264.jpg',
+                    })
+                    this.setState({ fileList:fileList, printCurrent: (ev.newPoint + 1)})
                     console.log("data", data);
+                    
+                    //this.handlePagePreview(this.state.fileOuter)
                 }
             }
         };
+        alert("test1"+JSON.stringify(this.state.fileList))
+        alert("test2"+JSON.stringify(this.state.fileOuter))
         console.log("previewindex props",  props.location.state);
     }
 
@@ -201,6 +224,57 @@ class Index extends React.Component {
         const t = this;
         t.setState({
             [name]: value,
+        });
+    }
+
+    // 分页预览
+    handlePagePreview(data, limit){
+        const self = this
+        let pageLoad = data.pageCount
+        for(let i = 1 ;i <= ((pageLoad <= limit) ? pageLoad : limit); i++){
+            pageLoad++;
+            self.getImagePage(data)
+        }
+    }
+
+    //获取图片数据
+    getImagePage(data) {
+        const self = this
+        //PDF 文件预览接口
+        let previewData = new FormData();
+        previewData.append('taskId', data.taskId);
+        previewData.append('fileType', data.fileType);
+        previewData.append('checkedPage', data.currentPage);
+        previewData.append('width', 560);
+        previewData.append('height', 790);
+        fetch(convertURL + '/h5/converter/preview', {
+            method: 'POST',
+            headers: {
+                token: Cookies.load('token')
+            },
+            body: previewData
+        }).then(
+            function (response) {
+                if (response.status !== 200) {
+                    return;
+                }
+                response.json().then(function (json) {
+                    if (json.code === 0) {
+                        const fileList = self.state.fileList
+                        self.setState({fileList:fileList})
+                    }else{
+                        deli.common.notification.hidePreloader();
+                        deli.common.notification.prompt({
+                            "type": "error",
+                            "text": json.msg,
+                            "duration": 2
+                        },function(data){},function(resp){});
+                    }
+                });
+            }
+        ).catch(function (err) {
+            deli.common.notification.hidePreloader();
+            console.log("错误:" + err);
         });
     }
 

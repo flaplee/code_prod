@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Redirect } from 'react-router-dom'
 import Cookies from 'react-cookies'
-import pictureimg from '../../images/picture.png'
-import fileimg from '../../images/file.png'
-import taskimg from '../../images/Print_task.png'
-import manage01 from '../../images/management01.png'
-import manage02 from '../../images/Printer_management02.png'
+import pictureimg from '../../images/picture@3x.png'
+import fileimg from '../../images/file@3x.png'
+import taskimg from '../../images/Print_task@3x.png'
+import manage01 from '../../images/management01@3x.png'
+import manage02 from '../../images/Printer_management02@3x.png'
 import { Layer } from 'saltui';
 import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL } from '../../configs/config'
 class Nav extends Component {
@@ -69,18 +69,6 @@ class Nav extends Component {
         console.log("props", props)
         console.log("state", state)
     }
-
-    // 文件转换完成直接预览
-    handleUploadPreview(data, limit, callback){
-        const self = this
-        let pageLoad = data.pdfPageCount
-        for(let i = 1 ;i <= ((pageLoad <= limit) ? pageLoad : limit); i++){
-            pageLoad++;
-            if(typeof callback === 'function'){
-                callback(data)
-            }
-        }
-    }
     
     //下载图片获取图片宽高
     getPreviewImg(url){
@@ -102,7 +90,7 @@ class Nav extends Component {
         let previewData = new FormData();
         previewData.append('taskId', data.taskId);
         previewData.append('fileType', ((type && type == 'file') ? data.fileType : 'pdf'));
-        previewData.append('checkedPage', data.pdfPageCount);
+        previewData.append('checkedPage', 1);//data.pdfPageCount
         previewData.append('width', 560);
         previewData.append('height', 790);
         fetch(convertURL + '/h5/converter/preview', {
@@ -124,7 +112,8 @@ class Nav extends Component {
                                 callback(json.data, {
                                     "taskId": data.taskId,
                                     "fileType": data.fileType,
-                                    "checkedPage": data.pdfPageCount
+                                    "checkedPage": data.pdfPageCount,
+                                    "pageCount": data.pdfPageCount
                                 });
                             }
                         }
@@ -349,6 +338,7 @@ class Nav extends Component {
         console.log("task", task);
         switch (value) {
             case 1:
+                const docFileList = []
                 self.setState({ layerView: false });
                 deli.common.file.choose({
                     types: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'pdf'],
@@ -356,18 +346,12 @@ class Nav extends Component {
                 }, function(data) {
                     if(data.length > 0){
                         deli.common.notification.showPreloader();
-                        let docFileNum = 0
-                        let docFileList = []
-                        for (let i = 0; i < data.length; i++) {
-                            docFileGet(data, i)
-                        }
-                        function docFileGet(data, i) {
+                        for (let docFileNum = 0; docFileNum < data.length; docFileNum++) {
                             deli.common.file.upload({
                                 url: 'http://convert.delicloud.xin/h5/converter/local',
-                                file: data[i].file_path
+                                file: data[docFileNum].file_path
                             }, function (json) {
                                 if (data.length == 1) {
-                                    docFileNum++
                                     self.loadPreviewFile(json, 'file', function(inner, outer){
                                         docFileList.push({
                                             'fileSuffix': json.fileType,
@@ -379,7 +363,6 @@ class Nav extends Component {
                                         });
                                     })
                                 } else {
-                                    docFileNum++
                                     self.loadPreviewFile(json, 'file', function (inner, outer) {
                                         docFileList.push({
                                             'fileSuffix': json.fileType,
@@ -462,6 +445,7 @@ class Nav extends Component {
         const sn = this.state.printer.printerSn
         const file = this.state.file
         const fileList = this.state.fileList
+        const fileOuter = this.state.fileOuter
         const fileType = this.state.fileType
         if (this.state.redirect.imgNav) {
             return <Redirect push to={
@@ -471,7 +455,7 @@ class Nav extends Component {
         if (this.state.redirect.fileNav) {
             //alert(JSON.stringify(fileList))
             return <Redirect push to={
-                { pathname: "/previewindex", search: "?sn=" + sn + "", state: { "sn": sn, "file": file, "fileList": fileList, "fileType": fileType  }  }
+                { pathname: "/previewindex", search: "?sn=" + sn + "", state: { "sn": sn, "file": file, "fileList": fileList, "fileType": fileType, "fileOuter":fileOuter   }  }
             } />;
         }
         if (this.state.redirect.taskNav) {

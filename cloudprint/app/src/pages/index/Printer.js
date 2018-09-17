@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Redirect } from 'react-router-dom';
-import printimg from '../../images/L1000DNW.png'
-import printimgNone from '../../images/Printer_management01.png'
+import printimg from '../../images/L1000DNW@3x.png'
+import printimgNone from '../../images/Printer_management01@3x.png'
 import { Progress } from 'saltui';
 import './Index.scss';
 class Printer extends Component {

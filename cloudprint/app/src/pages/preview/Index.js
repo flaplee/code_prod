@@ -351,7 +351,7 @@ class Index extends React.Component {
                 </Group>
                 <div className="preview-box">
                     <div className="preview swiper-container">
-                        <ReactSwipe className="preview-inner swiper-wrapper" options={this.state.opt}>
+                        <ReactSwipe className="preview-inner swiper-wrapper" key={this.state.fileList.length} options={this.state.opt}>
                             {this.rederPrintImgItem()}
                         </ReactSwipe>
                     </div>

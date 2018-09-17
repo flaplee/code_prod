@@ -147,13 +147,6 @@ class PrintIndex extends Component{
                 console.log("deli.error")
             });
 
-            // 调试
-            self.setState({ "user": { "token": Cookies.load('token') } })
-            self.getLocalData({
-                user_id: Cookies.load('userId'),
-                org_id: Cookies.load('orgId'),
-                token: Cookies.load('loginToken')
-            });
         });
     }
 
@@ -343,12 +336,6 @@ class PrintIndex extends Component{
                     if (data.code === 0) {
                         Cookies.save('appId', data.data.appId, { path: '/' });
                         Cookies.save('sign', data.data.signStr, { path: '/' });
-                        /* self.setState({ "user": { token: data.data } }, function () {
-                            self.setState({ "user": { "token": data.data } })
-                            Cookies.save('token', data.data, { path: '/' });
-                            Cookies.save('sn', 'L1000DNW-1B_0000000000000000', { path: '/' });
-                        }) */
-                        // Cookies.save('token', 'cf8fbcb6-a582-4aaf-b309-0cdb5aaba2f8', { path: '/' });
                         // todo
                         if (typeof callback === 'function'){
                             callback(data)

@@ -13,7 +13,7 @@ import PrintIndex from './pages/index/Index';
 import PrintList from './pages/index/PrintList';
 import PrintManage from './pages/manage/PrintManage';
 import ManageTask from './pages/manage/PrintTask';
-import PrintTask from './pages/index/PrintTask.js';
+import PrintTask from './pages/index/PrintTask';
 import PrintInk from './pages/manage/PrintInk';
 import PreviewSetup from './pages/preview/Setup'; 
 import PreviewIndex from './pages/preview/Index';

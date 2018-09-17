@@ -1,4 +1,4 @@
-$browser-default-fontSize :12px !default;//根据UI给出的设计稿设置默认值，这里用的是iphone6设计稿
+$browser-default-fontSize : 12px !default;//根据UI给出的设计稿设置默认值，这里用的是iphone6设计稿
 $headerHeight:90px; //标题栏高度
 $footerHeight:90px; //尾部高度
 $themeColor:#5d85e0; //主题颜色
@@ -17,13 +17,26 @@ $offColor: #999999;
 
 @mixin px2px($px){
   [data-dpr="1"] & {
-    font-size: ($px / 2) * 1px;
+    font-size: ($px / 2) * 1px !important;
   }
   [data-dpr="2"] & {
-    font-size: $px * 1px;
+    font-size: $px * 1px !important;
   }
   [data-dpr="3"] & {
-    font-size: ($px / 2 * 3) * 1px;
+    font-size: ($px / 2 * 3) * 1px !important;
+  }
+  // for mx3
+  [data-dpr="2.5"] & {
+      font-size: ($px * 2.5 / 2) * 1px !important;
+  }
+  // for 小米note
+  [data-dpr="2.75"] & {
+      font-size: ($px * 2.75 / 2) * 1p !important;
+  }
+
+  // for 三星note4
+  [data-dpr="4"] & {
+      font-size: $px * 2px;
   }
 }
 

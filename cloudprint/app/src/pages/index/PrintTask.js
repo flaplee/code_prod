@@ -6,7 +6,7 @@ import { Group, Boxs, List, Layer, ScrollView } from 'saltui'
 import Icon from 'salt-icon'
 import FileList from './FileList';
 import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL } from '../../configs/config'
-import './Index'
+import './Index.scss'
 
 const { HBox, Box } = Boxs;
 
@@ -311,7 +311,6 @@ class PrintTask extends React.Component {
                                     response.json().then(function (data) {
                                         console.log("data", data)
                                         if (data.code == 0) {
-                                            alert("正在打印~")
                                             self.setState({
                                                 layerView: false
                                             })

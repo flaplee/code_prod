@@ -277,55 +277,49 @@ class Nav extends Component {
                 //this.setState({ redirect: { imgNav: true } });
                 break;
             case 'imgNav':
+                const imgFileList = []
                 deli.common.image.choose({
                     types: ["photo"],
                     multiple: true,
-                    max: 9
+                    max: 1
                 }, function (data) {
                     if(data.length > 0){
                         deli.common.notification.showPreloader();
-                        let imgFileNum = 0
-                        let imgFileList = []
-                        function imgFileGet(data, i){
+                        for (let imgFileNum = 0; imgFileNum < data.length; imgFileNum++){
                             deli.common.file.upload({
-                                url: 'http://convert.delicloud.xin/h5/converter/local', //文件转化接口
-                                file: data[i].file_path
-                            }, function (json) {
-                                if (data.length == 1) {
-                                    imgFileNum++
-                                    self.loadPreviewImg(json, 'image', function(inner){
-                                        imgFileList.push({
-                                            'fileSuffix': json.fileType,
-                                            'fileSourceName': json.sourceName,
-                                            'fileSourceUrl': inner
-                                        })
-                                        self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList },function(){
-                                            deli.common.notification.hidePreloader();
-                                        });
-                                    })
-                                } else {
-                                    imgFileNum++
-                                    self.loadPreviewImg(json, 'image', function (inner) {
-                                        imgFileList.push({
-                                            'fileSuffix': json.fileType,
-                                            'fileSourceName': json.sourceName,
-                                            'fileSourceUrl': inner
-                                        })
-                                        if (imgFileNum == data.length) {
+                                    url: 'http://convert.delicloud.xin/h5/converter/local', //文件转化接口
+                                    file: data[imgFileNum].file_path
+                                }, function (json) {
+                                    if (data.length == 1) {
+                                        self.loadPreviewImg(json, 'image', function (inner) {
+                                            imgFileList.push({
+                                                'fileSuffix': json.fileType,
+                                                'fileSourceName': json.sourceName,
+                                                'fileSourceUrl': inner
+                                            })
                                             self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {
                                                 deli.common.notification.hidePreloader();
                                             });
-                                        } else {
-                                            self.setState({ fileType: 'image', fileList: imgFileList }, function(){
-                                                deli.common.notification.hidePreloader();
+                                        })
+                                    } else {
+                                        self.loadPreviewImg(json, 'image', function (inner) {
+                                            imgFileList.push({
+                                                'fileSuffix': json.fileType,
+                                                'fileSourceName': json.sourceName,
+                                                'fileSourceUrl': inner
                                             })
-                                        }
-                                    })
-                                }
-                            }, function (resp) {});
-                        }
-                        for (let i = 0; i < data.length; i++){
-                            imgFileGet(data, i)
+                                            if (imgFileNum == data.length) {
+                                                self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {
+                                                    deli.common.notification.hidePreloader();
+                                                });
+                                            } else {
+                                                self.setState({ fileType: 'image', fileList: imgFileList }, function () {
+                                                    deli.common.notification.hidePreloader();
+                                                })
+                                            }
+                                        })
+                                    }
+                                }, function (resp) { });
                         }
                     }
                 }, function (resp) {

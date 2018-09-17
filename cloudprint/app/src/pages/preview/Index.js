@@ -74,7 +74,6 @@ class Index extends React.Component {
                 }
             }
         };
-        alert(JSON.stringify(props.location))
         console.log("previewindex props",  props.location.state);
     }
 

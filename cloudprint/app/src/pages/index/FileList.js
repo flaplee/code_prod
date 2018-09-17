@@ -89,9 +89,10 @@ class FileList extends Component {
     }
 
     onLoad() {
+        this.getListPage({ pageNo: this.state.page + 1, pageLimit: 12, sn: this.state.printer.sn })
         this.setState({ page: this.state.page + 1, loading: false }, function(){
             console.log("page", this.state.page)
-            this.getListPage({ pageNo: this.state.page, pageLimit: 12, sn: this.state.printer.sn })
+            //this.getListPage({ pageNo: this.state.page, pageLimit: 12, sn: this.state.printer.sn })
         });
     }
 

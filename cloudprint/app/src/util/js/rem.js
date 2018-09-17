@@ -18,7 +18,7 @@
 	};
 	scale = 1 / dpr;
 	
-	rem = docEl.clientWidth * dpr / 10;
+	rem = docEl.clientWidth * dpr / 62.5;
 	// 设置 viewpoer，进行缩放，达到高清
 	// content="width=docEl.clientWidth,initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5, user-scalable=no"
 	metaEl.setAttribute('content', 'width=' + dpr * docEl.clientWidth + ',initial-scale=' + scale + ',maximum-scale=' + scale + ',minimum-scale=' + scale + ',user-scalable=no')

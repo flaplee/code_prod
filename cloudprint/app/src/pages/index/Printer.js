@@ -85,7 +85,7 @@ class Printer extends Component {
                             </div>
                             <div className="print-progress">
                                 <div className="progress-bar bg-success">
-                                    <Progress percent={this.state.inkbox.percent} status={this.state.inkbox.percent <= 20 ? 'normal' : 'success'} showInfo={false} />
+                                    <Progress percent={this.state.inkbox.percent} status={this.state.inkbox.percent <= 20 ? 'normal' : 'success'} showInfo={false} strokeWidth={12} />
                                 </div>
                             </div>
                         </div>

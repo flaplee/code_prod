@@ -231,7 +231,7 @@
         &.print-status-printing{
             width: 4rem;
             height: 4rem;
-            background-image:url(../../images/management01@3x.png)
+            background-image:url(../../images/printer@3x.png)
         }
         &.print-status-success{
             width: 3rem;
@@ -252,7 +252,7 @@
         &.print-status-printing-mine{
             width: 4rem;
             height: 4rem;
-            background-image:url(../../images/Printer_management02@3x.png)
+            background-image:url(../../images/printer02@3x.png)
         }
         &.print-status-success-mine{
             width: 3rem;
@@ -295,6 +295,18 @@
 
     .other2 {
         background-color: #666;
+    }
+
+    /* loading */
+    .task-list-more{
+        display: none;
+        color:#9b9b9b;
+        text-align:center;
+        margin: 1.5rem auto;
+        p{
+            font-size:2rem;
+            color:#9B9B9B;
+        }
     }
 }
 

@@ -24,18 +24,14 @@ class Index extends React.Component {
             printCurrent: 1,
             printLoading: false,
             photo: 'https://file.delicloud.xin/oss-1535626446061-2048.jpg',
-            sn: '',//(new URLSearchParams(props.location.search)).get('sn'),
-            file: '',//props.location.state && props.location.state.file,
-            fileList: [{
-                'fileSuffix': 'pptx',
-                'fileSourceName': 'Android四大组件解析(1).pptx',
-                'fileSourceUrl': 'https://file.delicloud.xin/oss-1537198999181-11264.jpg',
-            }],//props.location.state && props.location.state.fileList,
-            fileOuter: '',//props.location.state && props.location.state.fileOuter,
+            sn: (new URLSearchParams(props.location.search)).get('sn'),
+            file: props.location.state && props.location.state.file,
+            fileList: props.location.state && props.location.state.fileList,
+            fileOuter: props.location.state && props.location.state.fileOuter,
             printer:{
-                sn: '',//(new URLSearchParams(props.location.search)).get('sn'),
-                name: '',//(new URLSearchParams(props.location.search)).get('name'),
-                status: '',//(new URLSearchParams(props.location.search)).get('status')
+                sn: (new URLSearchParams(props.location.search)).get('sn'),
+                name: (new URLSearchParams(props.location.search)).get('name'),
+                status: (new URLSearchParams(props.location.search)).get('status')
             },
             printData: {
                 'fileSource': 'CLOUD',
@@ -63,17 +59,8 @@ class Index extends React.Component {
                 currentPoint: 0,// 初始位置，默认从0即第一个元素开始
                 autoPlay: false, // 是否开启自动播放
                 swTouchstart: (ev) => {
-                    console.log("swTouchstart ev", ev);
-                    const fileList = this.state.fileList
-                    fileList.push({
-                        'fileSuffix': 'pptx',
-                        'fileSourceName': 'Android四大组件解析(1).pptx',
-                        'fileSourceUrl': 'https://file.delicloud.xin/oss-1537198999181-11264.jpg',
-                    })
-                    this.setState({ fileList:fileList})
                 },
                 swTouchmove: (ev) => {
-                    console.log("swTouchmove ev", ev);
                 },
                 swTouchend: (ev) => {
                     let data = {
@@ -82,21 +69,12 @@ class Index extends React.Component {
                         newPoint: ev.newPoint,
                         cancelled: ev.cancelled
                     }
-                    const fileList = this.state.fileList
-                    fileList.push({
-                        'fileSuffix': 'pptx',
-                        'fileSourceName': 'Android四大组件解析(1).pptx',
-                        'fileSourceUrl': 'https://file.delicloud.xin/oss-1537198999181-11264.jpg',
-                    })
-                    this.setState({ fileList:fileList, printCurrent: (ev.newPoint + 1)})
+                    this.setState({printCurrent: (ev.newPoint + 1)})
                     console.log("data", data);
-                    
                     //this.handlePagePreview(this.state.fileOuter)
                 }
             }
         };
-        alert("test1"+JSON.stringify(this.state.fileList))
-        alert("test2"+JSON.stringify(this.state.fileOuter))
         console.log("previewindex props",  props.location.state);
     }
 
@@ -351,7 +329,7 @@ class Index extends React.Component {
                 </Group>
                 <div className="preview-box">
                     <div className="preview swiper-container">
-                        <ReactSwipe className="preview-inner swiper-wrapper" key={this.state.fileList.length} options={this.state.opt}>
+                        <ReactSwipe className="preview-inner swiper-wrapper" options={this.state.opt}>
                             {this.rederPrintImgItem()}
                         </ReactSwipe>
                     </div>

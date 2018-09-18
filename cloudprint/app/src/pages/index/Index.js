@@ -95,13 +95,16 @@ class PrintIndex extends Component{
                 }, function(data) {}, function(resp) {});
 
                 deli.common.navigation.setRight({
-                    "icon": "http://t.static.delicloud.com/h5/web/cloudprint/images/icon/scan_code.png"
+                    "icon": "http://t.static.delicloud.com/h5/web/cloudprint/images/icon/scan_code@3x.png"
                 }, function(data) {
+
                     deli.app.code.scan({
+                        type: 'qrcode',
                         app_id: ''
                     }, function (json) {
-                        alert(JSON.stringify(json))
+                        alert(json.data)
                     }, function(resp) {});
+
                 }, function(resp) {});
 
                 deli.common.navigation.setColors({
@@ -132,11 +135,8 @@ class PrintIndex extends Component{
                                     org_id: odata.organization.id,
                                     token: udata.token
                                 }, self.state.sn);
-
-                            }, function (uresp) {
-                            });
-                        }, function (oresp) {
-                        });
+                            }, function (uresp) {});
+                        }, function (oresp) {});
                     }
                 }, function (resp) {
                 });
@@ -148,12 +148,12 @@ class PrintIndex extends Component{
             });
 
             // 调试
-            self.setState({ "user": { "token": Cookies.load('token') } })
+            /* self.setState({ "user": { "token": Cookies.load('token') } })
             self.getLocalData({
                 user_id: Cookies.load('userId'),
                 org_id: Cookies.load('orgId'),
                 token: Cookies.load('loginToken')
-            });
+            }); */
         });
     }
 

@@ -152,16 +152,16 @@ to{opacity:1}
                       background-size:100% 100%;
                     }
                     &.print-status-success{
-                      background-image:url(../../images/check.png)
+                      background-image:url(../../images/check@3x.png)
                     }
                     &.print-status-error{
-                      background-image:url(../../images/Notice.png)
+                      background-image:url(../../images/Notice@3x.png)
                     }
                     &.print-status-empty{
-                      background-image:url(../../images/Notice.png)
+                      background-image:url(../../images/Notice@3x.png)
                     }
                     &.print-status-offline{
-                      background-image:url(../../images/off_line.png)
+                      background-image:url(../../images/off_line@3x.png)
                     }
                   }
                 }
@@ -170,8 +170,8 @@ to{opacity:1}
               position: absolute;
               right: 17rem;
               top: 12rem;
-              width: 8rem;
-              height: 1rem;
+              width: 8.17rem;
+              height: 1.08rem;
               margin: 0 auto;
               transform: rotate(270deg);
               -ms-transform: rotate(270deg);
@@ -183,14 +183,23 @@ to{opacity:1}
                 .t-progress{
                     position: relative;
                     padding: 0;
-                    height: 10px;
-                    border-radius: 5px;
+                    height: 14px;
+                    border-radius: 7px;
                     border: 1px solid rgba(255, 255, 255, .7);
-                    .progress-bar.green-bar .bar-core{
-                      background-color: #fff;
-                    }
-                    .progress-bar.blue-bar .bar-core{
-                      background-color: #FF534D;
+                    .progress-bar{
+                        height: 12px;
+                        &.green-bar{
+                          .bar-core{
+                            height: 12px;
+                            background-color: #fff;
+                          }
+                        }
+                        &.blue-bar{
+                          .bar-core{
+                            height: 12px;
+                            background-color: #FF534D;
+                          }
+                        }
                     }
                 }
               }

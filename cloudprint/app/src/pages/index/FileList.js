@@ -66,17 +66,18 @@ class FileList extends Component {
                                 force: false
                             }, function () {})
                         }else{
-                            if(json.data.total > (data.pageLimit * data.pageNo)){
+                            if (json.data.total > 0){
                                 let rows = self.state.fileList
                                 self.setState({
                                     fileList: rows.concat(json.data.rows),
-                                    force: true
+                                    force: (json.data.total > (data.pageLimit * data.pageNo)) ? true : false,
+                                    noMore: ((data.pageNo == 1) ? false : true),
                                 }, function () {})
                             }else{
                                 self.setState({
                                     force: false,
                                     noMore: true
-                                }, function () {})
+                                }, function () { })
                             }
                         }
                     }

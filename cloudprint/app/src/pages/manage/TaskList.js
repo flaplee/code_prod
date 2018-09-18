@@ -6,7 +6,6 @@ import { Group, Boxs, List, Layer, ScrollView } from 'saltui';
 import Icon from 'salt-icon';
 import TaskItem from './TaskItem'
 import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL } from '../../configs/config'
-
 import './Print.scss'
 
 const { HBox, Box } = Boxs;
@@ -55,6 +54,7 @@ class TaskList extends Component {
                 }
                 response.json().then(function (json) {
                     if (json.code === 0) {
+                        self.setState({ loading: false });
                         if(data.pageNo == 1 && json.data.total == 0){
                             self.setState({
                                 taskList: [],
@@ -63,19 +63,18 @@ class TaskList extends Component {
                                 force: false
                             }, function () {})
                         }else{
-                            if(json.data.total > (data.pageLimit * data.pageNo)){
+                            if (json.data.total > 0) {
                                 let rows = self.state.taskList
                                 self.setState({
-                                    force: true,
-                                    loading: false,
+                                    force: (json.data.total > (data.pageLimit * data.pageNo)) ? true : false,
+                                    noMore: ((data.pageNo == 1) ? false : true),
                                     taskList: rows.concat(json.data.rows)
-                                }, function () {})
-                            }else{
+                                }, function() {})
+                            } else {
                                 self.setState({
-                                    loading: false,
                                     force: false,
                                     noMore: true
-                                }, function () {})
+                                }, function() {})
                             }
                         }
                     }

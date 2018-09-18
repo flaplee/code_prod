@@ -18,8 +18,8 @@ import PrintInk from './pages/manage/PrintInk';
 import PreviewSetup from './pages/preview/Setup'; 
 import PreviewIndex from './pages/preview/Index';
 import logo from './logo.svg';
-import printimg from './images/L1000DNW.png';
-import printimgNone from './images/Printer_management01.png';
+import printimg from './images/L1000DNW@3x.png';
+import printimgNone from './images/Printer_management01@3x.png';
 import { ScrollList, Icon, Group, Boxs, List } from 'saltui';
 import Header from './pages/components/header/Header'
 import Footer from './pages/components/footer/Footer'

@@ -222,6 +222,10 @@
                 height: 8rem;
                 line-height: 8rem;
                 margin: 3rem auto 2rem;
+                &:active {
+                    background: #35a4f2;
+                    color: #fff
+                }
             }
         }
     }

@@ -10,7 +10,7 @@ import './Index.scss'
 
 const { HBox, Box } = Boxs;
 
-class PrintTask extends React.Component {
+class ChooseTask extends React.Component {
 
     constructor(props) {
         super(props);
@@ -432,4 +432,4 @@ class PrintTask extends React.Component {
     }
 }
 
-export default PrintTask;
+export default ChooseTask;

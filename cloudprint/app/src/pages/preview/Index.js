@@ -39,7 +39,7 @@ class Index extends React.Component {
                 'fileSourceUrl': '',
                 'fileSuffix': '',
                 'fileSourceName': '',
-                'taskSource': 'WBE',
+                'taskSource': (deli.android ? 'ANDROID' : (deli.ios ? 'IOS' : 'WBE')),
                 'printDirection': 1,
                 'printEndPage': 1,
                 'pagesPre': 1,

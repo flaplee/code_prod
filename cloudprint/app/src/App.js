@@ -14,6 +14,7 @@ import PrintList from './pages/index/PrintList';
 import PrintManage from './pages/manage/PrintManage';
 import ManageTask from './pages/manage/PrintTask';
 import PrintTask from './pages/index/PrintTask';
+import ChooseTask from './pages/index/ChooseTask';
 import PrintInk from './pages/manage/PrintInk';
 import PreviewSetup from './pages/preview/Setup'; 
 import PreviewIndex from './pages/preview/Index';
@@ -71,6 +72,7 @@ class App extends Component {
                 <Route path="/printink" component={PrintInk} />
                 <Route path="/previewsetup" component={PreviewSetup} />
                 <Route path="/previewindex" component={PreviewIndex} />
+                <Route path="/choosetask" component={ChooseTask} />
               </Switch>
             </div>
           </Router>

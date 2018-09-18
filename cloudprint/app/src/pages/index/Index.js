@@ -37,7 +37,12 @@ class PrintIndex extends Component{
             {
                 title: '打印机管理',
                 url: ''
-            }]
+            }],
+            fileList: [],
+            redirect:{
+                chooseTask: false,
+                previewIndex: false
+            }
         };
     };
 
@@ -97,14 +102,12 @@ class PrintIndex extends Component{
                 deli.common.navigation.setRight({
                     "icon": "http://t.static.delicloud.com/h5/web/cloudprint/images/icon/scan_code@3x.png"
                 }, function(data) {
-
                     deli.app.code.scan({
                         type: 'qrcode',
                         app_id: ''
                     }, function (json) {
                         alert(json.data)
                     }, function(resp) {});
-
                 }, function(resp) {});
 
                 deli.common.navigation.setColors({
@@ -148,12 +151,12 @@ class PrintIndex extends Component{
             });
 
             // 调试
-            /* self.setState({ "user": { "token": Cookies.load('token') } })
+            self.setState({ "user": { "token": Cookies.load('token') } })
             self.getLocalData({
                 user_id: Cookies.load('userId'),
                 org_id: Cookies.load('orgId'),
                 token: Cookies.load('loginToken')
-            }); */
+            }); 
         });
     }
 
@@ -213,12 +216,22 @@ class PrintIndex extends Component{
                                 self.getPrinterData(sn)
                             });
                         }
-                        
+                    }else{
+                        deli.common.notification.prompt({
+                            "type": 'error',
+                            "text": json.msg,
+                            "duration": 1.5
+                        },function(data){},function(resp){});
                     }
                 });
             }
         ).catch(function (err) {
             console.log("错误:" + err);
+            deli.common.notification.prompt({
+                "type": 'error',
+                "text": "网络错误,请重试",
+                "duration": 1.5
+            },function(data){},function(resp){});
         });
     }
 
@@ -252,9 +265,10 @@ class PrintIndex extends Component{
                             });
                         }
                     } else {
+                        
                         deli.common.notification.prompt({
                             "type": 'error',
-                            "text": json.data,
+                            "text": json.msg,
                             "duration": 1.5
                         },function(data){},function(resp){});
                     }
@@ -306,20 +320,38 @@ class PrintIndex extends Component{
                                             self.setState({ inkbox: resp2.data }, function () {
                                                 console.log("test3")
                                             });
+                                        }else{
+                                            deli.common.notification.prompt({
+                                                "type": 'error',
+                                                "text": resp2.msg,
+                                                "duration": 1.5
+                                            }, function (data) { }, function (resp) { });
                                         }
                                     });
                                 }
                             ).catch(function (err) {
-                                console.log("错误:" + err);
+                                deli.common.notification.prompt({
+                                    "type": 'error',
+                                    "text": "网络错误,请重试",
+                                    "duration": 1.5
+                                }, function (data) { }, function (resp) { });
                             });
                         })
                     } else {
-
+                        deli.common.notification.prompt({
+                            "type": 'error',
+                            "text": resp1.msg,
+                            "duration": 1.5
+                        }, function (data) { }, function (resp) { });
                     }
                 });
             }
         ).catch(function (err) {
-            console.log("错误:" + err);
+            deli.common.notification.prompt({
+                "type": 'error',
+                "text": "网络错误,请重试",
+                "duration": 1.5
+            }, function (data) { }, function (resp) { });
         });
     }
 
@@ -355,7 +387,105 @@ class PrintIndex extends Component{
         });
     }
 
+    //显示头部任务状态图标
+    setQrcodeStatus(data){
+        const self = this
+        deli.common.navigation.setRight({
+            "icon": "http://t.static.delicloud.com/h5/web/cloudprint/images/icon/scan_code"+(( data && data.length > 1) ? '02' : '')+"@3x.png"
+        }, function(data) {
+            deli.app.code.scan({
+                type: 'qrcode',
+                app_id: ''
+            }, function (json) {
+                if(data){
+                    //只有一条数据时进入打印预览，否则进入选择打印任务
+                    if(data.length > 1){
+                        self.setState({
+                            sn: json.data,
+                            fileList: data,
+                            redirect:{
+                                chooseTask: true,
+                                previewIndex: false
+                            }
+                        })
+                    }else{
+                        self.setState({
+                            sn: json.data,
+                            fileList: data,
+                            redirect:{
+                                chooseTask: false,
+                                previewIndex: true
+                            }
+                        })
+                    }
+                }else{
+                    self.setState({
+                        sn: json.data,
+                        fileList: [],
+                        redirect:{
+                            chooseTask: false,
+                            previewIndex: false
+                        }
+                    })
+                }
+            }, function(resp) {});
+        }, function(resp) {});
+    }
+
+    //获取新的任务状态及数据
+    getNewListPage() {
+        const self = this
+        let appData = new FormData();
+        appData.append('pageNo', 1);
+        appData.append('pageSize', 100);
+        //分页查询打印机任务列表
+        fetch(mpURL + '/app/printerTask/queryPage', {
+            method: 'POST',
+            headers: {
+                token: Cookies.load('token')
+            },
+            body: appData
+        }).then(
+            function (response) {
+                if (response.status !== 200) {
+                    return;
+                }
+                response.json().then(function (json) {
+                    if (json.code === 0) {
+                        if (json.data.total > 0){
+                            let rows = self.state.fileList
+                            self.setState({
+                                fileList: rows.concat(json.data.rows)
+                            }, function () {
+                                self.setQrcodeStatus(self.state.fileList)
+                            })
+                        }else{
+                            self.setQrcodeStatus()
+                        }
+                    }else{
+
+                    }
+                });
+            }
+        ).catch(function (err) {
+            console.log("错误:" + err);
+
+        });
+    }
+
     render(){
+        const sn = this.state.printer.printerSn
+        const fileList = this.state.fileList
+        if (this.state.redirect.chooseTask) {
+            return <Redirect push to={
+                { pathname: "/choosetask", search: "?sn=" + sn + "", state: { "sn": sn, "fileList": fileList}  }
+            } />;
+        }
+        if (this.state.redirect.previewIndex) {
+            return <Redirect push to={
+                { pathname: "/previewindex", search: "?sn=" + sn + "", state: { "sn": sn,  "fileList": fileList }  }
+            } />;
+        }
         return(
             <div className="print-index"
             id="print-index"

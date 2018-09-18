@@ -107,7 +107,7 @@ class PrintList extends React.Component {
                     } else {
                         deli.common.notification.prompt({
                             "type": 'error',
-                            "text": data.data,
+                            "text": data.msg,
                             "duration": 1.5
                         }, function (data) { }, function (resp) { });
                     }

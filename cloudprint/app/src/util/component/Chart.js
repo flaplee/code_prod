@@ -6,7 +6,9 @@ class PrintChart extends Component {
         super(props);
         this.state = {
             chartData: props.chartData,
-            percent: props.percent
+            percent: props.percent,
+            width: props.width,
+            height: props.height
         }
     }
 
@@ -110,7 +112,7 @@ class PrintChart extends Component {
     render() {
         return (
             <div className="print-ink-chart chart">
-                <canvas id="canvas"></canvas>
+                <canvas id="canvas" width={this.state.width} height={this.state.height}></canvas>
             </div>
         )
     }

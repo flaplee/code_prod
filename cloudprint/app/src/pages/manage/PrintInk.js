@@ -76,7 +76,7 @@ class PrintInk extends React.Component {
     render() {
         return (
             <div className="print-ink" id="print-ink">
-                <PrintChart chartData={this.state.chartData} percent={this.state.percent} displayLegend="true" location="墨盒信息" borderWidth="100" cutoutPercentage="86" rotation={2.5 * Math.PI} width="44rem" height="44rem" legendPosition="bottom" />
+                <PrintChart chartData={this.state.chartData} percent={this.state.percent} displayLegend="true" location="墨盒信息" borderWidth="100" cutoutPercentage="86" rotation={2.5 * Math.PI} width="10" height="7" legendPosition="bottom" />
                 <div className="print-ink-title">墨盒信息</div>
             </div>
         );

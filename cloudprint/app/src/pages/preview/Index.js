@@ -29,9 +29,9 @@ class Index extends React.Component {
             fileList: props.location.state && props.location.state.fileList,
             fileOuter: props.location.state && props.location.state.fileOuter,
             printer:{
-                sn: (new URLSearchParams(props.location.search)).get('sn'),
-                name: (new URLSearchParams(props.location.search)).get('name'),
-                status: (new URLSearchParams(props.location.search)).get('status')
+                sn: (new URLSearchParams(props.location.search)).get('sn') || '',
+                name: (new URLSearchParams(props.location.search)).get('name') || '',
+                status: (new URLSearchParams(props.location.search)).get('status') || ''
             },
             printData: {
                 'fileSource': 'CLOUD',
@@ -260,9 +260,12 @@ class Index extends React.Component {
     rederPrintImgItem(){
         const imgItem = this.state.fileList;
         const result = [];
-        for (let i = 0; i < imgItem.length; i++) {
-            result.push(<div key={`page-img-${i}`} className="swiper-slide"><div className="swiper-slide-img"><img src={imgItem[i].fileSourceUrl} /></div></div>);
+        if(imgItem.length > 0){
+            for (let i = 0; i < imgItem.length; i++) {
+                result.push(<div key={`page-img-${i}`} className="swiper-slide"><div className="swiper-slide-img"><img src={imgItem[i].fileSourceUrl} /></div></div>);
+            }
         }
+        
         return result;
     }
     

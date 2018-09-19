@@ -18,6 +18,8 @@ import ChooseTask from './pages/index/ChooseTask';
 import PrintInk from './pages/manage/PrintInk';
 import PreviewSetup from './pages/preview/Setup'; 
 import PreviewIndex from './pages/preview/Index';
+import ScanDenied from './pages/scan/Denied';
+import ScanUnbind from './pages/scan/Unbind';
 import logo from './logo.svg';
 import printimg from './images/L1000DNW@3x.png';
 import printimgNone from './images/Printer_management01@3x.png';
@@ -73,6 +75,8 @@ class App extends Component {
                 <Route path="/previewsetup" component={PreviewSetup} />
                 <Route path="/previewindex" component={PreviewIndex} />
                 <Route path="/choosetask" component={ChooseTask} />
+                <Route path="/scandenied" component={ScanDenied} />
+                <Route path="/scanunbind" component={ScanUnbind} />
               </Switch>
             </div>
           </Router>

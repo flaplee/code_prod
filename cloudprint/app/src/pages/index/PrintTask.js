@@ -64,9 +64,9 @@ class ChooseTask extends React.Component {
                 text: '取消'
             }],
             printer:{
-                sn: (new URLSearchParams(props.location.search)).get('sn'),
-                name: '' || (new URLSearchParams(props.location.search)).get('sn'),
-                status: '' || (new URLSearchParams(props.location.search)).get('sn'),
+                sn: (new URLSearchParams(props.location.search)).get('sn') || '',
+                name: (new URLSearchParams(props.location.search)).get('name') || '',
+                status: (new URLSearchParams(props.location.search)).get('status') || '',
             },    
             fileList: [],
             fileItemData:{},

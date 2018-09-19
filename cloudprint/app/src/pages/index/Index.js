@@ -18,7 +18,7 @@ class PrintIndex extends Component{
                 org_id: '',
                 token: ''
             },
-            sn: '' || (new URLSearchParams(props.location.search)).get('sn'),
+            sn: (new URLSearchParams(props.location.search)).get('sn') || '',
             printer:{},
             printerList:{},
             inkbox:{},
@@ -121,28 +121,30 @@ class PrintIndex extends Component{
                     // 重置设置
                 }, function (resp) {});
 
-                deli.app.user.get({
-                    "user_id": ""
-                }, function (data) {
-                    if (data) {
-                        self.setState({ "user": { "user_id": data.user.id } })
-                        deli.app.organization.get({
-                            "org_id": ""
-                        }, function (odata) {
-                            self.setState({ "user": { "org_id": odata.organization.id } })
-                            deli.app.session.get({
-                                user_id: data.user.id
-                            }, function (udata) {
-                                self.getLocalData({
-                                    user_id: data.user.id,
-                                    org_id: odata.organization.id,
-                                    token: udata.token
-                                }, self.state.sn);
-                            }, function (uresp) {});
-                        }, function (oresp) {});
-                    }
-                }, function (resp) {
-                });
+                if(!Cookies.load('userId') && !Cookies.load('orgId') && !Cookies.load('loginToken')){
+                    deli.app.user.get({
+                        "user_id": ""
+                    }, function (data) {
+                        if (data) {
+                            self.setState({ "user": { "user_id": data.user.id } })
+                            deli.app.organization.get({
+                                "org_id": ""
+                            }, function (odata) {
+                                self.setState({ "user": { "org_id": odata.organization.id } })
+                                deli.app.session.get({
+                                    user_id: data.user.id
+                                }, function (udata) {
+                                    self.getLocalData({
+                                        user_id: data.user.id,
+                                        org_id: odata.organization.id,
+                                        token: udata.token
+                                    }, self.state.sn);
+                                }, function (uresp) {});
+                            }, function (oresp) {});
+                        }
+                    }, function (resp) {
+                    });
+                }
             });
 
             //验证签名失败

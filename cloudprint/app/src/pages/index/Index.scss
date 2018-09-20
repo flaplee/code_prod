@@ -251,3 +251,60 @@
     }
   }
 }
+
+.print-scan{
+  display: block;
+  text-align: center;
+  margin: 33rem auto 0;
+
+  .scan-denied-img, .scan-unbind-img{
+    width: 10rem;
+    height: 9rem;
+    background-image: url(../../images/management01@3x.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    display: block;
+    text-align: center;
+    margin: 0 auto 4rem;
+  }
+
+  .scan-denied-title{
+    font-size: 3rem;
+    color: #333333;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .scan-denied-info{
+    font-size: 2rem;
+    color: #999999;
+    margin: 2rem auto 3rem;
+  }
+
+  .scan-denied-text, .scan-unbind-text{
+    font-size: 2rem;
+    color: #EB1D16;
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  .scan-denied-back, .scan-unbind-back{
+    margin-top: 7rem;
+    .scan-btn{
+      font-size: 3rem;
+      width: 13.33rem;
+      height: 5rem;
+      line-height: 5rem;
+      background:#fff;
+      border-radius: 3rem;
+      text-align: center;
+      border: 1px solid #5D85E0;
+      display: inline-block;
+      color: #5D85E0;
+      &:active{
+        background:#5D85E0;
+        color: #fff;
+      }
+    }
+  }
+}

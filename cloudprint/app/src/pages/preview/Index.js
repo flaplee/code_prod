@@ -24,14 +24,14 @@ class Index extends React.Component {
             printCurrent: 1,
             printLoading: false,
             photo: 'https://file.delicloud.xin/oss-1535626446061-2048.jpg',
-            sn: (new URLSearchParams(props.location.search)).get('sn'),
-            file: props.location.state && props.location.state.file,
-            fileList: props.location.state && props.location.state.fileList,
-            fileOuter: props.location.state && props.location.state.fileOuter,
+            sn: (new URLSearchParams(props.location.search)).get('sn') || '',
+            file: (props.location.state && props.location.state.file) || '',
+            fileList: (props.location.state && props.location.state.fileList) || [],
+            fileOuter: (props.location.state && props.location.state.fileOuter) || [],
             printer:{
-                sn: (new URLSearchParams(props.location.search)).get('sn'),
-                name: (new URLSearchParams(props.location.search)).get('name'),
-                status: (new URLSearchParams(props.location.search)).get('status')
+                sn: (new URLSearchParams(props.location.search)).get('sn') || '',
+                name: (new URLSearchParams(props.location.search)).get('name') || '',
+                status: (new URLSearchParams(props.location.search)).get('status') || ''
             },
             printData: {
                 'fileSource': 'CLOUD',
@@ -260,9 +260,12 @@ class Index extends React.Component {
     rederPrintImgItem(){
         const imgItem = this.state.fileList;
         const result = [];
-        for (let i = 0; i < imgItem.length; i++) {
-            result.push(<div key={`page-img-${i}`} className="swiper-slide"><div className="swiper-slide-img"><img src={imgItem[i].fileSourceUrl} /></div></div>);
+        if(imgItem.length > 0){
+            for (let i = 0; i < imgItem.length; i++) {
+                result.push(<div key={`page-img-${i}`} className="swiper-slide"><div className="swiper-slide-img"><img src={imgItem[i].fileSourceUrl} /></div></div>);
+            }
         }
+        
         return result;
     }
     

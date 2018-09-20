@@ -70,6 +70,11 @@ class ManageTask extends Component {
         // 关闭
         deli.common.navigation.close({}, function (data) {
            this.stopPrinterPoll(this.state.timer)
+            Cookies.remove('appId');
+            Cookies.remove('sign');
+            Cookies.remove('userId');
+            Cookies.remove('orgId');
+            Cookies.remove('token');
         }, function (resp) {});
         
         //this.startPrinterPoll(this.state.printer.sn)

@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom'
 import Nav from './Nav'
 import Printer from './Printer'
+
 import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL } from '../../configs/config'
 class PrintIndex extends Component{
     constructor(props) {
@@ -16,7 +17,8 @@ class PrintIndex extends Component{
             user:{
                 user_id: '',
                 org_id: '',
-                token: ''
+                token: '',
+                app_id:''
             },
             sn: (new URLSearchParams(props.location.search)).get('sn') || '',
             printer:{},
@@ -41,7 +43,9 @@ class PrintIndex extends Component{
             fileList: [],
             redirect:{
                 chooseTask: false,
-                previewIndex: false
+                previewIndex: false,
+                scandenied: false,
+                scanunbind: false
             }
         };
     };
@@ -82,6 +86,8 @@ class PrintIndex extends Component{
                 Cookies.save('appId', appIdPrint, { path: '/' });
                 Cookies.save('timestamp', timestampPrint, { path: '/' });
                 Cookies.save('nonceStr', nonceStrPrint, { path: '/' });
+
+                self.setState({ "user": { "app_id": appIdPrint } })
             }
 
             // 注入配置信息
@@ -98,15 +104,15 @@ class PrintIndex extends Component{
                 deli.common.navigation.setTitle({
                     "title": "得力云打印"
                 }, function(data) {}, function(resp) {});
-
                 deli.common.navigation.setRight({
                     "icon": "http://t.static.delicloud.com/h5/web/cloudprint/images/icon/scan_code@3x.png"
                 }, function(data) {
                     deli.app.code.scan({
                         type: 'qrcode',
-                        app_id: ''
+                        app_id: Cookies.load('appId'),
+                        direct: true
                     }, function (json) {
-                        alert(json.data)
+                        //alert(json.text)
                     }, function(resp) {});
                 }, function(resp) {});
 
@@ -118,10 +124,16 @@ class PrintIndex extends Component{
 
                 // 关闭
                 deli.common.navigation.close({}, function (data) {
-                    // 重置设置
+                    // 重置
+                    Cookies.remove('appId');
+                    Cookies.remove('sign');
+                    Cookies.remove('userId');
+                    Cookies.remove('orgId');
+                    Cookies.remove('token');
+                    Cookies.remove('loginToken');
                 }, function (resp) {});
 
-                if(!Cookies.load('userId') && !Cookies.load('orgId') && !Cookies.load('loginToken')){
+                if(!(Cookies.load('userId') && Cookies.load('orgId') && Cookies.load('token'))){
                     deli.app.user.get({
                         "user_id": ""
                     }, function (data) {
@@ -134,6 +146,7 @@ class PrintIndex extends Component{
                                 deli.app.session.get({
                                     user_id: data.user.id
                                 }, function (udata) {
+                                    Cookies.save('loginToken', udata.token, { path: '/' });
                                     self.getLocalData({
                                         user_id: data.user.id,
                                         org_id: odata.organization.id,
@@ -144,6 +157,18 @@ class PrintIndex extends Component{
                         }
                     }, function (resp) {
                     });
+                }else{
+                    if (self.state.sn) {
+                        self.getPrinterData(self.state.sn)
+                    } else {
+                        //获取打印机列表并选择上次的打印机
+                        self.getPrinterList({
+                            'page': 1,
+                            'limit': 10
+                        }, function (sn) {
+                            self.getPrinterData(sn)
+                        });
+                    }
                 }
             });
 
@@ -191,6 +216,7 @@ class PrintIndex extends Component{
                 }
                 response.json().then(function (json) {
                     if (json.code == 0) {
+                        self.startGetNewListPage()
                         self.setState({"user":{token: data.data }}, function(){
                             Cookies.save('userId', data.user_id, { path: '/' });
                             Cookies.save('orgId', data.org_id, { path: '/' });
@@ -372,7 +398,7 @@ class PrintIndex extends Component{
                         Cookies.save('sign', data.data.signStr, { path: '/' });
                         // todo
                         if (typeof callback === 'function'){
-                            callback(data)
+                            callback(data.data)
                         }
                     }
                 });
@@ -387,12 +413,15 @@ class PrintIndex extends Component{
         const self = this
         deli.common.navigation.setRight({
             "icon": "http://t.static.delicloud.com/h5/web/cloudprint/images/icon/scan_code"+(( data && data.length > 1) ? '02' : '')+"@3x.png"
-        }, function(data) {
+        }, function(innerdata) {
             deli.app.code.scan({
                 type: 'qrcode',
-                app_id: ''
+                app_id: Cookies.load('appId'),
+                direct: true
             }, function (json) {
-                if(data){
+                //alert(json.text)
+                
+                /* if(data){
                     //只有一条数据时进入打印预览，否则进入选择打印任务
                     if(data.length > 1){
                         self.setState({
@@ -422,19 +451,19 @@ class PrintIndex extends Component{
                             previewIndex: false
                         }
                     })
-                }
+                } */
             }, function(resp) {});
         }, function(resp) {});
     }
 
-    //获取新的任务状态及数据
+    // 获取新的任务状态及数据
     getNewListPage() {
         const self = this
         let appData = new FormData();
         appData.append('pageNo', 1);
         appData.append('pageSize', 100);
         //分页查询打印机任务列表
-        fetch(mpURL + '/app/printerTask/queryPage', {
+        fetch(mpURL + '/app/printerTask/queryMyPage', {
             method: 'POST',
             headers: {
                 token: Cookies.load('token')
@@ -464,7 +493,71 @@ class PrintIndex extends Component{
             }
         ).catch(function (err) {
             console.log("错误:" + err);
+        });
+    }
 
+    // 开始获取新的任务状态及数据
+    startGetNewListPage() {
+        const self = this
+        const timer = setInterval(() => {
+            self.getNewListPage();
+        }, 2000);
+        self.setState({ timer: timer })
+    }
+
+    // 关闭获取新的任务状态及数据
+    stopGetNewListPage(timer){
+        clearInterval(timer)
+    }
+
+    // 处理扫码结果
+    getScanQrcode(text, type){
+        const self = this
+        let appData = new FormData();
+        appData.append('qrCode', text);
+        appData.append('printerType', type);
+        //分页查询打印机任务列表
+        fetch(mpURL + '/app/printerTask/scanQrCode', {
+            method: 'POST',
+            headers: {
+                token: Cookies.load('token')
+            },
+            body: appData
+        }).then(
+            function (response) {
+                if (response.status !== 200) {
+                    return;
+                }
+                response.json().then(function (json) {
+                    if(json.code == 0){
+                        self.setState({
+                            sn: self.state.sn,
+                            fileList: self.state.fileList,
+                            redirect: {
+                                chooseTask: true,
+                                previewIndex: false
+                            }
+                        })
+                    } else if (json.code == -3) {
+                        self.setState({ "redirect": { "scandenied": true } })
+                    } else if (json.code == -4) {
+                        self.setState({ "redirect": { "scanunbind": true } })
+                    }else{
+                        deli.common.notification.prompt({
+                            "type": 'error',
+                            "text": json.msg,
+                            "duration": 1.5
+                        }, function (data) { }, function (resp) { });
+                    }
+                });
+            }
+        ).catch(function (err) {
+            console.log("错误:" + err);
+            deli.common.notification.prompt({
+                "type": 'error',
+                "text": "网络错误,请重试",
+                "duration": 1.5
+            }, function (data) { }, function (resp) { });
         });
     }
 
@@ -472,15 +565,33 @@ class PrintIndex extends Component{
         const sn = this.state.printer.printerSn
         const fileList = this.state.fileList
         if (this.state.redirect.chooseTask) {
+            this.stopGetNewListPage(this.state.timer)
             return <Redirect push to={
                 { pathname: "/choosetask", search: "?sn=" + sn + "", state: { "sn": sn, "fileList": fileList}  }
             } />;
         }
+
         if (this.state.redirect.previewIndex) {
+            this.stopGetNewListPage(this.state.timer)
             return <Redirect push to={
                 { pathname: "/previewindex", search: "?sn=" + sn + "", state: { "sn": sn,  "fileList": fileList }  }
             } />;
         }
+
+        if (this.state.redirect.scandenied) {
+            this.stopGetNewListPage(this.state.timer)
+            return <Redirect push to={
+                { pathname: "/scandenied", search: "?sn=" + sn + "", state: { "sn": sn,  "fileList": fileList }  }
+            } />;
+        }
+
+        if (this.state.redirect.scanunbind) {
+            this.stopGetNewListPage(this.state.timer)
+            return <Redirect push to={
+                { pathname: "/scanunbind", search: "?sn=" + sn + "", state: { "sn": sn, "fileList": fileList } }
+            } />;
+        }
+
         return(
             <div className="print-index"
             id="print-index"

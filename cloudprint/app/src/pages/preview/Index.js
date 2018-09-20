@@ -109,6 +109,16 @@ class Index extends React.Component {
         }, function (data) {
             self.setState({ redirectPrintSetup: true });
         }, function (resp) {});
+
+        // 关闭
+        deli.common.navigation.close({}, function (data) {
+            // 重置
+            Cookies.remove('appId');
+            Cookies.remove('sign');
+            Cookies.remove('userId');
+            Cookies.remove('orgId');
+            Cookies.remove('token');
+        }, function (resp) { });
     }
 
     // 打印机信息

@@ -81,6 +81,16 @@ class PreviewSetup extends React.Component {
             Cookies.save('setupData', self.state.PrintSetupData, { path: '/' });
             self.setState({ PrintSetupData: self.state.PrintSetupData, redirectBack: true }, function () {})
         }, function (resp) {});
+
+        // 关闭
+        deli.common.navigation.close({}, function (data) {
+            // 重置
+            Cookies.remove('appId');
+            Cookies.remove('sign');
+            Cookies.remove('userId');
+            Cookies.remove('orgId');
+            Cookies.remove('token');
+        }, function (resp) {});
     }
     
     handleChildChange(range) {

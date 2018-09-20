@@ -14,6 +14,27 @@ class Unbind extends React.Component {
         };
     }
 
+    componentDidMount() {
+        deli.common.navigation.setTitle({
+            "title": "得力云打印"
+        }, function (data) { }, function (resp) { });
+
+        deli.common.navigation.setRight({
+            "text": "",
+            "icon": ""
+        }, function (data) {}, function (resp) {});
+
+        // 关闭
+        deli.common.navigation.close({}, function (data) {
+            // 重置
+            Cookies.remove('appId');
+            Cookies.remove('sign');
+            Cookies.remove('userId');
+            Cookies.remove('orgId');
+            Cookies.remove('token');
+        }, function (resp) {});
+    };
+
     handleBackClick(){
         this.setState({redirectIndexNav:true}, function(){})
     }

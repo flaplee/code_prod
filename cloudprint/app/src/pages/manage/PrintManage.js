@@ -62,6 +62,16 @@ class PrintManage extends React.Component {
         deli.common.navigation.setRight({
             "text": ""
         }, function (data) {}, function (resp) {});
+
+        // 关闭
+        deli.common.navigation.close({}, function (data) {
+            // 重置
+            Cookies.remove('appId');
+            Cookies.remove('sign');
+            Cookies.remove('userId');
+            Cookies.remove('orgId');
+            Cookies.remove('token');
+        }, function (resp) {});
     }
 
     // 屏蔽触摸移动

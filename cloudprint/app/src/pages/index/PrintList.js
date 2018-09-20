@@ -40,6 +40,16 @@ class PrintList extends React.Component {
             "text": "",
             "icon": ""
         }, function (data) { }, function (resp) { });
+
+        // 关闭
+        deli.common.navigation.close({}, function (data) {
+            // 重置
+            Cookies.remove('appId');
+            Cookies.remove('sign');
+            Cookies.remove('userId');
+            Cookies.remove('orgId');
+            Cookies.remove('token');
+        }, function (resp) {});
     };
 
     componentWillUnmount(){

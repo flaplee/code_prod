@@ -16,7 +16,7 @@ import ManageTask from './pages/manage/PrintTask';
 import PrintTask from './pages/index/PrintTask';
 import ChooseTask from './pages/index/ChooseTask';
 import PrintInk from './pages/manage/PrintInk';
-import PreviewSetup from './pages/preview/Setup'; 
+import PreviewSetup from './pages/preview/Setup';
 import PreviewIndex from './pages/preview/Index';
 import ScanDenied from './pages/scan/Denied';
 import ScanUnbind from './pages/scan/Unbind';

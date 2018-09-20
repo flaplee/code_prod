@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { render } from 'react-dom'
+import Cookies from 'react-cookies';
 // 引入路由
 import { History, createHashHistory } from "history";
 class Unbind extends React.Component {
@@ -15,6 +17,13 @@ class Unbind extends React.Component {
     }
 
     componentDidMount() {
+        // 屏蔽触摸移动
+        document.getElementById('print-scan').addEventListener("touchmove", (e) => {
+            this.unableTouchMove(e)
+        }, {
+            passive: false
+        })
+
         deli.common.navigation.setTitle({
             "title": "得力云打印"
         }, function (data) { }, function (resp) { });
@@ -33,7 +42,12 @@ class Unbind extends React.Component {
             Cookies.remove('orgId');
             Cookies.remove('token');
         }, function (resp) {});
-    };
+    }
+
+    // 屏蔽触摸移动
+    unableTouchMove(e) {
+        e.preventDefault();
+    }
 
     handleBackClick(){
         this.setState({redirectIndexNav:true}, function(){})
@@ -52,7 +66,7 @@ class Unbind extends React.Component {
                 state: { "sn": sn, name: name, status: status }
             })
         }
-        return <div className="print-scan">
+        return <div className="print-scan" id="print-scan">
             <div className="scan-denied">
                 <div className="scan-denied-img"></div>
                 <p className="scan-denied-text">无权限操作该打印机</p>

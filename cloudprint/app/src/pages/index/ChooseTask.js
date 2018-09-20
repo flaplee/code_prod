@@ -55,41 +55,18 @@ class ChooseTask extends React.Component {
     componentDidMount(){
     }
 
-    onLoad(){
-    }
+    onLoad(){}
 
     //监听Tasker变化状态
     transFiler(filer) {
         console.log("filer~~~", filer);
-        this.setState(filer);
-    }
+        this.setState({
+            redirect:{
+                previewNav: true
+            },
+            fileItemData: filer.fileItemData
+        }, function(){
 
-    //查询任务详情
-    handleQueryTask(item) {
-        console.log("查询任务详情~~~~~~~~~~~~")
-        console.log("item", item)
-        const self = this
-        fetch(mpURL + '/app/printerTask/queryDetais/' + item.taskCode, {
-            method: 'GET',
-            headers: {
-                token: Cookies.load('token')
-            }
-        }).then(
-            function (response) {
-                if (response.status !== 200) {
-                    return;
-                }
-                response.json().then(function (data) {
-                    console.log("~~~~~~~~~~data", data)
-                    if (data.code == 0 ) {
-                        self.setState({ printer: { sn: data.data.printerSn, name: data.data.printerName, status: data.data.onlineStatus }, redirect: { previewNav: true } });
-                    } else {
-
-                    }
-                });
-            }
-        ).catch(function (err) {
-            console.log("错误:" + err);
         });
     }
 
@@ -106,8 +83,9 @@ class ChooseTask extends React.Component {
             const sn = this.state.printer.sn
             const name = this.state.printer.sn
             const status = this.state.printer.status
+            const fileItemData = this.state.fileItemData
             return <Redirect push to={
-                { pathname: "/previewindex", search: "?sn=" + sn + "&name=" + name + "&status=" + status + "", state: { "sn": sn, "file": file } }
+                { pathname: "/previewindex", search: "?sn=" + sn + "&name=" + name + "&status=" + status + "", state: { "sn": sn, "file": file, "fileList": fileItemData } }
             } />;
         }
         return (

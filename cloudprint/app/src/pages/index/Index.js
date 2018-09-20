@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
-import Cookies from 'react-cookies';
+import { Redirect } from 'react-router-dom'
+import Cookies from 'react-cookies'
 import 'whatwg-fetch'
 import {
     BrowserRouter as Router,
@@ -419,39 +420,9 @@ class PrintIndex extends Component{
                 app_id: Cookies.load('appId'),
                 direct: true
             }, function (json) {
-                //alert(json.text)
-                
-                /* if(data){
-                    //只有一条数据时进入打印预览，否则进入选择打印任务
-                    if(data.length > 1){
-                        self.setState({
-                            sn: json.data,
-                            fileList: data,
-                            redirect:{
-                                chooseTask: true,
-                                previewIndex: false
-                            }
-                        })
-                    }else{
-                        self.setState({
-                            sn: json.data,
-                            fileList: data,
-                            redirect:{
-                                chooseTask: false,
-                                previewIndex: true
-                            }
-                        })
-                    }
-                }else{
-                    self.setState({
-                        sn: json.data,
-                        fileList: [],
-                        redirect:{
-                            chooseTask: false,
-                            previewIndex: false
-                        }
-                    })
-                } */
+                if(data){
+                    self.getScanQrcode(json.text, 'web', data)
+                }
             }, function(resp) {});
         }, function(resp) {});
     }
@@ -477,11 +448,10 @@ class PrintIndex extends Component{
                 response.json().then(function (json) {
                     if (json.code === 0) {
                         if (json.data.total > 0){
-                            let rows = self.state.fileList
                             self.setState({
-                                fileList: rows.concat(json.data.rows)
+                                fileList: json.data.rows
                             }, function () {
-                                self.setQrcodeStatus(self.state.fileList)
+                                self.setQrcodeStatus(json.data.rows)
                             })
                         }else{
                             self.setQrcodeStatus()
@@ -509,14 +479,15 @@ class PrintIndex extends Component{
     stopGetNewListPage(timer){
         clearInterval(timer)
     }
+    
 
     // 处理扫码结果
-    getScanQrcode(text, type){
+    getScanQrcode(text, type, fileList){
         const self = this
         let appData = new FormData();
         appData.append('qrCode', text);
         appData.append('printerType', type);
-        //分页查询打印机任务列表
+        //查询打印机状态
         fetch(mpURL + '/app/printerTask/scanQrCode', {
             method: 'POST',
             headers: {
@@ -530,24 +501,47 @@ class PrintIndex extends Component{
                 }
                 response.json().then(function (json) {
                     if(json.code == 0){
-                        self.setState({
-                            sn: self.state.sn,
-                            fileList: self.state.fileList,
-                            redirect: {
-                                chooseTask: true,
-                                previewIndex: false
-                            }
-                        })
-                    } else if (json.code == -3) {
-                        self.setState({ "redirect": { "scandenied": true } })
-                    } else if (json.code == -4) {
-                        self.setState({ "redirect": { "scanunbind": true } })
-                    }else{
                         deli.common.notification.prompt({
                             "type": 'error',
                             "text": json.msg,
                             "duration": 1.5
                         }, function (data) { }, function (resp) { });
+                    } else if (json.code == -3) {
+                        self.setState({ "redirect": { "scandenied": true } }, function(){})
+                    } else if (json.code == -4) {
+                        self.setState({ "redirect": { "scanunbind": true } }, function(){})
+                    }else{
+                        if(fileList){
+                            //只有一条数据时进入打印预览，否则进入选择打印任务
+                            if(fileList.length > 1){
+                                self.setState({
+                                    sn: text,
+                                    fileList: fileList,
+                                    redirect:{
+                                        chooseTask: true,
+                                        previewIndex: false
+                                    }
+                                })
+                            }else{
+                                self.setState({
+                                    sn: text,
+                                    fileList: fileList,
+                                    redirect:{
+                                        chooseTask: false,
+                                        previewIndex: true
+                                    }
+                                })
+                            }
+                        }else{
+                            self.setState({
+                                sn: text,
+                                fileList: [],
+                                redirect:{
+                                    chooseTask: false,
+                                    previewIndex: false
+                                }
+                            })
+                        }
                     }
                 });
             }

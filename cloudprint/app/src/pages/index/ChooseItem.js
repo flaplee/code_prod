@@ -2,34 +2,37 @@ import React, { Component } from 'react'
 import { Group, Boxs, List, Layer, ScrollView } from 'saltui';
 import Icon from 'salt-icon';
 import './Index.scss';
-
-
-
 const { HBox, Box } = Boxs;
 
 class ChooseItem extends Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            file: props.file,
+            index: props.index
+        };
+    }
 
-    //打印任务状态
+    //选择任务打印
     handleItemClick(data) {
-        console.log("data~~~", data);
         this.props.transFilerList({ fileItemData: data })
     }
 
     render() {
         const self = this
-        let dataIndex = self.props.index
-        let dataItem = self.props.file
+        let dataIndex = self.statefile
+        let dataItem = self.state.file
         return <div key={`page-file-${dataIndex}`} className="task-list-item task-list-item-tap" ref={(input) => { this.fileImgInput = input }} onClick={self.handleItemClick.bind(self, dataItem)}>
             <div className="task-list-item-wrap">
                 <HBox vAlign="center">
                     <HBox flex={1}>
                         <Box className="list-item-text-content" flex={1}>
                             <p className="list-item-title t-omit">{dataItem.fileSourceName}</p>
-                            <p className="list-item-text t-omit">{dataItem.printerName}</p>
+                            <p className="list-item-text t-omit">{dataItem.taskStartTime}</p>
                         </Box>
                     </HBox>
                     <Box>
-                        <Icon name="angle-down" width={20} fill="#ccc" className="list-item-arrow" />
+                        <Icon className="print-list-arrow right" name='direction-right' fill="#ccc" width="7rem" height="3rem" />
                     </Box>
                 </HBox>
             </div>

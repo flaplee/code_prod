@@ -21,7 +21,7 @@ class ChooseList extends Component {
             isEmpty: false,
             noMore: false, 
             force: true,
-            fileList: []
+            fileList: props.files
         };
         console.log("fileList props", props)
     }
@@ -44,7 +44,7 @@ class ChooseList extends Component {
         appData.append('pageSize', data.pageLimit);
         appData.append('printerSn', data.sn);
         //分页查询打印机任务列表
-        fetch(mpURL + '/app/printerTask/queryPage', {
+        fetch(mpURL + '/app/printerTask/queryMyPage', {
             method: 'POST',
             headers: {
                 token: Cookies.load('token')
@@ -112,12 +112,13 @@ class ChooseList extends Component {
     }
 
     render() {
-        let fileItems, fileItemEmpty;
+        let fileItems, fileItemEmpty
+        const files = this.state.fileList
+        console.log("this.props.fileList", this.state.fileList)
         if (this.state.isEmpty == true){
             fileItemEmpty = <div className="task-list-empty"><div className="task-list-empty-img"></div><p className="task-list-empty-text">暂无更多打印记录</p></div>
         }else{
-            console.log("this.props.fileList", this.state.fileList)
-            fileItems = this.state.fileList.map((file, index) => {
+            fileItems = files.map((file, index) => {
                 return (
                     <ChooseItem key={index} index={index} file={file} transFilerList={filer => this.transFilerList(filer)} />
                 );

@@ -135,7 +135,7 @@ class ManageTask extends Component {
     handleCancelTask(item) {
         console.log("取消打印~~~~~~~~~~~~")
         const self = this
-        fetch(mpURL + '/app/printerTask/cancel/' + item.id, {
+        fetch(mpURL + '/app/printerTask/cancel/' + item.taskCode, {
             method: 'GET',
             headers: {
                 token: Cookies.load('token')
@@ -172,7 +172,7 @@ class ManageTask extends Component {
                 "type": 'error',
                 "text": "网络错误,请重试",
                 "duration": 1.5
-            }, function (data) { }, function (resp) { });
+            }, function (data) {}, function (resp) {});
         });
     }
 

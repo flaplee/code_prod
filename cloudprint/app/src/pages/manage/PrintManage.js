@@ -322,7 +322,7 @@ class PrintManage extends React.Component {
                             <HBox vAlign="center">
                                 <HBox flex={1}>
                                     <Box className="print-list-text-content-single" flex={1}>
-                                        <p className="print-list-title-single omit">清洗答应头</p>
+                                        <p className="print-list-title-single omit">清洗打印头</p>
                                     </Box>
                                 </HBox>
                                 <Box>

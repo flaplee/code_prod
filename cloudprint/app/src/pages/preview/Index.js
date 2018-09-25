@@ -495,7 +495,7 @@ class Index extends React.Component {
                             </div>
                         </div>
                         <div>
-                            <div className="print-list-wrap-single print-list-wrap-single-tap">
+                            <div className="print-list-wrap-single">
                                 <HBox vAlign="center">
                                     <HBox flex={1}>
                                         <Box className="print-list-text-content-single" flex={1}>
@@ -504,7 +504,7 @@ class Index extends React.Component {
                                     </HBox>
                                     <Box>
                                         <Box className="print-list-text-content-single">
-                                            <div className="line"> <NumberPicker value={this.state.printCount} min={1} max={99} step={1} width="14rem" onChange={this.handlePrintNumChange.bind(this, 'printCount')} useTouch={!Context.isPC} /></div>
+                                            <div className="line"> <NumberPicker className="number-picker" value={this.state.printCount} min={1} max={99} step={1} width="14rem" onChange={this.handlePrintNumChange.bind(this, 'printCount')} useTouch={!Context.isPC} /></div>
                                         </Box>
                                     </Box>
                                 </HBox>
@@ -513,7 +513,7 @@ class Index extends React.Component {
                     </Group.List>
                 </Group>
                 <div className="preview-box">
-                    <div className="preview swiper-container">
+                    <div className="preview-container swiper-container">
                         <ReactSwipe className="preview-inner swiper-wrapper" options={this.state.opt}>
                             {this.rederPrintImgItem()}
                         </ReactSwipe>

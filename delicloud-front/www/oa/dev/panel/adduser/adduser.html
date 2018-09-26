@@ -1,0 +1,57 @@
+<div class="add-user" data-userid="">
+	<h4>添加成员</h4>
+	<div class="add-inner">
+		<form class="add-form form-horizontal" role="form">
+			<div class="add-form-base">
+				<div class="form-group">
+					<label class="col-sm-2 control-label" for="formGroupInputDefault">姓名:</label>
+					<div class="col-sm-8 from-dept">
+						<input class="form-control username" name="username" type="text" placeholder="姓名" require>
+						<a class="btn-to-user" style="display: none;" href="javascript:;"></a>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label" for="formGroupInputDefault">手机:</label>
+					<div class="col-sm-8">
+						<input class="form-control usermobile" name="usermobile" type="text" placeholder="手机号码" require>
+		            </div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label" for="formGroupInputDefault">工号:</label>
+					<div class="col-sm-8">
+						<input class="form-control employee_num" name="employee_num" type="text" placeholder="员工工号" require>
+					</div>
+				</div>
+			</div>
+			<div class="add-form-extra">
+				<ul class="extra-list clear">
+					<!-- <li class="extra-item extra-item-index">
+						<a href="javascript:;" class="extra-item-del hide">删除</a>
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="formGroupInputDefault">部门:</label>
+							<div class="col-sm-8">
+								<input disabled class="form-control department" name="department" type="text" placeholder="" require>
+								<input disabled class="form-control departmentId" name="departmentId" type="hidden">
+								<a class="btn-to-dept" href="javascript:;"></a>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="formGroupInputDefault">职务:</label>
+							<div class="col-sm-8">
+								<input class="form-control business" name="business" type="text" placeholder="" require>
+							</div>
+						</div>
+					</li> -->
+				</ul>
+			</div>
+			<div class="add-form-btn">
+				<a href="javascript:;" class="button button-white button-large btn-add-more">继续增加部门及职务</a>
+			</div>
+		</form>
+		<div class="add-btns">
+			<button type="button" class="btn btn-small btn-info btn-add-user fl">保存</button>
+			<button type="button" class="btn btn-info btn-add-user-go fl">保存并继续添加成员</button>
+			<button type="button" class="button button-small button-white btn-add-cancel fr">取消</button>
+		</div>
+	</div>
+</div>

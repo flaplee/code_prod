@@ -1,0 +1,216 @@
+@import "../../config.less";
+#panels.adduser {
+	> .contents {
+		width: 482px;
+	    height: 100%;
+	    border: 1px solid #dedede;
+	    border-top-left-radius: 8px;
+	    border-bottom-left-radius: 8px;
+	    box-shadow: -4px 0px 11px 0px rgba(0, 0, 0, 0.14);
+	    background: #fff;
+	    --webkit-animation-duration: .3s;
+	    -animation-duration: .3s;
+	}
+}
+
+#adduser {
+	overflow:hidden;
+	.add-user{
+		h4{
+			padding:25px;
+			update:20171122;
+			font-family: inherit;
+			font-weight: 700;
+			line-height: 1.1;
+			color: inherit;
+			font-size: 24px;
+			font-weight: normal;
+		}
+		.add-inner{
+			width: 100%;
+			height:100%;
+			overflow-y:hidden;
+			.add-form{
+				.add-form-base{
+					border-bottom:1px solid #eaeaea;
+					.form-group{
+						div.col-sm-8{
+							&.from-dept{
+								position:relative;
+							}
+							input{
+								width:100%;
+							}
+							.btn-to-user{
+								display:none;
+								position: absolute;
+								top: 8px;
+								right: 10px;
+								width: 25px;
+								height: 25px;
+								background:url('./images/to-dept.png')no-repeat center;
+							}
+						}
+					}
+				}
+				.add-form-extra{
+					ul.extra-list{
+						max-height: 400px;
+						overflow-y: auto;
+						li.extra-item{
+							position:relative;
+							width:100%;
+							float: left;
+							padding:15px 0;
+							border-bottom:1px solid #eaeaea;
+							.extra-item-del{
+								display:inline-block;
+								width:24px;
+								height:24px;
+								position:absolute;
+								top:-2px;
+								right:0;
+								background:url('./images/del-dept.png') no-repeat center;
+								text-indent: -9999px;
+							}
+							.form-group{
+								&:last-child{
+									margin-bottom:0;
+								}
+								.col-sm-8{
+									position: relative;
+									.form-control{
+										width:100%;
+									}
+								}
+								
+								.btn-to-dept{
+									position: absolute;
+									top: 8px;
+									right: 10px;
+									width: 25px;
+									height: 25px;
+									background:url('./images/to-dept.png')no-repeat center;
+								}
+							}
+							&:n-child(3n){
+								border-bottom:none;
+							}
+						}
+					}
+				}
+				.add-form-btn{
+					border-top:1px solid #eaeaea;
+					.btn-add-more{
+						margin: 20px auto;
+						display: block;
+					}
+				}
+			}
+			.add-btns{
+				width: 100%;
+				position: absolute;
+				bottom: 0;
+				padding: 25px 30px;
+				border: 1px solid #eaeaea;
+				background-color: #fff;
+				text-align: center;
+				button{
+					&.btn-add-user{
+						width:100px;
+					}
+					&.btn-add-user-go{
+						margin: 0 20px;
+					}
+					&.btn-add-cancel{
+					
+					}
+				}
+			}
+		}
+	}
+}
+
+.form-group{
+	position: relative;
+	margin-bottom: 20px;
+	zoom:1
+	&:before,&:after{
+	    display: table;
+	    content: " ";
+	}
+	&:after {
+	    visibility: hidden;
+	    display: block;
+	    font-size: 0;
+	    content: " ";
+	    clear: both;
+	    height: 0
+	}
+}
+@media (min-width: 768px) {
+	.input-group .form-control {
+	    position: relative;
+	    z-index: 2;
+	    float: left;
+	    width: 100%;
+	    margin-bottom: 0;
+	}
+	.form-horizontal .control-label {
+		font-weight:normal;
+	    padding-top: 3px;
+	    padding-bottom: 3px;
+	}
+	.form-horizontal .control-label {
+		font-weight:normal;
+	    padding-top: 7px;
+	    margin-bottom: 0;
+	    text-align: right;
+	}
+    .col-sm-2,.col-sm-8,.col-sm-10{
+        float:left
+    }
+    .col-sm-2 {
+        width: 16.66666667%
+    }
+    .col-sm-8 {
+	    width: 66.66666667%;
+	}
+
+    .col-sm-10 {
+        width: 83.33333333%
+    }
+
+    .col-sm-2{
+		position: relative;
+		min-height: 1px;
+		padding-right: 15px;
+		padding-left: 15px;
+    }
+    label {
+	    font-size: 15px;
+	    font-weight: 400;
+	    line-height: 2.3;
+	    display: inline-block;
+	    max-width: 100%;
+	    margin-bottom: 5px;
+	    font-weight: 700;
+	}
+}
+@media (min-width: 992px) {}
+
+@media (min-width: 1200px) {}
+
+.form-control{
+    height: 42px;
+    padding: 8px 12px;
+    font-family: Lato,Helvetica,Arial,sans-serif;
+    font-size: 15px;
+    line-height: 1.467;
+    color: #34495e;
+    border: 1px solid #bdc3c7;
+    border-radius: 6px;
+    box-shadow: none;
+    -webkit-transition: border .25s linear,color .25s linear,background-color .25s linear;
+    transition: border .25s linear,color .25s linear,background-color .25s linear;
+}

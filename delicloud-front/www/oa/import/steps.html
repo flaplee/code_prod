@@ -1,0 +1,25 @@
+<div class="imports-steps">
+	<div class="steps-inner">
+		<div class="steps-item steps-one">
+			<div class="icon">
+				<p>下载成员信息表模板，批量填写信息</p>
+				<div class="operate">
+					<button type="button" class="btn btn-info btn-sm btn-step-download hide">下载</button>
+					<a class="btn btn-info btn-sm btn-step-download" href="docs/model.xls" download="通讯录批量导入模板.xls" title="下载">下载</a>
+				</div>
+			</div>
+		</div>
+		<div class="steps-item steps-two">
+			<div class="icon">
+				<p>上传填写好的成员信息表</p>
+				<!-- <div class="operate">
+					<button type="button" class="btn btn-info btn-sm btn-step-upload">上传</button>
+					<input id="upload-file" class="hide" name="file" type="file"/>
+				</div> -->
+				<form id="upload-form" action="/v1.0/import/employee" method="POST" enctype="multipart/form-data">
+			        <input id="upload-file" name="file" type="file"/>
+			    </form>
+			</div>
+		</div>
+	</div>
+</div>

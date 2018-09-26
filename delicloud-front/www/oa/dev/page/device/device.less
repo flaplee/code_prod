@@ -1,0 +1,140 @@
+@import '../../config.less';
+#device {
+	font-size: 16px;
+	color: @textColor;
+	padding: 0 30px;
+	>a {
+		color: black;
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+	.dev-box{
+		.dev-main{
+			background-color: #fff;
+			border: 1px solid #eaeaea;
+			margin-top: 30px;
+			border-radius: 10px;
+			-webkit-border-radius: 10px;
+			-moz-border-radius: 10px;
+			-o-border-radius: 10px;
+			.dev-title{
+				font-size: 16px;
+				color: #333333;
+				width: 100%;
+				height: 40px;
+				line-height: 40px;
+				padding-left:20px;
+				background-color:#f9f9f9;
+				text-align: left;
+				border-radius: 10px 10px 0 0;
+				-webkit-border-radius: 10px 10px 0 0;
+				-moz-border-radius: 10px 10px 0 0;
+				-o-border-radius: 10px 10px 0 0;
+			}
+			.dev-installed{
+				min-height: 690px;
+				height:auto !important;
+				height:690px;
+				.dev-wrap{
+					border-top: 1px solid #eaeaea;
+					table.table{
+						thead.thead{
+							background: #f2f2f2;
+							tr{
+								height:30px;
+								th{
+									font-size:14px;
+									color:#333333;
+									height:20px;
+									line-height: 20px;
+									padding:5px 20px;
+								}
+							}
+						}
+						tbody.tbody{
+							tr.dev-item{
+								height: 78px;
+								td{
+									font-family: "SimSun";
+									padding: 10px 20px;
+									font-size:12px;
+									color:#999999;
+									border-left: none;
+									border-right: none;
+									text-align:center;
+									&.item-desc{
+										.item-img{
+											padding: 5px 0 0 20px;
+											margin-right: 15px;
+											img{
+												width:40px;
+												-height:30px;
+												display:inline-block;
+											}
+										}
+										.item-text{
+											p{
+												color:#333333;
+												text-align:left;
+											}
+										}
+									}
+									&.item-title,&.item-status,&.item-app{
+										font-size:12px;
+										color:#5d85e0;
+									}
+									&.item-status{
+										span.status-online{
+											color:#5d85e0;
+										}
+										span.status-offline{
+											color:#999999;
+										}
+									}
+									&.item-app{
+										span{
+											display:block;
+										}
+									}
+									&.item-delact{
+										width:300px;
+										a{
+											font-size: 12px;
+											font-family: "SimSun";
+										}
+										a.btn-dev-rename-item{
+											float: left;
+											width: 100px;
+											margin-right: 50px;
+										}
+										a.btn-dev-delete-item{
+											float: left;
+											width: 100px;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@media (max-width: 1440px) {
+		.dev-box{
+			.dev-main{
+				.dev-installed{
+					min-height: 540px;
+					height:auto !important;
+					height: 540px;
+					.empty.empty-device{
+						height: 320px;
+					}
+				}
+			}
+		}
+	}
+}

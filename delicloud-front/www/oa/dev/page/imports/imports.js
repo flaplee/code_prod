@@ -23,74 +23,74 @@ define(['common/kernel/kernel', 'site/util/util', 'page/imports/member', 'page/i
     return {
         onload: function(force) {
             userid = util.getCookie('userid'),
-            token = util.getCookie('token'),
-            orgid = util.getCookie('orgid'),
-            orgname = util.getCookie('orgname'),
-            parentid = util.getCookie('parentid');
+                token = util.getCookie('token'),
+                orgid = util.getCookie('orgid'),
+                orgname = util.getCookie('orgname'),
+                parentid = util.getCookie('parentid');
             loc = kernel.parseHash(location.hash),
-            locid = loc.id,
-            //type = loc.args.type,
-            status = loc.args.status,
-            imports = loc.args.imports,
-            importsid = loc.args.id,
-            p = loc.args.p;
+                locid = loc.id,
+                //type = loc.args.type,
+                status = loc.args.status,
+                imports = loc.args.imports,
+                importsid = loc.args.id,
+                p = loc.args.p;
             delete loc.args.p;
             if (!isFinite(p) || p < 1) {
                 p = 1;
             }
-            if(locid == 'imports'){
+            if (locid == 'imports') {
                 var $usermenu = $('#header .user-head .nav-top .nav-item');
                 $usermenu.find('a.navlink').removeClass('navlink-current');
-                $usermenu.find('a.navlink.orgBtn').addClass('navlink-current');
-                if(!status && !imports){
-                    steps(function(){});
+                $usermenu.find('a.navlink.devBtn').addClass('navlink-current');
+                if (!status && !imports) {
+                    steps(function() {});
                 }
             };
-            if(status){
+            if (status) {
                 $importsInfo.show();
                 $importsSteps.hide();
-                switch(status){
+                switch (status) {
                     case 'data':
                         $importsInnerData.show();
                         $importsInnerError.hide();
                         $importsInnerSuccess.hide();
                         //steps(function(){});
-                        switch(imports){
+                        switch (imports) {
                             case 'enable':
-                                if(!$importsInnerNav.find('.nav-enable').hasClass('active')){
+                                if (!$importsInnerNav.find('.nav-enable').hasClass('active')) {
                                     $importsInnerNav.find('.nav-enable').addClass('active').siblings().removeClass('active');
                                     $importsInnerTable.find('.imports-table-enable').addClass('active').siblings().removeClass('active');
                                 }
-                            break;
+                                break;
                             case 'unable':
-                                if(!$importsInnerNav.find('.nav-unable').hasClass('active')){
+                                if (!$importsInnerNav.find('.nav-unable').hasClass('active')) {
                                     $importsInnerNav.find('.nav-unable').addClass('active').siblings().removeClass('active');
                                     $importsInnerTable.find('.imports-table-unable').addClass('active').siblings().removeClass('active');
                                 }
-                            break;
+                                break;
                             default:
-                                if(!$importsInnerNav.find('.nav-enable').hasClass('active')){
+                                if (!$importsInnerNav.find('.nav-enable').hasClass('active')) {
                                     $importsInnerNav.find('.nav-enable').addClass('active').siblings().removeClass('active');
                                     $importsInnerTable.find('.imports-table-enable').addClass('active').siblings().removeClass('active');
                                 };
                         }
-                    break;
+                        break;
                     case 'error':
                         $importsInnerData.hide();
                         $importsInnerError.show();
                         $importsInnerSuccess.hide();
-                    break;
+                        break;
                     case 'success':
                         $importsInnerData.hide();
                         $importsInnerError.hide();
                         $importsInnerSuccess.show();
-                    break;
+                        break;
                     default:
                         $importsInnerData.show();
                         $importsInnerError.hide();
                         $importsInnerSuccess.hide();
                 }
-            }else{
+            } else {
                 $importsInfo.hide();
                 $importsSteps.show();
             }

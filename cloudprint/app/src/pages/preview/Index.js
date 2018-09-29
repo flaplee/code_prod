@@ -71,7 +71,7 @@ class Index extends React.Component {
                 }
             }
         };
-        alert(JSON.stringify(this.state.fileList))
+        //alert(JSON.stringify(this.state.fileList))
         console.log("previewindex props",  props.location.state);
     }
 

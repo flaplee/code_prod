@@ -217,7 +217,7 @@ class PrintIndex extends Component{
                 }
                 response.json().then(function (json) {
                     if (json.code == 0) {
-                        self.startGetNewListPage()
+                        //self.startGetNewListPage()
                         self.setState({"user":{token: data.data }}, function(){
                             Cookies.save('userId', data.user_id, { path: '/' });
                             Cookies.save('orgId', data.org_id, { path: '/' });

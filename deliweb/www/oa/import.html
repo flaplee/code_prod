@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="fragment" content="!" />
+	<title>得力e+——为了难以触摸的效率</title>
+	<style>
+		body.loading * {
+			display: none;
+		}
+		body.loading #loading,
+		body.loading #loading * {
+			display: block;
+		}
+	</style>
+	<script src='/oa/framework/all2.js'></script>
+</head>
+<body class="loading">
+	<div id="header" class="wrap-top wrap-top-shadow">
+		<div class="user-head">
+			<div id="head" class="clear">
+				<div class="logo-box clear">
+					<a href="/#!loginhome" class="logo"></a>
+				</div>
+				<div class="nav-top">
+					<ul class="nav-top-list clear">
+						<li class="nav-item"><a href="/#!home" class="navlink navlink-current homeBtn">首页</a></li>
+						<li class="nav-item"><a href="/#!contacts" class="navlink orgBtn">组织通讯录</a></li>
+						<li class="nav-item"><a href="/#!apphome" class="navlink appBtn">应用</a></li>
+						<li class="nav-item"><a href="/#!device" class="navlink devBtn">设备</a></li>
+						<li class="nav-item nav-item-team">
+							<a href="javascript:;" class="navlink nav-item-current"><span class="navlink-name">得力团队</span><span class="navlink-icon"><i class="iconfont">&#xe608;</i></span></a>
+							<div class="son-nav-list son-nav-list-team"></div>
+						</li>
+						<li class="nav-item nav-item-login">
+							<div class="nologin">
+								<a href="/#!loginhome" class="green">登录</a>
+							</div>
+							<div class="login user-panel">
+								<a href="javascript:;" class="user-info fl" style="display: block;">
+									<img class="user-info-avatar" width="50" height="50" src="/dev/page/loginhome/images/user.png" />
+									<i class="iconfont">&#xe608;</i>
+								</a>
+								<div class="user-asset fl">
+									<a class="user-asset-link logout" href="javascript:;">退出登录</a>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="pages">
+		<div class="imports-menu">
+			<ul class="menu-list fl">
+				<li class="item">
+					<a class="item-menu menu-manage-user" href="/#!contacts&type=user">
+						<i></i>
+						员工管理
+					</a>
+				</li>
+				<li class="item">
+					<a class="item-menu menu-manage-dept" href="/#!contacts&type=department">
+						<i></i>
+						部门管理
+					</a>
+				</li>
+				<li class="item current">
+					<a class="item-menu menu-manage-import current" href="/#!imports">
+						<i></i>
+						导入成员
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div class="imports-box">
+			<div class="imports-info">
+				<div class="imports-crumbs">
+					<a class="active" href="/#!imports">导入成员</a>&nbsp;&gt;&nbsp;<a href="javascript:;">导入成员信息</a>
+				</div>
+				<div class="imports-inner">
+					<div class="imports-inner-data data">
+						<div class="imports-nav">
+							<a href="javascript:;" class="nav-enable active">已导入数据（<span class="">10</span>条）</a>
+							<a href="javascript:;" class="nav-unable">不可导入数据（<span class="">20</span>条）</a>
+						</div>
+						<div class="imports-table">
+							<table class="table">
+								<thead class="thead">
+									<th></th>
+									<th>姓名</th>
+									<th>员工工号</th>
+									<th>所在部门</th>
+									<th>职务</th>
+									<th>手机号码</th>
+									<th>导入失败原因</th>
+								</thead>
+								<tbody class="tbody">
+									<tr>
+										<td>1</td>
+										<td>张飞</td>
+										<td>123456</td>
+										<td>技术部、设计部</td>
+										<td>技术部-产品经理、设计部-设计师</td>
+										<td>13999999999</td>
+										<td><span class="red">通讯录中已存在该手机号码的员工</span></td>
+									</tr>
+									<tr>
+										<td>2</td>
+										<td>张飞</td>
+										<td>123456</td>
+										<td>技术部、设计部</td>
+										<td>技术部-产品经理、设计部-设计师</td>
+										<td>13999999999</td>
+										<td><span class="red">通讯录中已存在该手机号码的员工</span></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="imports-paging paging hide">
+							<a href="javascript:;" class="first disabled">首页</a>
+							<a href="javascript:;" class="previous disabled">上一页</a>
+							<a href="javascript:;" class="item active">1</a><a href="javascript:;" class="item">2</a><a href="javascript:;" class="item">3</a><a href="javascript:;" class="item">4</a><a href="javascript:;" class="item">5</a><a href="javascript:;" class="item">6</a><a href="javascript:;" class="item">7</a><a href="javascript:;" class="item">8</a><a href="javascript:;" class="item">9</a><a href="javascript:;" class="item">10</a><a href="javascript:;" class="next">下一页</a>
+							<a href="javascript:;" class="last">尾页</a> 共
+							<span class="listnum"></span>条记录, 每页
+							<select class="select_pagelist">
+								<option value="10">10</option>
+								<option value="30">30</option>
+								<option value="50">50</option>
+								<option value="100">100</option>
+							</select> 条
+						</div>
+						<div class="imports-upload">
+							<button type="button" class="btn btn-info btn-middle btn-upload">重新上传</button>
+						</div>
+					</div>
+					<div class="imports-inner-error error">
+						<div class="icon"><i class="iconfont">&#xe649;</i></div>
+						<p class="title">没有识别到人员信息，请检查上传文件</p>
+					</div>
+					<div class="imports-inner-success success">
+						<div class="icon"><i class="iconfont">&#xe66b;</i></div>
+						<p class="title">上传成功，将进入组织通讯录</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="footer">
+		<div class="container footer">
+			<div class="footer-link clear">
+				<dl>
+					<dt>使用帮助</dt>
+					<dd><a href="javascript:;">去购买智能设备</a></dd>
+					<dd><a href="javascript:;">App使用帮助</a></dd>
+					<dd><a href="javascript:;">网页使用帮助</a></dd>
+				</dl>
+				<dl>
+					<dt>应用开发商</dt>
+					<dd><a href="javascript:;">应用接入指南</a></dd>
+				</dl>
+				<dl>
+					<dt>关于我们</dt>
+					<dd><a href="javascript:;">加入我们</a></dd>
+					<dd><a href="javascript:;">联系我们</a></dd>
+				</dl>
+				<dl class="attus">
+					<dt>联系我们</dt>
+					<dd class="kefu-phone">400-185-0555</dd>
+					<a class="share-icon icon-qq" href="javascript:;"><i class="iconfont">&#xe644;</i></a>
+					<a class="share-icon icon-weixin" href="javascript:;"><i class="iconfont">&#xe609;</i><img class="icon-weixin-img" src=""></a>
+				</dl>
+			</div>
+			<div class="footer-copyright">鄂ICP备17027057号  Copyright &copy;2018 武汉得力智能办公研究院有限公司 版权所有</div>
+		</div>
+	</div>
+	<div id="panels"><div class="mask"></div><div class="contents"><div><a class="close" href="javascript:;">✕</a></div></div></div>
+	<div id="popups"><div><div></div><a class="close" href="javascript:;">✕</a></div></div>
+	<div id="photoview"><div></div><a class="close" href="javascript:;">✕</a><a class="prev" href="javascript:;">‹</a><a class="next" href="javascript:;">›</a><a class="rotate p" href="javascript:;">⤺</a><a class="rotate n" href="javascript:;">⤺</a></div>
+	<div id="readable"><div><div></div><a class="close" href="javascript:;">✕</a></div></div>
+	<div id="dialogs"><div><div><div></div></div><a class="close" href="javascript:;">✕</a><a class="yes" href="javascript:;">确定</a><a class="no" href="javascript:;">取消</a></div></div>
+	<div id="loading"><div><div>正在加载页面，请稍后...</div></div></div>
+	<div id="hint"><span>_</span></div>
+	<div id="hintIcon"><div><div><div class="icon"></div><p class="title"></p><p class="desc"></p></div></div><div class="mask"></div></div>
+</body>
+</html>
+

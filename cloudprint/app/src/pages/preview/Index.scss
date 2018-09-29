@@ -128,7 +128,7 @@
     }
 }
 .swiper-container {width: 100%; height: 100%;}
-.swiper-slide {padding-top:4rem;left: 12rem;width: 50rem;height: 66rem;text-align: center; font-size: 18px; /* Center slide text vertically */ display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-box-pack: center; -ms-flex-pack: center; -webkit-justify-content: center; justify-content: center; -webkit-box-align: center; -ms-flex-align: center; -webkit-align-items: center; align-items: center;}
+.swiper-slide {padding-top:4rem;left: 12rem;width: 50rem;height: 66rem;text-align: center; font-size: 18px; /* Center slide text vertically */ display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-box-pack: center; -ms-flex-pack: center; -webkit-justify-content: center; justify-content: center; -webkit-box-align: center; -ms-flex-align: center; -webkit-align-items: center; align-items: center;overflow: hidden;}
 @media (device-height:568px) and (-webkit-min-device-pixel-ratio:2){.swiper-slide {left:11rem;}.preview-inner .swiper-slide > div{width:47rem;height: 66rem;} .preview-inner .swiper-slide > div img{width:47rem;height: 66rem;}}
 @media (device-height:667px) and (-webkit-min-device-pixel-ratio:2){.swiper-slide {left:6rem;}.preview-inner .swiper-slide > div{width:47rem;height: 66rem;} .preview-inner .swiper-slide > div img{width:47rem;height: 66rem;}}
 @media (device-height:736px) and (-webkit-min-device-pixel-ratio:2){.swiper-slide {left:12rem;}.preview-inner .swiper-slide > div{width:47rem;height: 66rem;} .preview-inner .swiper-slide > div img{width:47rem;height: 66rem;}}
@@ -186,6 +186,9 @@
                 &.rc-input-number-handler-up-disabled{
                     background-image: url(../../images/add@3x.png);
                 }
+                svg{
+                    fill: transparent;
+                }
             }
             .rc-input-number-handler-down{
                 border: 0;
@@ -198,6 +201,9 @@
                 display: block;
                 &.rc-input-number-handler-down-disabled{
                     background-image: url(../../images/subtract@3x.png);
+                }
+                svg{
+                    fill: transparent;
                 }
             }
         }

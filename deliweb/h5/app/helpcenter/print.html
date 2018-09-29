@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="x-ua-compatible" content="IE=edge" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-category-bar-style" content="black" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="mobile-web-app-capable" content="yes" />
+	<meta name="msapplication-tap-highlight" content="no" />
+	<meta name="fragment" content="!" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=0" />
+	<title>本地打印-帮助</title>
+	<style>
+		* {
+			font-family: PingFang SC, Heiti SC, Droid Sans, Microsoft YaHei UI;
+			padding: 0;
+			margin: 0;
+			box-sizing: border-box;
+			-webkit-appearance: none;
+			-webkit-tap-highlight-color: none;
+			-webkit-touch-callout: none;
+			user-select: text;
+			-moz-user-select: text;
+			-webkit-user-select: text;
+			-o-user-select: text;
+		}
+
+		html {
+			font-family: PingFang SC, Heiti SC, Droid Sans, Microsoft YaHei UI;
+			-ms-text-size-adjust: 100%;
+			-webkit-text-size-adjust: 100%;
+			-webkit-user-select: none;
+			user-select: none;
+			width: 100%;
+			min-height: 535px;
+			overflow-y: auto;
+			background-color: #f3f3f3;
+			font-size: 100px
+		}
+
+		img {
+			image-orientation: from-image
+		}
+
+		body {
+			margin: 0;
+			padding: 0;
+			font: .16rem PingFang SC, Heiti SC, Droid Sans, Microsoft YaHei UI, sans-serif;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			-webkit-tap-highlight-color: none;
+		}
+
+		.page-print,
+		.page-employee {
+			background-size: auto;
+			background-repeat: no-repeat
+		}
+
+		.page-print img,
+		.page-employee img {
+			width: 100%;
+			height: 100%
+		}
+
+		.print-box {
+			background-color: #f3f3f3
+		}
+
+		.print-title {
+			font-size: .16rem;
+			font-weight: bold;
+			color: #333;
+			margin: .30rem .15rem;
+			text-align: left;
+		}
+
+		.print-tip {
+			font-size: .16rem;
+			font-weight: bold;
+			color: #333;
+			padding: .15rem .15rem;
+			margin: .30rem .15rem;
+		}
+
+		.print-wrapper {
+			border-radius: 10px;
+			box-shadow:10px 18px 10px rgba(0, 0, 0, .03);
+			background-color: #fff;
+		}
+
+		.print-url {
+			color: #477fff;
+			text-decoration: none;
+			text-align: center;
+			display: block;
+			font-size: .17rem;
+		}
+
+		.steps-text {
+			margin: 0 .15rem;
+		}
+
+		.steps-text p {
+			font-size: .15rem;
+			color: #666;
+		}
+
+		.steps-text img {
+			width: 100%;
+			display: block
+		}
+
+		.mb60 {
+			margin-bottom: .3rem;
+		}
+
+		.mb20 {
+			margin-bottom: .1rem;
+		}
+
+		@media (min-width: 1200px) {
+			body {
+				background-color: #f3f3f3;
+			}
+			#page {
+				width: 1000px;
+				margin: 0 auto;
+			}
+			.print-box {
+				padding: 0 20px;
+				width: 100%;
+				overflow: hidden;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div id="page" class="page-print">
+		<div id="content" class="print-box">
+			<div class="print-wrapper steps-text mb60">
+				<div class="print-tip">你的手机未安装Mopria Print Service 服务， 为了更好的使用体验，建议你下载该服务后，再使用本地打印。</div>
+			</div>
+			<p class="print-title mb60">Mopria Print Service 使用教程</p>
+			<div class="steps-text mb60">
+				<p class="mb20">1、下载安装后，打开应用并按照提示，完成基本设置；</p>
+				<img src="http://t.static.delicloud.com/h5/app/helpcenter/images/print1.png" />
+			</div>
+			<div class="steps-text mb60">
+				<p class="mb20">2、进入手机系统设置的 "打印" 设置中，将应用设置为"开启"：</p>
+				<img src="http://t.static.delicloud.com/h5/app/helpcenter/images/print2.png" />
+			</div>
+			<div class="steps-text mb60">
+				<p class="mb20">3、设置完成后回到APP，再次使用本地打印，进入本地打印页面，选择打印机，点击 "打印机ICON" ，即可进行打印。</p>
+				<img src="http://t.static.delicloud.com/h5/app/helpcenter/images/print3.png" />
+			</div>
+			<div class="steps-text mb60">
+				<a class="print-url" href="https://app.mopria.org/zh-cn/MopriaPrintService" title="下载Mopria Print Service">下载Mopria Print Service</a>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

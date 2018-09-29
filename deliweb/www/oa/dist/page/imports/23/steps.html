@@ -1,0 +1,46 @@
+<div class="imports-steps">
+	<div class="steps-inner">
+		<div class="steps-inner-btns">
+			<form id="upload-form" action="/web/v1.0/import/employee" method="POST" enctype="multipart/form-data">
+				<a href="javascript:;" class="upload-file">上传人员信息表
+					<input id="upload-file" name="file" type="file" multiple="multiple"/>
+				</a>
+		    </form>
+		    <div class="operate">
+				<a class="btn-step-download" href="docs/model.xls" download="通讯录批量导入模板.xls" title="下载《人员信息表模板》">下载《人员信息表模板》</a>
+			</div>
+		</div>
+	</div>
+	<div class="steps-record">
+		<h2 class="record-title">导入记录</h2>
+		<div class="record-list">
+			<div class="record-list-title">
+				<table class="table">
+					<thead class="thead">
+						<tr>
+							<th class="record-date">时间</th>
+							<th class="record-imported">已导入</th>
+							<th class="record-unimported">不可导入</th>
+							<th class="record-operater">操作者</th>
+							<th class="record-status">状态</th>
+							<th class="record-operate">操作</th>
+						</tr>
+					</thead>
+					<tbody class="tbody"></tbody>
+				</table>
+			</div>
+			<div class="record-list-table">
+				<table class="table">
+					<thead class="thead"></thead>
+					<tbody class="tbody"></tbody>
+				</table>
+			</div>
+			<div class="record-list-paging paging" style="display: none;">
+				<a href="javascript:;" class="first disabled">首页</a>
+				<a href="javascript:;" class="previous disabled">上一页</a>
+				<a href="javascript:;" class="next">下一页</a>
+				<a href="javascript:;" class="last">尾页</a> <span>共<span class="listnum"></span>条记录</span>
+			</div>
+		</div>
+	</div>
+</div>

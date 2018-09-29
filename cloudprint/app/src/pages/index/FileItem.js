@@ -3,8 +3,6 @@ import { Group, Boxs, List, Layer, ScrollView } from 'saltui';
 import Icon from 'salt-icon';
 import './Index.scss';
 
-
-
 const { HBox, Box } = Boxs;
 
 class FileItem extends Component{

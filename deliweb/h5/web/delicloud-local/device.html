@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+		<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="msapplication-tap-highlight" content="no"/>
+		<meta name="fragment" content="!"/>
+        <link rel="shortcut icon" type="image/x-icon" href=""/> 
+        <meta name="keywords" content=""/>
+        <meta name="description" content=""/>
+        <meta name="author" content="" />
+        <meta name="copyright" content=""/>
+        <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+        <link rel="stylesheet" href="./css/style.css"/>
+		<title>得力应用</title>
+	</head>
+	<body>
+		<div class="deliapi_header">得力设备接口测试</div>
+		<div class="deliapi_container">
+		    <div class="deliapi_index_container">
+		        <ul class="label_box lbox_close deliapi_index_list">
+		            <li class="label_item deliapi_index_item"><a class="label_inner" href="#menu-common">蓝牙接口</a>
+		            </li>
+		            <li class="label_item deliapi_index_item"><a class="label_inner" href="#menu-app">ibeacon接口</a>
+		            </li>
+		            <li class="label_item deliapi_index_item"><a class="label_inner" href="#menu-device">操作设备接口</a>
+		            </li>
+		        </ul>
+		    </div>
+		    <div class="lbox_close deliapi_form">
+		        <h3 id="menu-common">蓝牙接口</h3>
+		        <span class="desc">打开蓝牙</span>
+		        <button class="btn btn_primary" data-type="bluetoothOpen">bluetooth.open</button>
+		        <span class="desc">关闭蓝牙</span>
+		        <button class="btn btn_primary" data-type="bluetoothClose">bluetooth.close</button>
+		        <span class="desc">开始蓝牙扫描</span>
+		        <button class="btn btn_primary" data-type="bluetoothstartScan">bluetooth.startScan</button>
+		        <span class="desc">关闭蓝牙扫描</span>
+		        <button class="btn btn_primary" data-type="bluetoothStopScan">bluetooth.stopScan</button>
+		        <span class="desc">获取扫描的蓝牙列表</span>
+		        <button class="btn btn_primary" data-type="bluetoothGetScanList">bluetooth.getScanList</button>
+		        <span class="desc">判断蓝牙状态</span>
+		        <button class="btn btn_primary" data-type="bluetoothStatus">bluetooth.status</button>
+		        <span class="desc">通过蓝牙与某个设备配对</span>
+		        <button class="btn btn_primary" data-type="bluetoothConnect">bluetooth.connect</button>
+		        <span class="desc">通过蓝牙断开与某个设备配对</span>
+		        <button class="btn btn_primary" data-type="bluetoothDisconnect">bluetooth.disconnect</button>
+		        <span class="desc">获取当前蓝牙支持的服务列表</span>
+		        <button class="btn btn_primary" data-type="bluetoothGetService">bluetooth.getService</button>
+		        <span class="desc">绑定蓝牙与某个设备通讯的服务</span>
+		        <button class="btn btn_primary" data-type="bluetoothBindService">bluetooth.bindService</button>
+		        <span class="desc">通过蓝牙给配对设备发送数据</span>
+		        <button class="btn btn_primary" data-type="bluetoothSend">bluetooth.send</button>
+		        
+
+		        <h3 id="menu-app">ibeacon接口</h3>
+		        <span class="desc" style="display: none;">初始化蓝牙模块, 开启查找周边蓝牙设备</span>
+		        <button class="btn btn_primary" style="display: none;" data-type="startSearch">bluetooth.startSearch</button>
+		        <span class="desc" style="display: none;">关闭查找周边蓝牙设备</span>
+		        <button class="btn btn_primary" style="display: none;" data-type="stopSearch">bluetooth.stopSearch</button>
+		        <span class="desc" style="display: none;">获取本机蓝牙适配器状态 </span>
+		        <button class="btn btn_primary" style="display: none;" data-type="getBluetoothAdapterState">bluetooth.getBluetoothAdapterState</button>
+		        <span class="desc" style="display: none;">获取所有已发现的蓝牙设备</span>
+		        <button class="btn btn_primary" style="display: none;" data-type="getBluetoothDevices">bluetooth.getBluetoothDevices</button>
+
+		        <span class="desc">开启查找周边ibeacon设备</span>
+		        <button class="btn btn_primary" data-type="ibeaconStartSearch">ibeacon.startSearch</button>
+		        <span class="desc">关闭查找周边ibeacon设备</span>
+		        <button class="btn btn_primary" data-type="ibeaconStopSearch">ibeacon.stopSearch</button>
+		        <span class="desc">获取查找到的周边ibeacon设备 </span>
+		        <button class="btn btn_primary" data-type="ibeaconGetSearch">ibeacon.getSearch</button>
+
+		        <h3 id="menu-device">操作设备接口</h3>
+		        <span class="desc">初始化蓝牙SDK</span>
+		        <button class="btn btn_primary" data-type="devicebluetoothsdkinit">bluetooth.sdk.init</button>
+		        <span class="desc">销毁蓝牙SDK</span>
+		        <button class="btn btn_primary" data-type="devicebluetoothsdkdestory">bluetooth.sdk.destory</button>
+
+		        <span class="desc">初始化ibeacon设备</span>
+		        <button class="btn btn_primary" data-type="deviceibeaconsdkinit">ibeacon.sdk.init</button>
+		        <span class="desc">销毁ibeacon设备</span>
+		        <button class="btn btn_primary" data-type="deviceibeaconsdkdestory">ibeacon.sdk.destory</button>
+		    </div>
+		</div>
+        <script src="./js/jquery.js?v=003"></script>
+		<!-- <script src="./js/delicloud.js?v=003"></script> -->
+		<script src="http://t.static.delicloud.com/h5/sdk/delicloud.min.js?v=20180713"></script>
+        <script src="./js/device.js?v=20180713"></script>
+	</body>
+</html>

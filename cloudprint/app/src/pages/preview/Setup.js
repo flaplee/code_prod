@@ -59,7 +59,7 @@ class PreviewSetup extends React.Component {
                 'printEndPage': 1,
                 'pagesPre': 1,
                 'copyCount':  1,
-                'printDpi': 1200,
+                'printDpi': 600,
                 'printPageSize': 'A4',
                 'printColorMode': 'black',
                 'isPrintWhole':  0,

@@ -81,108 +81,61 @@ class Nav extends Component {
         let sapce = (tmp.width > tmp.height) ? tmp.height : tmp.width
         return [type, sapce]
     }
-
+    
     // 文件转换,下载预览图片
     loadPreviewFile(data, type, callback){
-        //alert(JSON.stringify(data))
         const self = this
-        //PDF 文件预览接口
-        let previewData = new FormData();
-        previewData.append('taskId', data.taskId);
-        previewData.append('fileType', ((type && type == 'file') ? data.fileType : 'pdf'));
-        previewData.append('checkedPage', 1);//data.pdfPageCount
-        previewData.append('width', 560);
-        previewData.append('height', 790);
-        fetch(convertURL + '/h5/converter/preview', {
-            method: 'POST',
-            headers: {
-                token: Cookies.load('token')
-            },
-            body: previewData
-        }).then(
-            function (response) {
-                if (response.status !== 200) {
-                    return;
-                }
-                response.json().then(function (json) {
-                    console.log("json", json)
-                    if (json.code === 0) {
-                        if (json.code === 0) {
-                            if(typeof callback === 'function'){
-                                callback(json.data, {
-                                    "taskId": data.taskId,
-                                    "fileType": data.fileType,
-                                    "checkedPage": data.pdfPageCount,
-                                    "pageCount": data.pdfPageCount
-                                });
-                            }
-                        }
-                    }
-                });
-            }
-        ).catch(function (err) {
-            console.log("错误:" + err);
-        });
+        if(typeof callback === 'function'){
+            callback(convertURL + '/file/preview/' + data.id + '_' + data.totalPage + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '', {
+                "fileId": data.id,
+                "fileType": data.fileType,
+                "checkedPage": data.totalPage,
+                "pageCount": data.totalPage
+            });
+        }
     }
 
     // 图片转换,下载预览图片
     loadPreviewImg(data, type, callback) {
-        //alert(JSON.stringify(data))
         const self = this
-        //PDF 文件预览接口
-        let previewData = new FormData();
-        previewData.append('taskId', data.taskId);
-        previewData.append('fileType', data.fileType);
-        previewData.append('checkedPage', data.pdfPageCount);
-        previewData.append('width', 560);
-        previewData.append('height', 790);
-        fetch(convertURL + '/h5/converter/preview', {
-            method: 'POST',
-            headers: {
-                token: Cookies.load('token')
-            },
-            body: previewData
-        }).then(
-            function (response) {
-                if (response.status !== 200) {
-                    return;
-                }
-                response.json().then(function (json) {
-                    if (json.code === 0) {
-                        if(typeof callback === 'function'){
-                            callback(json.data);
-                        }
-                    }else{
-                        deli.common.notification.hidePreloader();
-                        deli.common.notification.prompt({
-                            "type": "error",
-                            "text": json.msg,
-                            "duration": 2
-                        },function(data){},function(resp){});
-                    }
-                });
-            }
-        ).catch(function (err) {
-            deli.common.notification.hidePreloader();
-            console.log("错误:" + err);
-        });
+        if (typeof callback === 'function') {
+            callback(convertURL + '/file/preview/' + data.id + '_' + data.totalPage + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '', {
+                "fileId": data.id,
+                "fileType": data.fileType,
+                "checkedPage": data.totalPage,
+                "pageCount": data.totalPage
+            });
+        }
     }
 
     // url转换，下载预览图片
     loadPreviewUrl(data, type, callback){
         const self = this
         let previewData = new FormData();
-        previewData.append('url', data.file_url);
-        previewData.append('fileName', data.file_name);
-        previewData.append('fileExt', data.file_url.substring(data.file_url.lastIndexOf("\.") + 1, data.file_url.length));
-
+        //previewData.append();
         //上传文件 第三方url转PDF
-        fetch(convertURL + '/h5/converter/converterByUrlForId', {
+        fetch(convertURL + '/file/uploadByUrl', {
             method: 'POST',
             headers: {
-                token: Cookies.load('token')
+                "Content-Type": "application/json",
+                "token": Cookies.load('token'),
             },
-            body: previewData
+            body: JSON.stringify({
+                "converterUrlVos": [{
+                    "fileUrl": "http://file.delicloud.xin/deli_POT_Manual.pdf",
+                    "fileType": "pdf",
+                    "fileName": "deli_POT_Manual.pdf",
+                    "fileSource": "disk"
+                }]
+            })
+            /* {
+                'converterUrlVos': [{
+                    'fileUrl': data.file_url,
+                    'fileName': data.file_name,
+                    'fileType': data.file_url.substring(data.file_url.lastIndexOf("\.") + 1, data.file_url.length),
+                    'fileSource': 'disk'
+                }]
+            } */
         }).then(
             function (response) {
                 if (response.status !== 200) {
@@ -190,7 +143,15 @@ class Nav extends Component {
                 }
                 response.json().then(function (json) {
                     if (json.code == 0) {
-                        self.startConvertPoll(json.data, callback)
+                        //self.startConvertPoll(json.data, callback)
+                        if (typeof callback === 'function') {
+                            callback(convertURL + '/file/preview/' + json.data[0].id + '_' + json.data[0].totalPage + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '', {
+                                "fileId": json.data[0].id,
+                                "fileType": json.data[0].fileType,
+                                "checkedPage": json.data[0].totalPage,
+                                "pageCount": json.data[0].totalPage
+                            });
+                        }
                     }else{
                         deli.common.notification.hidePreloader();
                         deli.common.notification.prompt({
@@ -210,12 +171,15 @@ class Nav extends Component {
     // 获取文件转换状态
     getConvertStatus(id, callback){
         const self = this
+        let statusData = new FormData();
+        statusData.append('fileId', id);
         //文件转换情况
-        fetch(convertURL + '/converter/find/taskId/'+ id +'', {
+        fetch(convertURL + '/file/findByFileId', {
             method: 'GET',
             headers: {
                 token: Cookies.load('token')
-            }
+            },
+            body: statusData
         }).then(
             function (response) {
                 if (response.status !== 200) {
@@ -276,28 +240,21 @@ class Nav extends Component {
                         deli.common.notification.showPreloader();
                         for (let imgFileNum = 0; imgFileNum < data.length; imgFileNum++){
                             deli.common.file.upload({
-                                    url: 'http://convert.delicloud.xin/h5/converter/local', //文件转化接口
-                                    file: data[imgFileNum].file_path
-                                }, function (json) {
-                                    if (data.length == 1) {
-                                        self.loadPreviewImg(json, 'image', function (inner) {
+                                url: convertURL + '/file/uploadByFile',
+                                file: data[imgFileNum].file_path
+                            }, function (json) {
+                                for (let i = 0; i < json.length; i++) {
+                                    (function (i) {
+                                        self.loadPreviewImg(json[i], 'image', function (inner) {
                                             imgFileList.push({
-                                                'fileSuffix': json.fileType,
-                                                'fileSourceName': json.sourceName,
+                                                'fileSuffix': json[i].fileType,
+                                                'pdfMd5': json[i].pdfMd5,
+                                                'fileSourceName': json[i].fileName,
                                                 'fileSourceUrl': inner
                                             })
-                                            self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {
-                                                deli.common.notification.hidePreloader();
-                                            });
-                                        })
-                                    } else {
-                                        self.loadPreviewImg(json, 'image', function (inner) {
-                                            imgFileList.push({
-                                                'fileSuffix': json.fileType,
-                                                'fileSourceName': json.sourceName,
-                                                'fileSourceUrl': inner
-                                            })
-                                            if (imgFileNum == data.length) {
+                                            console.log("imgFileNum", imgFileNum)
+                                            console.log("status", imgFileNum == (data.length - 1 ))
+                                            if (imgFileNum == (data.length - 1 )) {
                                                 self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {
                                                     deli.common.notification.hidePreloader();
                                                 });
@@ -307,13 +264,15 @@ class Nav extends Component {
                                                 })
                                             }
                                         })
-                                    }
-                                }, function (resp) { });
+                                    })(i);
+                                }
+                            }, function (resp) {});
                         }
                     }
                 }, function (resp) {
                     alert(JSON.stringify(resp));
                 });
+                
                 break;
             case 'fileNav':
                 self.setState({ layerView: true});
@@ -342,43 +301,34 @@ class Nav extends Component {
                 self.setState({ layerView: false });
                 deli.common.file.choose({
                     types: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'pdf'],
-                    max_size: 5242880
+                    max_size: 52428800
                 }, function(data) {
                     if(data.length > 0){
                         deli.common.notification.showPreloader();
                         for (let docFileNum = 0; docFileNum < data.length; docFileNum++) {
                             deli.common.file.upload({
-                                url: 'http://convert.delicloud.xin/h5/converter/local',
+                                url: convertURL + '/file/uploadByFile',
                                 file: data[docFileNum].file_path
                             }, function (json) {
-                                if (data.length == 1) {
-                                    self.loadPreviewFile(json, 'file', function(inner, outer){
-                                        docFileList.push({
-                                            'fileSuffix': json.fileType,
-                                            'fileSourceName': json.sourceName,
-                                            'fileSourceUrl': inner
-                                        })
-                                        self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList, fileOuter: outer  }, function(){
-                                            deli.common.notification.hidePreloader();
-                                        });
-                                    })
-                                } else {
-                                    self.loadPreviewFile(json, 'file', function (inner, outer) {
-                                        docFileList.push({
-                                            'fileSuffix': json.fileType,
-                                            'fileSourceName': json.sourceName,
-                                            'fileSourceUrl': inner
-                                        })
-                                        if (docFileNum == data.length) {
-                                            self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList, fileOuter: outer }, function () {
-                                                deli.common.notification.hidePreloader();
-                                            });
-                                        } else {
-                                            self.setState({ fileType: 'file', fileList: docFileList, fileOuter: outer }, function(){
-                                                deli.common.notification.hidePreloader();
+                                for (let i = 0; i < json.length; i++) {
+                                    (function (i) {
+                                        self.loadPreviewFile(json[i], 'file', function (inner, outer) {
+                                            docFileList.push({
+                                                'fileSuffix': json[i].fileType,
+                                                'fileSourceName': json[i].fileName,
+                                                'fileSourceUrl': inner
                                             })
-                                        }
-                                    })
+                                            if (docFileNum == (data.length-1)) {
+                                                self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList, fileOuter: outer }, function () {
+                                                    deli.common.notification.hidePreloader();
+                                                });
+                                            } else {
+                                                self.setState({ fileType: 'file', fileList: docFileList, fileOuter: outer }, function () {
+                                                    deli.common.notification.hidePreloader();
+                                                })
+                                            }
+                                        })
+                                    })(i);
                                 }
                             }, function (resp) {});
                         }
@@ -397,12 +347,14 @@ class Nav extends Component {
                             urlFileGet(data, i)
                         }
                         function urlFileGet(data, i) {
-                            self.loadPreviewUrl(data[i], 'url', function(json){
-                                //alert(JSON.stringify(json))
+                            self.loadPreviewUrl(data[i], 'url', function(url, json){
+                                alert(JSON.stringify(url))
+                                alert(JSON.stringify(json))
                                 self.loadPreviewFile(json, 'url', function(inner, outer){
                                     urlFileList.push({
                                         'fileSuffix': json.fileType,
-                                        'fileSourceName': json.sourceName,
+                                        'fileSourceName': json.fileName,
+                                        'totalPage': json.totalPage,
                                         'fileSourceUrl': inner
                                     })
                                     self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: urlFileList, fileOuter: outer  }, function(){

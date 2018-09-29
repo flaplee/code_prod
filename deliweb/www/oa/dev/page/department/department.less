@@ -1,0 +1,78 @@
+@import '../../config.less';
+#department {
+	min-height:600px;
+	height:auto !important;
+	height:600px;
+	font-size: 16px;
+	color: @textColor;
+	padding: 30px;
+	>a {
+		color: black;
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+	.department-box{
+		-width: 100%;
+		display: flex;
+		display: -ms-flexbox;
+		flex-wrap: wrap;
+		-ms-flex-wrap: wrap;
+		justify-content: space-between;
+		-ms-flex-pack: justify;
+		>div{
+			-display: flex;
+	    	-display: -ms-flexbox;
+		}
+		.department-menu{
+			width:150px;
+			margin-right:10px;
+			ul.menu-list{
+				width:150px;
+				li.item{
+					width:150px;
+					a{
+						display:inline-block;
+						font-weight: normal;
+						cursor: pointer;
+						color: #555;
+						text-decoration: none;
+						padding: 8px 0px 8px 25px;
+						display: block;
+						transition: all 0.25s;
+						position: relative;
+						white-space: nowrap;
+						text-overflow: ellipsis;
+						overflow: hidden;
+						i{
+
+						}
+					}
+					a.item-menu{
+						background-color: #55BEBF;
+						color:#fff;
+					}
+				}
+			}
+		}
+		.department-team{
+		}
+		.department-info{
+			width:920px;
+			.department-form{
+				width:920px;
+				margin-bottom:10px;
+				.department-title{
+					border-bottom:1px solid #ccc;
+					.btn-dept-add{
+						margin:15px 0;
+					}
+				}
+			}
+			.department-inner{
+				width:920px;
+			}
+		}
+	}
+}

@@ -23,7 +23,6 @@ class Index extends React.Component {
             printCount: 1,
             printCurrent: 1,
             printLoading: false,
-            photo: 'https://file.delicloud.xin/oss-1535626446061-2048.jpg',
             sn: (new URLSearchParams(props.location.search)).get('sn') || '',
             file: (props.location.state && props.location.state.file) || '',
             fileList: (props.location.state && props.location.state.fileList) || [],
@@ -44,8 +43,7 @@ class Index extends React.Component {
                 'printEndPage': 1,
                 'pagesPre': 1,
                 'copyCount': 1,
-                'copyCount': 1,
-                'printDpi': 1200,
+                'printDpi': 600,
                 'printPageSize': 'A4',
                 'printColorMode': 'black',
                 'isPrintWhole': 0,
@@ -55,7 +53,7 @@ class Index extends React.Component {
             pageData: {},//props.location.state,
             // swipes 的配置
             opt : {
-                distance: 50 * window.rem, // 每次移动的距离，卡片的真实宽度
+                distance: 560, // 每次移动的距离，卡片的真实宽度
                 currentPoint: 0,// 初始位置，默认从0即第一个元素开始
                 autoPlay: false, // 是否开启自动播放
                 swTouchstart: (ev) => {
@@ -75,6 +73,7 @@ class Index extends React.Component {
                 }
             }
         };
+        alert(JSON.stringify(this.state.fileList))
         console.log("previewindex props",  props.location.state);
     }
 
@@ -134,6 +133,10 @@ class Index extends React.Component {
         const self = this
         let printData = new FormData();
         let printItems = self.state.printData;
+        let fileMsg = {
+            'pdfMd5': this.state.fileList[0].pdfMd5,
+            'fileSuffix': this.state.fileList[0].fileSuffix
+        }
         printItems.fileSourceUrl = this.state.fileList[0].fileSourceUrl
         printItems.fileSuffix = this.state.fileList[0].fileSuffix
         printItems.fileSourceName = this.state.fileList[0].fileSourceName
@@ -157,7 +160,7 @@ class Index extends React.Component {
                 response.json().then(function (json) {
                     console.log("json", json)
                     if (json.code === 0) {
-                        self.handlePrinterStart(json.data);
+                        self.handlePrinterStart(json.data, fileMsg);
                     }
                 });
             }
@@ -167,11 +170,14 @@ class Index extends React.Component {
     }
 
     //任务设置打印机打印
-    handlePrinterStart(task){
+    handlePrinterStart(task, fileMsg){
         const self = this
         let PrinterData = new FormData();
         PrinterData.append('printerSn', self.state.sn);
         PrinterData.append('taskCode', task);
+        //update 20180929
+        PrinterData.append('pdfMd5', fileMsg.pdfMd5);
+        PrinterData.append('fileSuffix', fileMsg.fileSuffix);
         fetch(mpURL + '/app/printerTask/setPrinterToPrint', {
             method: 'POST',
             headers: {
@@ -213,7 +219,7 @@ class Index extends React.Component {
         console.log("value", value);
         const t = this;
         t.setState({
-            [name]: value,
+            [name]: value
         });
     }
 
@@ -236,7 +242,7 @@ class Index extends React.Component {
         previewData.append('sourceName', data.fileId);
         previewData.append('fileType', data.fileType);
         previewData.append('pdfPageCount', data.pdfPageCount);
-        fetch(convertURL + '/h5/converter/local', {
+        fetch(convertURL + '/file/uploadByFile', {
             method: 'POST',
             headers: {
                 token: Cookies.load('token')
@@ -252,6 +258,7 @@ class Index extends React.Component {
                         self.loadPreviewImg(json, 'image', function (inner) {
                             imgFileList.push({
                                 'fileSuffix': json.fileType,
+                                'pdfMd5': json.pdfMd5,
                                 'fileSourceName': json.sourceName,
                                 'fileSourceUrl': inner
                             })
@@ -359,7 +366,7 @@ class Index extends React.Component {
         //alert(JSON.stringify(data))
         const self = this
         //PDF 文件预览接口
-        let previewData = new FormData();
+        /* let previewData = new FormData();
         previewData.append('taskId', data.taskId);
         previewData.append('fileType', data.fileType);
         previewData.append('checkedPage', data.pdfPageCount);
@@ -394,7 +401,8 @@ class Index extends React.Component {
         ).catch(function (err) {
             deli.common.notification.hidePreloader();
             console.log("错误:" + err);
-        });
+        }); */
+
     }
 
     //获取图片数据

@@ -1,0 +1,90 @@
+<div class="contacts-menu">
+	<ul class="menu-list fl">
+		<li class="item item-user">
+			<a class="item-menu menu-manage-user" href="/oa/#!contacts&type=user">
+				<i></i>
+				员工管理
+			</a>
+		</li>
+		<li class="item item-department">
+			<a class="item-menu menu-manage-department" href="/oa/#!contacts&type=department">
+				<i></i>
+				部门管理
+			</a>
+		</li>
+		<li class="item item-import">
+			<a class="item-menu menu-manage-import" href="/oa/#!imports">
+				<i></i>
+				导入成员
+			</a>
+		</li>
+	</ul>
+	<div class="contacts-list fl">
+		<div class="search-form clear">
+			<div class="search-box fl">
+				<i class="icon iconfont search-ico">&#xe600;</i>
+				<input class="search" placeholder="姓名/手机号" type="text"/>
+			</div>
+			<a class="button btn-user-search fl" href="javascript:;">搜索</a>
+		</div>
+		<div class="contacts-team">
+			<div class="dept-select-list">
+				<div class="dept-select-wrap clear">
+					<a class="select-item item-info" href="javascript:;"><i class="iconfont item-class">&#xe608;</i><span class="text"><i class="iconfont item-class">&#xe61d;</i></span></a>
+				</div>
+				<ul class="dept-select-inner" data-status="onload"></ul>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="contacts-box">
+	<div class="contacts-info user-info">
+		<div class="contacts-wrap contacts-wrap-data">
+			<div class="contacts-form clear">
+				<h2 class="form-title fl"></h2>
+				<div class="form-btns fl" style="display: none;">
+					<a href="javascript:;" class="button btn-user-dept">移动到其他部门</a>
+					<a href="javascript:;" class="button button-orange btn-user-remove" style="display:none;">从本部门移除</a>
+					<a href="javascript:;" class="button button-red btn-user-delete-end">彻底删除</a>
+					<button type="button" class="btn btn-info btn-sm btn-user-add fr">添加成员</button>
+				</div>
+			</div>
+			<div class="contacts-inner-title">
+				<table class="table">
+					<thead class="thead">
+						<th class="user-check" style="display:none;"><a class="select-all" href="javascript:;"><i class="iconfont">&#xe76a;</i></a></th>
+						<th class="user-name">姓名</th>
+						<th class="user-employeenum">员工工号</th>
+						<th class="user-deptname">所在部门</th>
+						<th class="user-title">职务</th>
+						<th class="user-mobile">手机号码</th>
+						<th class="delact user-operate" style="display: none;">操作</th>
+					</thead>
+					<tbody class="tbody"></tbody>
+				</table>
+			</div>
+			<div class="contacts-inner">
+				<table class="table">
+					<thead class="thead"></thead>
+					<tbody class="tbody"></tbody>
+				</table>
+				<div class="paging hide">
+					<a href="javascript:;" class="first disabled">首页</a>
+					<a href="javascript:;" class="previous disabled">上一页</a>
+					<a href="javascript:;" class="item active">1</a><a href="javascript:;" class="item">2</a><a href="javascript:;" class="item">3</a><a href="javascript:;" class="item">4</a><a href="javascript:;" class="item">5</a><a href="javascript:;" class="item">6</a><a href="javascript:;" class="item">7</a><a href="javascript:;" class="item">8</a><a href="javascript:;" class="item">9</a><a href="javascript:;" class="item">10</a><a href="javascript:;" class="next">下一页</a>
+					<a href="javascript:;" class="last">尾页</a> 共
+					<span class="listnum"></span>条记录, 每页
+					<select class="select_pagelist">
+						<option value="10">10</option>
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+					</select> 条
+				</div>
+			</div>
+		</div>
+		<div class="contacts-wrap contacts-wrap-empty">
+			<p>通讯录中，未找到该名成员!<a class="empty-back" href="javascript:;">点击返回</a></p>
+		</div>
+	</div>
+</div>

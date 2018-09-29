@@ -1,0 +1,95 @@
+<div class="contacts-menu">
+	<ul class="menu-list fl">
+		<li class="item current">
+			<a class="item-menu menu-manage-user" href="javascript:;">
+				<i></i>
+				员工管理
+			</a>
+		</li>
+		<li class="item">
+			<a class="item-menu menu-manage-dept" href="javascript:;">
+				<i></i>
+				部门管理
+			</a>
+		</li>
+		<li class="item">
+			<a class="item-menu menu-manage-import" href="javascript:;">
+				<i></i>
+				批量导入成员
+			</a>
+		</li>
+	</ul>
+	<div class="contacts-list fl">
+		<form class="search-form clear">
+			<div class="search-box fl">
+				<i class="icon iconfont search-ico">&#xe600;</i>
+				<input class="search" placeholder="姓名/手机号" name="key_search" />
+			</div>
+			<a class="button btn-user-search fl" href="javascript:;">搜索</a>
+		</form>
+		<div class="contacts-team">
+			<div id="treeMenu" class="ztree"></div>
+			<div class="contacts-dept hide">
+				<button type="button" class="btn btn-info btn-sm btn-dept-add-item">添加部门</button>
+				<button type="button" class="btn btn-default btn-sm btn-dept-delete-item">删除部门</button>
+				<button type="button" class="btn btn-default btn-sm btn-dept-rename-item">部门重命名</button>
+				<button type="button" class="btn btn-default btn-sm btn-dept-setadmin-item">设置主管</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="contacts-box">
+	<div class="contacts-info department-info">
+		<div class="contacts-form">
+			<h2 class="form-title fl">研发组</h2>
+			<div class="form-btns fl">
+				<a href="javascript:;" class="button btn-user-dept">移动到其他部门</a>
+				<a href="javascript:;" class="button button-orange btn-user-remove" style="display:none;">从本部门移除</a>
+				<a href="javascript:;" class="button button-red btn-user-delete">彻底删除</a>
+				<button type="button" class="btn btn-info btn-sm btn-user-add fr">添加成员</button>
+			</div>
+		</div>
+		<div class="contacts-inner">
+			<table class="table">
+				<thead class="thead">
+					<th><a class="select-all" href="javascript:;"><i class="iconfont">&#xe76a;</i></a></th>
+					<th>姓名</th>
+					<th>组织昵称</th>
+					<th>员工工号</th>
+					<th>所在部门</th>
+					<th>职务</th>
+					<th>手机号码</th>
+					<th class="delact">操作</th>
+				</thead>
+				<tbody class="tbody">
+					<!-- <tr>
+						<td><a href="javascript:;"><i class="iconfont">&#xe76a;</i></a></td>
+						<td>张飞</td>
+						<td>张飞</td>
+						<td>13999999999</td>
+						<td>技术部、设计部</td>
+						<td>技术部-产品经理、设计部-设计师</td>
+						<td>管理员</td>
+						<td>
+							<button type="button" class="btn btn-info btn-sm btn-user-edit">编辑</button>
+							<button type="button" class="btn btn-default btn-sm btn-user-delete">删除</button>
+						</td>
+					</tr> -->
+				</tbody>
+			</table>
+			<div class="paging hide">
+				<a href="javascript:;" class="first disabled">首页</a>
+				<a href="javascript:;" class="previous disabled">上一页</a>
+				<a href="javascript:;" class="item active">1</a><a href="javascript:;" class="item">2</a><a href="javascript:;" class="item">3</a><a href="javascript:;" class="item">4</a><a href="javascript:;" class="item">5</a><a href="javascript:;" class="item">6</a><a href="javascript:;" class="item">7</a><a href="javascript:;" class="item">8</a><a href="javascript:;" class="item">9</a><a href="javascript:;" class="item">10</a><a href="javascript:;" class="next">下一页</a>
+				<a href="javascript:;" class="last">尾页</a> 共
+				<span class="listnum"></span>条记录, 每页
+				<select class="select_pagelist">
+					<option value="10">10</option>
+					<option value="30">30</option>
+					<option value="50">50</option>
+					<option value="100">100</option>
+				</select> 条
+			</div>
+		</div>
+	</div>
+</div>

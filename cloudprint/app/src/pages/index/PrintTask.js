@@ -223,9 +223,7 @@ class ChooseTask extends React.Component {
                     console.log("~~~~~~~~~~data", data)
                     if (data.code == 0 ) {
                         self.setState({ printer: { sn: data.data.printerSn, name: data.data.printerName, status: data.data.onlineStatus }, redirect: { manageNav: true } });
-                    } else {
-
-                    }
+                    } else {}
                 });
             }
         ).catch(function (err) {
@@ -260,11 +258,20 @@ class ChooseTask extends React.Component {
                         }, function(){
                             console.log("self.state.fileList", self.state.fileList)
                             //self.renderListItems();
-                            deli.common.notification.prompt({
-                                "type": 'success',
-                                "text": '取消成功',
-                                "duration": 1.5
-                            }, function (data) { }, function (resp) { });
+                            let fileList = self.state.fileList
+                            let index = fileList.findIndex(element => element.taskCode === item.taskCode)
+                            console.log("fileList", fileList)
+                            fileList[index].taskStatus = 50
+                            self.setState({
+                                fileList: fileList,
+                                layerView: false
+                            }, function(){
+                                deli.common.notification.prompt({
+                                    "type": 'success',
+                                    "text": '取消成功',
+                                    "duration": 1.5
+                                }, function (data) { }, function (resp) { });
+                            })
                         })
                     } else {
                         deli.common.notification.prompt({
@@ -307,6 +314,9 @@ class ChooseTask extends React.Component {
                             let printerData = new FormData()
                             printerData.append('printerSn', json.data)
                             printerData.append('taskCode', item.taskCode)
+                            //update 20180929
+                            PrinterData.append('pdfMd5', '');
+                            PrinterData.append('fileSuffix', '');
                             //任务设置打印机 
                             fetch(mpURL + '/app/printerTask/setPrinterToPrint', {
                                 method: 'GET',

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-category-bar-style" content="black" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="msapplication-tap-highlight" content="no" />
+  <meta name="fragment" content="!" />
+  <meta name="description" content="" />
+  <meta name="keywords" content="" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=0" />
+  <title>批量导入-帮助</title>
+  <style>
+  * {
+	font-family: PingFang SC,Heiti SC,Droid Sans,Microsoft YaHei UI;
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+	-webkit-appearance: none;
+	-webkit-tap-highlight-color: none;
+	-webkit-touch-callout: none
+}
+
+html {
+	font-family: PingFang SC,Heiti SC,Droid Sans,Microsoft YaHei UI;
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+	-webkit-user-select: none;
+	user-select: none;
+	width: 100%;
+	min-height: 535px;
+	overflow-y: auto;
+	background-color: #ffffff;
+	font-size: 100px
+}
+
+img {
+	image-orientation: from-image
+}
+
+body {
+	margin: 0 font:.16rem PingFang SC,Heiti SC,Droid Sans,Microsoft YaHei UI,sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-tap-highlight-color: none
+}
+
+.page-import,.page-employee {
+	background-size: auto;
+	background-repeat: no-repeat
+}
+
+.page-import img,.page-employee img {
+	width: 100%;
+	height: 100%
+}
+
+.import-box {
+	background-color: #ffffff
+}
+
+.import-box .import-title {
+	font-size: .15rem;
+	line-height: .24rem;
+	width: 100%;
+	text-align: center;
+	display: table
+}
+
+.import-box .import-title .import-title-text {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center
+}
+
+.import-box .import-title .import-title-text p {
+	font-size: 16px;
+	font-weight: bold;
+	height: .16rem;
+	line-height: .16rem;
+	color: #333;
+	margin: .30rem .15rem;
+	text-align: left;
+}
+
+.import-box .steps-text {
+	margin: 0 .15rem .16rem
+}
+
+.import-box .steps-text p {
+	font-size: .15rem;
+	line-height: .18rem;
+	color: #666;
+	margin-bottom: .1rem
+}
+.import-box .steps-text p span.import-url {
+	color: #477fff;
+}
+
+.import-box .steps-text p img {
+	width: 100%;
+	display: block}</style>
+ </head>
+ <body>
+  <div id="page" class="page-import">
+   <div id="content" class="import-box">
+    <div class="import-title">
+     <div class="import-title-text">
+      <p>如何批量导入员工？</p>
+     </div>
+    </div>
+    <div class="steps-text">
+     <p>1、请在电脑上登录得力e+ 管理后台。管理后台网<br />址：<span class="import-url">https://www.delicloud.com/oa</span></p>
+    </div>
+    <div class="steps-text">
+     <p>2、打开网址后，使用App扫描网页中的二维码，登录到管理后台中；</p>
+     <p><img src="http://t.static.delicloud.com/h5/app/helpcenter/images/import2.png" /></p>
+    </div>
+    <div class="steps-text">
+     <p>3、进入管理后台后，点击快捷入口中的【批量导入成员】；</p>
+     <p><img src="http://t.static.delicloud.com/h5/app/helpcenter/images/import3.png" /></p>
+    </div>
+    <div class="steps-text">
+     <p>4、点击【下载《人员信息表模版》】；</p>
+     <p><img src="http://t.static.delicloud.com/h5/app/helpcenter/images/import4.png" /></p>
+    </div>
+    <div class="steps-text">
+     <p>5、文件下载成功后，打开文件，按照模版中的说明，填写你想添加进组织的成员信息；</p>
+     <p><img src="http://t.static.delicloud.com/h5/app/helpcenter/images/import5.png" /></p>
+    </div>
+    <div class="steps-text">
+     <p>6、表格填写完毕后，将文件保存。再次回到管理后台，点击【上传人员信息表】，将编辑后的文件上传；</p>
+     <p><img src="http://t.static.delicloud.com/h5/app/helpcenter/images/import6.png" /></p>
+    </div>
+    <div class="steps-text">
+     <p>7、文件导入成功后，你可以在导入记录中查看已导入的成员信息。</p>
+     <p><img src="http://t.static.delicloud.com/h5/app/helpcenter/images/import7.png" /></p>
+    </div>
+   </div>
+  </div>
+  <script src="http://t.static.delicloud.com/h5/sdk/delicloud.min.js?v=20180625"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript">
+  	$(function(){
+	  	var shareConfig = {
+			"text": "分享",
+			"title": "批量导入-帮助",
+			"desc": "批量导入-帮助",
+			"link": "http://t.h5.delicloud.com/app/helpcenter/import.html",
+			"imgUrl": "https://static.delicloud.com/images/logos/logo_64.png"
+	    };
+	    // 注入配置信息
+	    deli.config({
+	        noncestr: "abcdefg", // 必填，生成签名的随机串
+	        appId: "373175764691976192", // 必填，应用ID
+	        timestamp: "1508755836143", // 必填，生成签名的时间戳
+	        signature: "26fcd1cab8ff455bfea0ee59a67bf122", // 必填，服务端生成的签名
+	    });
+		// 验证签名成功
+	    deli.ready(function() {
+	    	deli.common.navigation.setRight({
+				"text": "分享"
+			},function(data){
+				deli.common.message.share(shareConfig,function(data){
+				},function(resp){});
+			},function(resp){});
+	    });
+	    // 验证签名失败
+	    deli.error(function(resp) {
+	        //alert(JSON.stringify(resp));
+	    });
+  	});
+  </script>
+ </body>
+</html>

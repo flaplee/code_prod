@@ -1,0 +1,158 @@
+@import '../../config.less';
+#app {
+	min-height:600px;
+    height:auto !important;
+    height:600px;
+	font-size: 16px;
+	color: @textColor;
+	padding: 30px;
+	>a {
+		color: black;
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+	.app-box{
+        background-color:#fff;
+        border-radius: 10px;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        -o-border-radius: 10px;
+		.app-title{
+            position: relative;
+            font-size:18px;
+            color:#333333;
+            width:100%;
+            height:80px;
+            line-height:80px;
+            border-bottom:1px solid #eaeaea;
+            text-align:center;
+            >a{
+                position:absolute;
+				font-size: 14px;
+                width: 60px;
+    			height: 30px;
+   				line-height: 30px;
+                color: #5d85e0;
+                border-color: #5d85e0;
+                background-color:#fff;
+                position: absolute;
+				top:25px;
+                left: 30px;
+            }
+            .app-menu{
+            	.menu-item{
+            		font-size:16px;
+            		color:#999999;
+            		height:30px;
+            		line-height:30px;
+            		margin-right: 80px;
+            		&.current,&:hover{
+            			color:#333333;
+            		}
+            	}
+            }
+        }
+        .app-main{
+        	padding: 0 100px;
+    		width: 100%;
+            min-height: 690px;
+            height:auto !important;
+            height:690px;
+        	.app-inner{
+        		ul.app-main-list{
+        			width:1000px;
+        			li.item{
+						width:1000px;
+						overflow:hidden;
+						border-bottom: 1px solid #eaeaea;
+                        .item-wrap{
+                            float:left;
+							margin-top: 30px;
+							margin-bottom:25px;
+                            .item-img{
+                            	float:left;
+                            	margin-right:15px;
+                            	width: 84px;
+                            	height: 54px;
+                            	border-radius:50%;
+                            	-moz-border-radius:50%;
+                            	-webkit-border-radius:50%;
+                            	-o-border-radius:50%;
+                            	-background-color: #5d85e0;
+                            	img{
+                                    width: 54px;
+                                    height: 54px;
+                                    margin: 0px 15px;
+                            	}
+                            }
+                            .item-info{
+                            	float:left;
+                            	.item-title{
+                            		margin-bottom:15px;
+                            		.item-text{
+                                        float: left;
+                                        font-size: 14px;
+                                        height: 20px;
+                                        line-height: 20px;
+										color: #333;
+										font-weight:bold;
+                            		}
+                            		.item-category{
+                            			float:left;
+                                        height: 20px;
+                                        line-height: 20px;
+                            			.item-category-name{
+                            				font-size:12px;
+                            				width:70px;
+                            				height: 20px;
+                                            line-height: 20px;
+                                            float:left;
+                            				color:#fff;
+                            				background-color:#cccccc;
+                            				border-radius:10px;
+                            				-moz-border-radius:10px;
+                            				-webkit-border-radius:10px;
+                            				-o-border-radius:10px;
+                            				display: inline-block;
+                            				text-align:center;
+                            				margin-left: 30px;
+                            			}
+                            		}
+                            	}
+                            	.item-content{
+                                    color: #999;
+                            		width: 700px;
+                            		overflow: hidden;
+                            		text-overflow: ellipsis;
+                            		display: -webkit-box;
+                            		-webkit-box-orient: vertical;
+									-webkit-line-clamp: 3;
+									font-size:12px;
+									line-height:14px;
+                            	}
+                            }
+                        }
+        				.item-btn{
+							float: right;
+                            margin-top: 40px;
+                            a{
+								width: 80px;
+								height: 30px;
+								line-height: 20px;
+								display: inline-block;
+								text-align: center;
+                                cursor: pointer;
+                                &.btn-install{}
+                                &.btn-uninstall{
+                                    cursor: not-allowed;
+                                }
+        					}
+        				}
+        			}
+        		}
+        	}
+        }
+	}
+}

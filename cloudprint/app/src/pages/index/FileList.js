@@ -44,7 +44,7 @@ class FileList extends Component {
         appData.append('pageSize', data.pageLimit);
         appData.append('printerSn', data.sn);
         //分页查询打印机任务列表
-        fetch(mpURL + '/app/printerTask/queryPage', {
+        fetch(mpURL + '/app/printerTask/queryMyPage', {
             method: 'POST',
             headers: {
                 token: Cookies.load('token')

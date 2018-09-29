@@ -117,38 +117,22 @@ class ChooseTask extends React.Component {
     handleprintTask(item) {
         console.log("重新打印~~~~~~~~~~~~")
         const self = this
-        self.setState({ layerView: false, redirect: { previewNav: true } });
-        /* fetch(mpURL + '/app/printerTask/restart/' + item.taskCode, {
-            method: 'GET',
-            headers: {
-                token: Cookies.load('token')
-            },
-            body: {}
-        }).then(
-            function (response) {
-                if (response.status !== 200) {
-                    return;
-                }
-                response.json().then(function (data) {
-                    console.log("data", data)
-                    if (data.code == 0 ) {
-                        let fileList = self.state.fileList
-                        let index = fileList.findIndex(element => element.taskCode === item.taskCode)
-                            fileList[index].task_status = '20'
-                        self.setState({
-                            fileList: fileList,
-                            layerView: false
-                        }, function() {
-                            console.log("self.state.fileList", self.state.fileList)
-                            //self.renderListItems();
-                        })
-                    } else {
-                    }
-                });
-            }
-        ).catch(function (err) {
-            console.log("错误:" + err);
-        }); */
+        let docFileList = []
+        let fileList = self.state.fileList
+        let index = fileList.findIndex(element => element.taskCode === item.taskCode)
+        //单个文件处理
+        for (let i = 1; i <= fileList[index].printPageCount; i++) {
+            docFileList.push({
+                'pdfMd5': '',
+                'fileSuffix': fileList[index].fileSourceName.substring(fileList[index].fileSourceName.lastIndexOf("\.") + 1, fileList[index].fileSourceName.length),
+                'fileSourceName': fileList[index].fileSourceName,
+                'fileSourceUrl': (convertURL + '/file/preview/' + fileList[index].id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '')
+            })
+        }
+        //alert(JSON.stringify(docFileList))
+        self.setState({ layerView: false, redirect: { previewNav: true }, fileType: 'image', fileList: docFileList },function(){
+            deli.common.notification.hidePreloader();
+        });
     }
 
     //删除任务
@@ -439,8 +423,9 @@ class ChooseTask extends React.Component {
             const sn = this.state.printer.sn
             const name = this.state.printer.sn
             const status = this.state.printer.status
+            const fileList = this.state.fileList
             return <Redirect push to={
-                { pathname: "/previewindex", search: "?sn=" + sn + "&name=" + name + "&status=" + status + "", state: { "sn": sn, "file": file } }
+                { pathname: "/previewindex", search: "?sn=" + sn + "&name=" + name + "&status=" + status + "", state: { "sn": sn, "file": file, "fileList": fileList } }
             } />;
         }
         return (

@@ -313,7 +313,6 @@ class Nav extends Component {
                             }, function (json) {
                                 //单个文件处理
                                 for (let i = 1; i <= json[0].totalPage; i++) {
-                                    alert(json[0].fileType)
                                     docFileList.push({
                                         'fileSuffix': json[0].fileType,
                                         'fileSourceName': json[0].fileName,

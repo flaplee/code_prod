@@ -26,7 +26,6 @@ class Index extends React.Component {
             sn: (new URLSearchParams(props.location.search)).get('sn') || '',
             file: (props.location.state && props.location.state.file) || '',
             fileList: (props.location.state && props.location.state.fileList) || [],
-            fileOuter: (props.location.state && props.location.state.fileOuter) || [],
             printer:{
                 sn: (new URLSearchParams(props.location.search)).get('sn') || '',
                 name: (new URLSearchParams(props.location.search)).get('name') || '',
@@ -53,7 +52,7 @@ class Index extends React.Component {
             pageData: {},//props.location.state,
             // swipes 的配置
             opt : {
-                distance: 560, // 每次移动的距离，卡片的真实宽度
+                distance: Math.ceil(600 / 750 * document.documentElement.clientWidth), // 每次移动的距离，卡片的真实宽度
                 currentPoint: 0,// 初始位置，默认从0即第一个元素开始
                 autoPlay: false, // 是否开启自动播放
                 swTouchstart: (ev) => {
@@ -69,11 +68,10 @@ class Index extends React.Component {
                     }
                     this.setState({printCurrent: (ev.newPoint + 1)})
                     console.log("data", data);
-                    //this.handlePagePreview(this.state.fileOuter)
                 }
             }
         };
-        alert(JSON.stringify(this.state.fileList))
+        //alert(JSON.stringify(this.state.fileList))
         console.log("previewindex props",  props.location.state);
     }
 
@@ -100,6 +98,12 @@ class Index extends React.Component {
     }
 
     componentDidMount() {
+        // 屏蔽触摸移动
+        document.getElementById('print-preview').addEventListener("touchmove", (e) => {
+            this.unableTouchMove(e)
+        }, {
+            passive: false
+        })
         const self = this
         deli.common.navigation.setTitle({
             "title": "打印预览"
@@ -120,6 +124,11 @@ class Index extends React.Component {
             Cookies.remove('orgId');
             Cookies.remove('token');
         }, function (resp) { });
+    }
+
+    // 屏蔽触摸移动
+    unableTouchMove(e) {
+        e.preventDefault();
     }
 
     // 打印机信息
@@ -479,7 +488,7 @@ class Index extends React.Component {
             } />;
         }
         return (
-            <div className="print-preview">
+            <div className="print-preview" id="print-preview" onTouchMove={this.unableTouchMove.bind(this)}>
                 <Group className="preview-title">
                     <Group.List lineIndent={15}>
                         <div>

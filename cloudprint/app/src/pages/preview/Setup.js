@@ -70,6 +70,12 @@ class PreviewSetup extends React.Component {
     }
 
     componentDidMount() {
+        // 屏蔽触摸移动
+        document.getElementById('print-setup').addEventListener("touchmove", (e) => {
+            this.unableTouchMove(e)
+        }, {
+            passive: false
+        })
         const self = this
         deli.common.navigation.setTitle({
             "title": "设置"
@@ -91,6 +97,11 @@ class PreviewSetup extends React.Component {
             Cookies.remove('orgId');
             Cookies.remove('token');
         }, function (resp) {});
+    }
+
+    // 屏蔽触摸移动
+    unableTouchMove(e) {
+        e.preventDefault();
     }
     
     handleChildChange(range) {
@@ -170,7 +181,7 @@ class PreviewSetup extends React.Component {
                 state: data
             })
         }
-        return (<div className="print-setup">
+        return (<div className="print-setup" id="print-setup" onTouchMove={this.unableTouchMove.bind(this)}>
             <Group className="print-setup-content">
                 <Group.List lineIndent={15}>
                     <div>

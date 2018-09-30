@@ -63,7 +63,7 @@ class PreviewSetup extends React.Component {
                 'printPageSize': 'A4',
                 'printColorMode': 'black',
                 'isPrintWhole':  0,
-                'printStartPage': 0
+                'printStartPage': 1
             },
             redirectBack: false
         }

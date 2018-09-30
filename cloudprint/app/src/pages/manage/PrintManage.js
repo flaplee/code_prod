@@ -115,7 +115,7 @@ class PrintManage extends React.Component {
                 }
                 response.json().then(function (data) {
                     console.log("data", data)
-                    if (data.code === 0) {
+                    if (data.code == 0) {
                         self.setState({ printer: data.data }, function () {
                             console.log("test2")
                             //查询打印机墨水信息
@@ -131,7 +131,7 @@ class PrintManage extends React.Component {
                                         return;
                                     }
                                     response.json().then(function (data) {
-                                        if (data.code === 0) {
+                                        if (data.code == 0) {
                                             self.setState({ inkbox: data.data }, function () {
                                                 console.log("test3")
                                                 Cookies.save('toner', parseInt(data.data.inkboxColors[0].tonerRemain), { path: '/' });

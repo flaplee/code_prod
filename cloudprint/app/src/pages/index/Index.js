@@ -87,7 +87,6 @@ class PrintIndex extends Component{
                 Cookies.save('appId', appIdPrint, { path: '/' });
                 Cookies.save('timestamp', timestampPrint, { path: '/' });
                 Cookies.save('nonceStr', nonceStrPrint, { path: '/' });
-
                 self.setState({ "user": { "app_id": appIdPrint } })
             }
 
@@ -386,7 +385,7 @@ class PrintIndex extends Component{
         //获取应用id
         fetch(mpURL + '/a/auth/config', {
             method: 'POST',
-            headers: appData,
+            headers: {},
             body: appData
         }).then(
             function (response) {
@@ -394,7 +393,7 @@ class PrintIndex extends Component{
                     return;
                 }
                 response.json().then(function (data) {
-                    if (data.code === 0) {
+                    if (data.code == 0) {
                         Cookies.save('appId', data.data.appId, { path: '/' });
                         Cookies.save('sign', data.data.signStr, { path: '/' });
                         // todo
@@ -480,7 +479,6 @@ class PrintIndex extends Component{
         clearInterval(timer)
     }
     
-
     // 处理扫码结果
     getScanQrcode(text, type, fileList){
         const self = this

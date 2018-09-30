@@ -46,7 +46,7 @@ class Index extends React.Component {
                 'printPageSize': 'A4',
                 'printColorMode': 'black',
                 'isPrintWhole': 0,
-                'printStartPage': 0
+                'printStartPage': 1
             },
             printertData:{},
             pageData: {},//props.location.state,
@@ -143,12 +143,15 @@ class Index extends React.Component {
         let printData = new FormData();
         let printItems = self.state.printData;
         let fileMsg = {
-            'pdfMd5': this.state.fileList[0].pdfMd5,
-            'fileSuffix': this.state.fileList[0].fileSuffix
+            'totalPage': self.state.fileList[0].totalPage,
+            'pdfMd5': self.state.fileList[0].pdfMd5,
+            'fileSuffix': self.state.fileList[0].fileSuffix
         }
-        printItems.fileSourceUrl = this.state.fileList[0].fileSourceUrl
-        printItems.fileSuffix = this.state.fileList[0].fileSuffix
-        printItems.fileSourceName = this.state.fileList[0].fileSourceName
+        printItems.printerSn = self.state.sn
+        printItems.totalPage = self.state.fileList[0].totalPage
+        printItems.fileSourceUrl = self.state.fileList[0].fileSourceUrl
+        printItems.fileSuffix = self.state.fileList[0].fileSuffix
+        printItems.fileSourceName = self.state.fileList[0].fileSourceName
         if (printItems) {
             Object.keys(printItems).map(print => {
                 printData.append(print, printItems[print]);
@@ -170,6 +173,12 @@ class Index extends React.Component {
                     console.log("json", json)
                     if (json.code === 0) {
                         self.handlePrinterStart(json.data, fileMsg);
+                    }else{
+                        deli.common.notification.toast({
+                            "text": json.msg,
+                            "duration": 1.5
+                        }, function (data) {}, function (resp) {});
+                        self.setState({ printLoading: false }, function () {})
                     }
                 });
             }
@@ -185,6 +194,7 @@ class Index extends React.Component {
         PrinterData.append('printerSn', self.state.sn);
         PrinterData.append('taskCode', task);
         //update 20180929
+        PrinterData.append('totalPage', fileMsg.totalPage);
         PrinterData.append('pdfMd5', fileMsg.pdfMd5);
         PrinterData.append('fileSuffix', fileMsg.fileSuffix);
         fetch(mpURL + '/app/printerTask/setPrinterToPrint', {
@@ -203,11 +213,11 @@ class Index extends React.Component {
                     if (json.code == 0) {
                         self.setState({ printLoading: false, redirectPrintTask: true }, function () { })
                     }else{
-                         deli.common.notification.toast({
+                        deli.common.notification.toast({
                             "text": json.msg,
                             "duration": 1.5
                         },function(data){},function(resp){});
-                        self.setState({ printLoading: false }, function () { })
+                        self.setState({ printLoading: false }, function () {})
                     }
                 });
             }
@@ -269,7 +279,8 @@ class Index extends React.Component {
                                 'fileSuffix': json.fileType,
                                 'pdfMd5': json.pdfMd5,
                                 'fileSourceName': json.sourceName,
-                                'fileSourceUrl': inner
+                                'fileSourceUrl': json.printUrl,
+                                'previewUrl': inner
                             })
                             self.setState({fileType: 'image', fileList: imgFileList}, function () {
                                 deli.common.notification.hidePreloader();
@@ -280,7 +291,8 @@ class Index extends React.Component {
                             docFileList.push({
                                 'fileSuffix': json.fileType,
                                 'fileSourceName': json.sourceName,
-                                'fileSourceUrl': inner
+                                'fileSourceUrl': json.printUrl,
+                                'previewUrl': inner
                             })
                         })
                     }
@@ -301,7 +313,8 @@ class Index extends React.Component {
                 imgFileList.push({
                     'fileSuffix': json.fileType,
                     'fileSourceName': json.sourceName,
-                    'fileSourceUrl': inner
+                    'fileSourceUrl': json.printUrl,
+                    'previewUrl': inner
                 })
                 self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {
                     deli.common.notification.hidePreloader();
@@ -312,7 +325,8 @@ class Index extends React.Component {
                 imgFileList.push({
                     'fileSuffix': json.fileType,
                     'fileSourceName': json.sourceName,
-                    'fileSourceUrl': inner
+                    'fileSourceUrl': json.printUrl,
+                    'previewUrl': inner
                 })
                 if (imgFileNum == data.length) {
                     self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {
@@ -461,7 +475,7 @@ class Index extends React.Component {
         const result = [];
         if(imgItem.length > 0){
             for (let i = 0; i < imgItem.length; i++) {
-                result.push(<div key={`page-img-${i}`} className="swiper-slide"><div className="swiper-slide-img"><img src={imgItem[i].fileSourceUrl} /></div></div>);
+                result.push(<div key={`page-img-${i}`} className="swiper-slide"><div className="swiper-slide-img"><img src={imgItem[i].previewUrl} /></div></div>);
             }
         }
         

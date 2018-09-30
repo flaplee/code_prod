@@ -86,7 +86,7 @@ class Nav extends Component {
     loadPreviewFile(data, type, callback){
         const self = this
         if(typeof callback === 'function'){
-            callback(convertURL + '/file/preview/' + data.id + '_' + data.totalPage + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '', {
+            callback(convertURL + '/file/preview/' + data.id + '_' + data.totalPage + '_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + '', {
                 "fileId": data.id,
                 "fileType": data.fileType,
                 "checkedPage": data.totalPage,
@@ -99,7 +99,7 @@ class Nav extends Component {
     loadPreviewImg(data, type, callback) {
         const self = this
         if (typeof callback === 'function') {
-            callback(convertURL + '/file/preview/' + data.id + '_' + data.totalPage + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '', {
+            callback(convertURL + '/file/preview/' + data.id + '_' + data.totalPage + '_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + '', {
                 "fileId": data.id,
                 "fileType": data.fileType,
                 "checkedPage": data.totalPage,
@@ -145,7 +145,7 @@ class Nav extends Component {
                     if (json.code == 0) {
                         //self.startConvertPoll(json.data, callback)
                         if (typeof callback === 'function') {
-                            /* callback(convertURL + '/file/preview/' + json.data[0].id + '_' + json.data[0].totalPage + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '', {
+                            /* callback(convertURL + '/file/preview/' + json.data[0].id + '_' + json.data[0].totalPage + '_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + '', {
                                 "fileId": json.data[0].id,
                                 "fileType": json.data[0].fileType,
                                 "checkedPage": json.data[0].totalPage,
@@ -251,7 +251,9 @@ class Nav extends Component {
                                                 'fileSuffix': json[i].fileType,
                                                 'pdfMd5': json[i].pdfMd5,
                                                 'fileSourceName': json[i].fileName,
-                                                'fileSourceUrl': inner
+                                                'totalPage': json[i].totalPage,
+                                                'previewUrl': inner,
+                                                'fileSourceUrl': json[i].printUrl
                                             })
                                             console.log("imgFileNum", imgFileNum)
                                             console.log("status", imgFileNum == (data.length - 1 ))
@@ -312,16 +314,21 @@ class Nav extends Component {
                                 file: data[docFileNum].file_path
                             }, function (json) {
                                 //单个文件处理
-                                for (let i = 1; i <= json[0].totalPage; i++) {
-                                    docFileList.push({
-                                        'fileSuffix': json[0].fileType,
-                                        'fileSourceName': json[0].fileName,
-                                        'fileSourceUrl': (convertURL + '/file/preview/' + json[0].id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '')
-                                    })
+                                if (json[0].status == 1){
+                                    for (let i = 1; i <= json[0].totalPage; i++) {
+                                        docFileList.push({
+                                            'fileSuffix': json[0].fileType,
+                                            'fileSourceName': json[0].fileName,
+                                            'totalPage': json[0].totalPage,
+                                            'pdfMd5': json[0].pdfMd5,
+                                            'fileSourceUrl': json[0].printUrl,
+                                            'previewUrl': (convertURL + '/file/preview/' + json[0].id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + '')
+                                        })
+                                    }
+                                    self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList}, function () {
+                                        deli.common.notification.hidePreloader();
+                                    });
                                 }
-                                self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList}, function () {
-                                    deli.common.notification.hidePreloader();
-                                });
                             }, function (resp) {});
                         }
                     }
@@ -337,18 +344,21 @@ class Nav extends Component {
                         let urlFileList = []
                         self.loadPreviewUrl(data[0], 'url', function(json){
                             //单个文件处理
-                            for (let i = 1; i <= json.totalPage; i++) {
-                                urlFileList.push({
-                                    'fileSuffix': json.fileType,
-                                    'fileSourceName': json.fileName,
-                                    'totalPage': json.totalPage,
-                                    'fileSourceUrl': (convertURL + '/file/preview/' + json.id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '')
-                                })
+                            if (json.status == 1){
+                                for (let i = 1; i <= json.totalPage; i++) {
+                                    urlFileList.push({
+                                        'fileSuffix': json.fileType,
+                                        'fileSourceName': json.fileName,
+                                        'totalPage': json.totalPage,
+                                        'previewUrl': (convertURL + '/file/preview/' + json.id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + ''),
+                                        'fileSourceUrl': json.printUrl
+                                    })
+                                }
+                                
+                                self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: urlFileList }, function(){
+                                    deli.common.notification.hidePreloader();
+                                });
                             }
-                            
-                            self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: urlFileList }, function(){
-                                deli.common.notification.hidePreloader();
-                            });
                         })
                 }, function (resp) {
                     alert(JSON.stringify(resp));

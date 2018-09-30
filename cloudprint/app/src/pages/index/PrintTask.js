@@ -126,7 +126,9 @@ class ChooseTask extends React.Component {
                 'pdfMd5': '',
                 'fileSuffix': fileList[index].fileSourceName.substring(fileList[index].fileSourceName.lastIndexOf("\.") + 1, fileList[index].fileSourceName.length),
                 'fileSourceName': fileList[index].fileSourceName,
-                'fileSourceUrl': (convertURL + '/file/preview/' + fileList[index].id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '')
+                'fileSourceUrl': fileList[index].printUrl,
+                'totalPage': fileList[index].totalPage,
+                'previewUrl': (convertURL + '/file/preview/' + fileList[index].id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '')
             })
         }
         //alert(JSON.stringify(docFileList))
@@ -270,14 +272,15 @@ class ChooseTask extends React.Component {
             console.log("错误:" + err);
         });
     }
-
+    
     //扫码指定打印机
     handleQrcodeTask(item) {
         console.log("扫码指定打印机~~~~~~~~~~~~")
         const self = this
         self.setState({ layerView: false });
         deli.app.code.scan({
-            app_id: ''
+            app_id: Cookies.load('appId'),
+            direct: true
         }, function (data) {
             let qrData = new FormData()
             qrData.append('qrcode', data.text)

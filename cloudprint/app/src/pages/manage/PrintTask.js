@@ -109,7 +109,7 @@ class ManageTask extends Component {
                 }
                 response.json().then(function (data) {
                     console.log("data", data)
-                    if (data.code === 0) {
+                    if (data.code == 0) {
                         if (self.state.printer.sn != data.data.printerSn || self.state.printer.name != data.data.printerName || self.state.printer.status == data.data.onlineStatus){
                             self.setState({ sn: data.data.printerSn, name: data.data.printerName, status: data.data.onlineStatus}, function () {})
                         }

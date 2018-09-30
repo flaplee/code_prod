@@ -102,11 +102,22 @@
     }
 }
 
+.t-slot-body li{
+    font-size: 2.5rem;
+}
+
 .t-slot-header{
     font-size: 3rem;
-    height: 6rem;
-    line-height: 6rem;
+    height: 8rem;
+    line-height: 8rem;
+    .t-slot-confirm{
+        color: rgba(31,56,88,0.6);
+        &.enable{
+            color: #477FFF;
+        }
+    }
 }
+
 .t-slot-title{
     font-size: 2.5rem;
 }
@@ -118,6 +129,7 @@
         line-height: 6rem;
     }
     >.t-slot-body{
+        height: 24rem;
         >.t-scroller{
             .t-slot-body li{
                 height: 4rem;

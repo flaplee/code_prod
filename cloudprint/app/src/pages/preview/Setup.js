@@ -14,11 +14,11 @@ class PreviewSetup extends React.Component {
         super(props)
         const t = this
         t.state = {
-            tranPreview: props.location.state,
+            tranPreview: Cookies.load('printPreviewData') || {},
             paper: { data: [{ value: 'A4', text: 'A4' }, { value: 'A5', text: 'A5' }], current: 0},
             direction: { data: [{ value: 1, text: '横向' }, { value: 2, text: '纵向' }], current: 0},
             mode: { data: [{ value: 0, text: '单面' }, { value: 1, text: '双面' }, { value: 2, text: '双面短边' }], current: 0},
-            color: { data: [{ value: 'singlecolour', text: '黑白' }, { value: 'multicolour', text: '彩色' }], current: 0}, 
+            color: { data: [{ value: 'black', text: '黑色' }, { value: 'white', text: '白色' }], current: 0}, 
             range: {
                 count: 1,
                 options: [{
@@ -30,16 +30,7 @@ class PreviewSetup extends React.Component {
                         children: [{
                             value: 1,
                             label: 1
-                        },{
-                            value: 2,
-                            label: 2
-                        }, {
-                            value: 3,
-                            label: 3
-                        }, {
-                            value: 4,
-                            label: 4
-                        }],
+                        }]  //Cookies.load('printChildrens') || 
                     }]
                 }],
                 columns: ['开始', '', '结束'],
@@ -47,28 +38,46 @@ class PreviewSetup extends React.Component {
             },
             layerView: false,
             type: 'paper',
-            PrintSetupData:{
+            PrintSetupData: Cookies.load('printData') || {
                 'fileSource': 'CLOUD',
                 'duplexMode': 1,
                 'fileSourceUrl': '',
                 'fileSuffix': '',
-                'taskSource': 'WBE',
-                'printerSn':  '',
-                'printDirection': 1,
                 'fileSourceName': '',
+                'taskSource': (deli.android ? 'ANDROID' : (deli.ios ? 'IOS' : 'WBE')),
+                'printDirection': 1,
                 'printEndPage': 1,
                 'pagesPre': 1,
-                'copyCount':  1,
+                'copyCount': 1,
                 'printDpi': 600,
                 'printPageSize': 'A4',
                 'printColorMode': 'black',
-                'isPrintWhole':  0,
+                'isPrintWhole': 0,
                 'printStartPage': 1
             },
             redirectBack: false
         }
     }
 
+    
+    componentWillMount() {
+        this.setState({ paper: Object.assign({}, this.state.paper, { current: (this.state.paper.data.findIndex(element => element.value == Cookies.load('printData').printPageSize)) || 0 }) }, function () {
+            Cookies.save('printData', this.state.PrintSetupData, { path: '/' });
+        })
+
+        this.setState({ direction: Object.assign({}, this.state.direction, { current: (this.state.direction.data.findIndex(element => element.value == Cookies.load('printData').printDirection)) || 0 }) }, function () {
+            Cookies.save('printData', this.state.PrintSetupData, { path: '/' });
+        })
+
+        this.setState({ mode: Object.assign({}, this.state.mode, { current: (this.state.mode.data.findIndex(element => element.value == Cookies.load('printData').duplexMode)) || 0 }) }, function () {
+            Cookies.save('printData', this.state.PrintSetupData, { path: '/' });
+        })
+
+        this.setState({ color: Object.assign({}, this.state.color, { current: (this.state.color.data.findIndex(element => element.value == Cookies.load('printData').printColorMode)) || 0 }) }, function () {
+            Cookies.save('printData', this.state.PrintSetupData, { path: '/' });
+        })
+    }
+    
     componentDidMount() {
         // 屏蔽触摸移动
         document.getElementById('print-setup').addEventListener("touchmove", (e) => {
@@ -84,8 +93,9 @@ class PreviewSetup extends React.Component {
         deli.common.navigation.setRight({
             "text": "确认"
         }, function (data) {
-            Cookies.save('setupData', self.state.PrintSetupData, { path: '/' });
-            self.setState({ PrintSetupData: self.state.PrintSetupData, redirectBack: true }, function () {})
+            self.setState({ PrintSetupData: self.state.PrintSetupData, redirectBack: true }, function () {
+                Cookies.save('printData', self.state.PrintSetupData, { path: '/' });
+            })
         }, function (resp) {});
 
         // 关闭
@@ -106,9 +116,13 @@ class PreviewSetup extends React.Component {
     
     handleChildChange(range) {
         if (range) {
-            this.setState({ range: { value: range } }, function () {
+            let tmpPrintData = Object.assign({}, this.state.PrintSetupData, { printStartPage: range[0], printEndPage: range[1]  })
+            this.setState({ layerView: false, PrintSetupData: tmpPrintData }, function () {
+                Cookies.save('printData', this.state.PrintSetupData, { path: '/' });
+            })
+            /* this.setState({range: { value: range } }, function () {
                 console.log("~~~~~~~~~value", this.state.range.value);
-            });
+            }); */
         }
     }
 
@@ -123,37 +137,58 @@ class PreviewSetup extends React.Component {
                 tmpData = Object.assign({}, this.state.paper, { current: index})
                 tmpPrintData = Object.assign({}, this.state.PrintSetupData, { printPageSize: value })
                 this.setState({ layerView: false, type: type, paper: tmpData , PrintSetupData: tmpPrintData }, function () {
-                    //console.log("this.sate.PrintSetupData", this.state.PrintSetupData)
-                    Cookies.save('printData', this.state.PrintSetupData)
+                    Cookies.save('printData', tmpPrintData, { path: '/' });
                 })
                 break;
             case 'direction':
                 tmpData = Object.assign({}, this.state.direction, { current: index })
                 tmpPrintData = Object.assign({}, this.state.PrintSetupData, { printDirection: value })
                 this.setState({ layerView: false, type: type, direction: tmpData , PrintSetupData: tmpPrintData }, function () {
-                    //console.log("this.sate.PrintSetupData", this.state.PrintSetupData)
-                    Cookies.save('printData', this.state.PrintSetupData)
+                    Cookies.save('printData', tmpPrintData, { path: '/' });
                 })
                 break;
             case 'mode':
                 tmpData = Object.assign({}, this.state.mode, { current: index })
                 tmpPrintData = Object.assign({}, this.state.PrintSetupData, { duplexMode: value })
                 this.setState({ layerView: false, type: type, mode: tmpData, PrintSetupData: tmpPrintData }, function () {
-                    //console.log("this.sate.PrintSetupData", this.state.PrintSetupData)
-                    Cookies.save('printData', this.state.PrintSetupData)
+                    Cookies.save('printData', tmpPrintData, { path: '/' });
                 })
                 break;
             case 'color':
                 tmpData = Object.assign({}, this.state.color, { current: index })
                 tmpPrintData = Object.assign({}, this.state.PrintSetupData, { printColorMode: value })
                 this.setState({ layerView: false, type: type, color: tmpData, PrintSetupData: tmpPrintData }, function () {
-                    //console.log("this.sate.PrintSetupData", this.state.PrintSetupData)
-                    Cookies.save('printData', this.state.PrintSetupData)
+                    Cookies.save('printData', tmpPrintData, { path: '/' });
                 })
                 break;
             default:
                 break;
         }
+    }
+
+    // 打印页面设置
+    handlePrintPage(total) {
+        const self = this
+        const printOptionsItems
+        const printChildrens = []
+        const printOptions = []
+        for (let i = 1; i <= total; i++) {
+            printChildrens.push({
+                value: i,
+                label: i
+            })
+        }
+        printOptionsItems = {
+            value: 1,
+            label: 1,
+            children: [{
+                value: '-',
+                label: '-',
+                children: printChildrens
+            }]
+        }
+        printOptions.push(printOptionsItems)
+        return printOptions
     }
 
     renderItems(type) {
@@ -169,17 +204,19 @@ class PreviewSetup extends React.Component {
         }
         return result;
     }
+
     render() {
         const hashHistory = createHashHistory()
         //this.setState({tranPreview : {printData : this.state.PrintSetupData}})
         if (this.state.redirectBack) {
             const data = this.state.tranPreview
             const sn = data.sn
-            hashHistory.push({
+            hashHistory.goBack();
+            /* hashHistory.push({
                 pathname: '/previewindex',
                 search: "?sn=" + sn + "",
                 state: data
-            })
+            }) */
         }
         return (<div className="print-setup" id="print-setup" onTouchMove={this.unableTouchMove.bind(this)}>
             <Group className="print-setup-content">
@@ -240,7 +277,7 @@ class PreviewSetup extends React.Component {
                             </HBox>
                         </div>
                     </div>
-                    <SelectField Name="setup-select-field" columns={this.state.range.columns} options={this.state.range.options} onChange={this.handleChildChange.bind(this)} placeholder={"所有页面("+ this.state.range.count + "页)"} unit="页" />
+                    <SelectField Name="setup-select-field" columns={this.state.range.columns} options={this.handlePrintPage(30)} onChange={this.handleChildChange.bind(this)} placeholder={"所有页面("+ this.state.range.count + "页)"} unit="页" />
                 </Group.List>
             </Group>
             <Layer bottom="0" visible={this.state.layerView}  maskCloseable>

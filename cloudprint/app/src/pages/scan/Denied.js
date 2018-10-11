@@ -57,7 +57,7 @@ class Denied extends React.Component {
         const hashHistory = createHashHistory()
         if(this.state.redirectIndexNav){
             const sn = this.state.printer.sn
-            const name = this.state.printer.sn
+            const name = this.state.printer.name
             const status = this.state.printer.status
             console.log("hashHistory", hashHistory)
             hashHistory.replace({

@@ -233,13 +233,13 @@ class ManageTask extends Component {
                                         <p className="print-list-title-single">打印机</p>
                                     </Box>
                                 </HBox>
-                                <HBox flex={1}>
-                                    <Box className="print-list-text-content-single" flex={1}>
-                                       <div className={(this.state.status == 0 ? 'print-img-status print-status-error' : (this.state.status == 1 ? 'print-img-status print-status-success' : 'print-img-status print-status-offline'))}></div>
+                                <HBox flex={1} className="print-list-text-content-info">
+                                    <Box className="print-list-text-content-single print-list-text-content-single-status" flex={1}>
+                                        <div className={(this.state.printer.status == 0 ? 'print-img-status print-status-error' : (this.state.printer.status == 1 ? 'print-img-status print-status-success' : 'print-img-status print-status-offline'))}></div>
                                     </Box>
                                     <Box>
                                         <div name="angle-right" width={20} fill="#ccc" className="print-list-name">
-                                            <p className="print-list-title-single">{this.state.name}</p>
+                                                <p className="print-list-title-single print-list-title-single-name">{this.state.printer.name}</p>
                                         </div>
                                     </Box>
                                 </HBox>

@@ -161,6 +161,13 @@
     font-size: 3rem;
     color: #222;
     padding-bottom: 0;
+    &.print-list-title-single-name{
+        font-size: 2.5rem;
+        width: 32rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }
 
 .tip {

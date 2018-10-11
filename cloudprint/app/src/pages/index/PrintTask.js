@@ -117,13 +117,14 @@ class ChooseTask extends React.Component {
     handleprintTask(item) {
         console.log("重新打印~~~~~~~~~~~~")
         const self = this
+        self.setState({ layerView: false });
         let docFileList = []
         let fileList = self.state.fileList
         let index = fileList.findIndex(element => element.taskCode === item.taskCode)
         //单个文件处理
         for (let i = 1; i <= fileList[index].printPageCount; i++) {
             docFileList.push({
-                'pdfMd5': '',
+                'pdfMd5': fileList[index].pdfMd5,
                 'fileSuffix': fileList[index].fileSourceName.substring(fileList[index].fileSourceName.lastIndexOf("\.") + 1, fileList[index].fileSourceName.length),
                 'fileSourceName': fileList[index].fileSourceName,
                 'fileSourceUrl': fileList[index].printUrl,
@@ -131,7 +132,6 @@ class ChooseTask extends React.Component {
                 'previewUrl': (convertURL + '/file/preview/' + fileList[index].id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '')
             })
         }
-        //alert(JSON.stringify(docFileList))
         self.setState({ layerView: false, redirect: { previewNav: true }, fileType: 'image', fileList: docFileList },function(){
             deli.common.notification.hidePreloader();
         });
@@ -302,8 +302,8 @@ class ChooseTask extends React.Component {
                             printerData.append('printerSn', json.data)
                             printerData.append('taskCode', item.taskCode)
                             //update 20180929
-                            PrinterData.append('pdfMd5', '');
-                            PrinterData.append('fileSuffix', '');
+                            PrinterData.append('pdfMd5', item.pdfMd5);
+                            PrinterData.append('fileSuffix', item.fileSuffix);
                             //任务设置打印机 
                             fetch(mpURL + '/app/printerTask/setPrinterToPrint', {
                                 method: 'GET',
@@ -410,7 +410,7 @@ class ChooseTask extends React.Component {
                 fileExt: this.state.fileItemData.fileType
             }
             const sn = this.state.printer.sn
-            const name = this.state.printer.sn
+            const name = this.state.printer.name
             const status = this.state.printer.status
             return <Redirect push to={
                 { pathname: "/managetask", search: "?sn=" + sn + "&name=" + name + "&status=" + status +"", state: { "sn": sn, "file": file }  }
@@ -424,7 +424,7 @@ class ChooseTask extends React.Component {
                 fileExt: this.state.fileItemData.fileType
             }
             const sn = this.state.printer.sn
-            const name = this.state.printer.sn
+            const name = this.state.printer.name
             const status = this.state.printer.status
             const fileList = this.state.fileList
             return <Redirect push to={

@@ -136,7 +136,7 @@ class PrintList extends React.Component {
         const hashHistory = createHashHistory()
         if(this.state.redirectIndexNav){
             const sn = this.state.sn
-            hashHistory.push({
+            hashHistory.replace({
                 pathname: '/',
                 search: "?sn=" + sn + "",
                 state: { "sn": sn }

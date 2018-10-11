@@ -78,7 +78,7 @@ class PrintIndex extends Component{
             timestampPrint = (Date.now().toString())
             nonceStrPrint = "abcdefg";
         }
-
+        
         self.getAppData(timestampPrint, nonceStrPrint, function (response) {
             if (response && response.signStr) {
                 signPrint = response.signStr
@@ -112,7 +112,6 @@ class PrintIndex extends Component{
                         app_id: Cookies.load('appId'),
                         direct: true
                     }, function (json) {
-                        //alert(json.text)
                     }, function(resp) {});
                 }, function(resp) {});
 
@@ -130,9 +129,9 @@ class PrintIndex extends Component{
                     Cookies.remove('userId');
                     Cookies.remove('orgId');
                     Cookies.remove('token');
-                    Cookies.remove('loginToken');
+                    //Cookies.remove('loginToken');
                 }, function (resp) {});
-
+                
                 if(!(Cookies.load('userId') && Cookies.load('orgId') && Cookies.load('token'))){
                     deli.app.user.get({
                         "user_id": ""
@@ -142,18 +141,32 @@ class PrintIndex extends Component{
                             deli.app.organization.get({
                                 "org_id": ""
                             }, function (odata) {
-                                self.setState({ "user": { "org_id": odata.organization.id } })
-                                deli.app.session.get({
-                                    user_id: data.user.id
-                                }, function (udata) {
-                                    Cookies.save('loginToken', udata.token, { path: '/' });
-                                    self.getLocalData({
-                                        user_id: data.user.id,
-                                        org_id: odata.organization.id,
-                                        token: udata.token
-                                    }, self.state.sn);
-                                }, function (uresp) {});
+                                if(odata){
+                                    self.setState({ "user": { "org_id": odata.organization.id } })
+                                    deli.app.session.get({
+                                        user_id: data.user.id
+                                    }, function (udata) {
+                                        Cookies.save('loginToken', udata.token, { path: '/' });
+                                        self.getLocalData({
+                                            user_id: data.user.id,
+                                            org_id: odata.organization.id,
+                                            token: udata.token
+                                        }, self.state.sn);
+                                    }, function (uresp) {});
+                                }else{
+                                    deli.common.notification.prompt({
+                                        "type": 'error',
+                                        "text": '获取组织信息失败',
+                                        "duration": 1.5
+                                    }, function (data) {}, function (resp) {});
+                                }
                             }, function (oresp) {});
+                        }else{
+                            deli.common.notification.prompt({
+                                "type": 'error',
+                                "text": '获取员工信息失败',
+                                "duration": 1.5
+                            }, function (data) {}, function (resp) {});
                         }
                     }, function (resp) {
                     });
@@ -176,7 +189,6 @@ class PrintIndex extends Component{
             deli.error(function () {
                 console.log("deli.error")
             });
-
         });
     }
 

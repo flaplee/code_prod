@@ -234,7 +234,7 @@ class PrintManage extends React.Component {
                                     </Box>
                                 </HBox>
                                 <Box>
-                                    <p className="print-list-title-single omit">{this.state.printer.printerName}</p>
+                                    <p className="print-list-title-single print-list-title-single-name omit">{this.state.printer.printerName}</p>
                                 </Box>
                             </HBox>
                         </div>
@@ -249,7 +249,7 @@ class PrintManage extends React.Component {
                                     </Box>
                                 </HBox>
                                 <Box>
-                                    <p className="print-list-title-single omit">{this.state.printer.printerSn}</p>
+                                    <p className="print-list-title-single print-list-title-single-sn omit">{this.state.printer.printerSn}</p>
                                 </Box>
                             </HBox>
                         </div>

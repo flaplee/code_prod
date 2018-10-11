@@ -73,6 +73,13 @@
         font-size : 2.5rem;
         color : #222;
         padding-bottom : 0;
+        &.print-list-title-single-sn, &.print-list-title-single-name{
+            text-align: right;
+            width: 40rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 
     .print-list-text {
@@ -169,20 +176,28 @@
         margin-right : 2rem;
     }
 
+    .print-list-text-content-info{
+        max-width: 50rem;
+    }
+
     .print-list-text-content-single {
-        line-height : 3rem;
+        line-height: 3rem;
+        &.print-list-text-content-single-status{
+            width: 2rem;
+            margin-right: 1rem;
+        }
     }
 
     .print-img-status{
-        width: 3rem;
-        height: 3rem;
+        width: 2rem;
+        height: 2rem;
+        margin: .5rem 0;
         &.print-status-success, &.print-status-error, &.print-status-offline, &.print-status-empty{
-            width: 3rem;
-            height: 3rem;
-            display:block;
-            margin:0 auto;
-            background-repeat:no-repeat;
-            background-size:100% 100%;
+            width: 2rem;
+            height: 2rem;
+            display: block;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
         }
         &.print-status-success{
             background-image:url(../../images/check@3x.png)
@@ -208,6 +223,12 @@
         font-size : 2.5rem;
         color : #222;
         padding-bottom : 0;
+        .print-list-title-single-name{
+            width: 40rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 
     .print-list-text-info {

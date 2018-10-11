@@ -25,13 +25,14 @@ class Index extends React.Component {
             printLoading: false,
             sn: (new URLSearchParams(props.location.search)).get('sn') || '',
             file: (props.location.state && props.location.state.file) || '',
-            fileList: (props.location.state && props.location.state.fileList) || [],
+            fileList: (props.location.state && props.location.state.fileList) || Cookies.load('printPreviewData') || [],
             printer:{
                 sn: (new URLSearchParams(props.location.search)).get('sn') || '',
                 name: (new URLSearchParams(props.location.search)).get('name') || '',
                 status: (new URLSearchParams(props.location.search)).get('status') || ''
             },
-            printData: {
+            printChildrens:[],
+            printData: Cookies.load('printData') || {
                 'fileSource': 'CLOUD',
                 'duplexMode': 1,
                 'fileSourceUrl': '',
@@ -71,8 +72,6 @@ class Index extends React.Component {
                 }
             }
         };
-        //alert(JSON.stringify(this.state.fileList))
-        console.log("previewindex props",  props.location.state);
     }
 
     componentWillMount(){
@@ -94,7 +93,6 @@ class Index extends React.Component {
             })
         }
         //data.file_url.substring(data.file_url.lastIndexOf("\.") + 1, data.file_url.length)
-        //this.getTaskToImages(this.state.fileList)
     }
 
     componentDidMount() {
@@ -112,6 +110,8 @@ class Index extends React.Component {
         deli.common.navigation.setRight({
             "text": "设置"
         }, function (data) {
+            const tranData = self.state
+            self.handlePrintPage((tranData.fileList[0] && tranData.fileList[0].totalPage) || 0)
             self.setState({ redirectPrintSetup: true });
         }, function (resp) {});
 
@@ -123,7 +123,7 @@ class Index extends React.Component {
             Cookies.remove('userId');
             Cookies.remove('orgId');
             Cookies.remove('token');
-        }, function (resp) { });
+        }, function (resp) {});
     }
 
     // 屏蔽触摸移动
@@ -187,6 +187,24 @@ class Index extends React.Component {
         });
     }
 
+    // 打印页面设置
+    handlePrintPage(total){
+        const self = this
+        const printChildrens = []
+        for (let i = 1; i <= total; i++){
+            printChildrens.push({
+                value: i,
+                label: i
+            })
+        }
+        self.setState({
+            printChildrens: printChildrens
+        }, function () {
+            Cookies.save('printPreviewData', self.state.fileList, { path: '/' });
+            Cookies.save('printChildrens', self.state.printChildrens, { path: '/' });
+        })
+    }
+
     //任务设置打印机打印
     handlePrinterStart(task, fileMsg){
         const self = this
@@ -234,238 +252,15 @@ class Index extends React.Component {
     
     // 打印份数
     handlePrintNumChange(name, value) {
-        console.log("name", name);
-        console.log("value", value);
-        const t = this;
-        t.setState({
-            [name]: value
-        });
-    }
-
-    // 分页预览
-    handlePagePreview(data, limit){
-        const self = this
-        let pageLoad = data.pageCount
-        for(let i = 1 ;i <= ((pageLoad <= limit) ? pageLoad : limit); i++){
-            pageLoad++;
-            self.getImagePage(data)
-        }
-    }
-
-    //任务转换
-    getTaskToImages(data, type){
-        const self = this
-        //文件转换
-        let previewData = new FormData();
-        previewData.append('fileId', data.fileId);
-        previewData.append('sourceName', data.fileId);
-        previewData.append('fileType', data.fileType);
-        previewData.append('pdfPageCount', data.pdfPageCount);
-        fetch(convertURL + '/file/uploadByFile', {
-            method: 'POST',
-            headers: {
-                token: Cookies.load('token')
-            },
-            body: previewData
-        }).then(
-            function (response) {
-                if (response.status !== 200) {
-                    return;
-                }
-                response.json().then(function (json) {
-                    if(type == 'image'){
-                        self.loadPreviewImg(json, 'image', function (inner) {
-                            imgFileList.push({
-                                'fileSuffix': json.fileType,
-                                'pdfMd5': json.pdfMd5,
-                                'fileSourceName': json.sourceName,
-                                'fileSourceUrl': json.printUrl,
-                                'previewUrl': inner
-                            })
-                            self.setState({fileType: 'image', fileList: imgFileList}, function () {
-                                deli.common.notification.hidePreloader();
-                            });
-                        })
-                    }else if(type == 'file'){
-                        self.loadPreviewFile(json, 'file', function(inner, outer){
-                            docFileList.push({
-                                'fileSuffix': json.fileType,
-                                'fileSourceName': json.sourceName,
-                                'fileSourceUrl': json.printUrl,
-                                'previewUrl': inner
-                            })
-                        })
-                    }
-                });
-            }
-        ).catch(function (err) {
-            console.log("错误:" + err);
-        });
-
-        if(type=='file'){
-            self.loadPreviewFile(data, type)
-        }else{
-            self.loadPreviewImg(data, type)
-        }
-        
-        if (data.length == 1) {
-            self.loadPreviewImg(json, 'image', function (inner) {
-                imgFileList.push({
-                    'fileSuffix': json.fileType,
-                    'fileSourceName': json.sourceName,
-                    'fileSourceUrl': json.printUrl,
-                    'previewUrl': inner
-                })
-                self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {
-                    deli.common.notification.hidePreloader();
-                });
-            })
-        } else {
-            self.loadPreviewImg(json, 'image', function (inner) {
-                imgFileList.push({
-                    'fileSuffix': json.fileType,
-                    'fileSourceName': json.sourceName,
-                    'fileSourceUrl': json.printUrl,
-                    'previewUrl': inner
-                })
-                if (imgFileNum == data.length) {
-                    self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {
-                        deli.common.notification.hidePreloader();
-                    });
-                } else {
-                    self.setState({ fileType: 'image', fileList: imgFileList }, function () {
-                        deli.common.notification.hidePreloader();
-                    })
-                }
-            })
-        }
-    }
-
-    // 文件转换,下载预览图片
-    loadPreviewFile(data, type, callback){
-        //alert(JSON.stringify(data))
-        const self = this
-        //PDF 文件预览接口
-        let previewData = new FormData();
-        previewData.append('taskId', data.taskId);
-        previewData.append('fileType', ((type && type == 'file') ? data.fileType : 'pdf'));
-        previewData.append('checkedPage', 1);//data.pdfPageCount
-        previewData.append('width', 560);
-        previewData.append('height', 790);
-        fetch(convertURL + '/h5/converter/preview', {
-            method: 'POST',
-            headers: {
-                token: Cookies.load('token')
-            },
-            body: previewData
-        }).then(
-            function (response) {
-                if (response.status !== 200) {
-                    return;
-                }
-                response.json().then(function (json) {
-                    console.log("json", json)
-                    if (json.code === 0) {
-                        if (json.code === 0) {
-                            if(typeof callback === 'function'){
-                                callback(json.data, {
-                                    "taskId": data.taskId,
-                                    "fileType": data.fileType,
-                                    "checkedPage": data.pdfPageCount,
-                                    "pageCount": data.pdfPageCount
-                                });
-                            }
-                        }
-                    }
-                });
-            }
-        ).catch(function (err) {
-            console.log("错误:" + err);
-        });
-    }
-
-    // 图片转换,下载预览图片
-    loadPreviewImg(data, type, callback) {
-        //alert(JSON.stringify(data))
-        const self = this
-        //PDF 文件预览接口
-        /* let previewData = new FormData();
-        previewData.append('taskId', data.taskId);
-        previewData.append('fileType', data.fileType);
-        previewData.append('checkedPage', data.pdfPageCount);
-        previewData.append('width', 560);
-        previewData.append('height', 790);
-        fetch(convertURL + '/h5/converter/preview', {
-            method: 'POST',
-            headers: {
-                token: Cookies.load('token')
-            },
-            body: previewData
-        }).then(
-            function (response) {
-                if (response.status !== 200) {
-                    return;
-                }
-                response.json().then(function (json) {
-                    if (json.code === 0) {
-                        if(typeof callback === 'function'){
-                            callback(json.data);
-                        }
-                    }else{
-                        deli.common.notification.hidePreloader();
-                        deli.common.notification.prompt({
-                            "type": "error",
-                            "text": json.msg,
-                            "duration": 2
-                        },function(data){},function(resp){});
-                    }
-                });
-            }
-        ).catch(function (err) {
-            deli.common.notification.hidePreloader();
-            console.log("错误:" + err);
-        }); */
-
-    }
-
-    //获取图片数据
-    getImagePage(data) {
-        const self = this
-        //PDF 文件预览接口
-        let previewData = new FormData();
-        previewData.append('taskId', data.taskId);
-        previewData.append('fileType', data.fileType);
-        previewData.append('checkedPage', data.currentPage);
-        previewData.append('width', 560);
-        previewData.append('height', 790);
-        fetch(convertURL + '/h5/converter/preview', {
-            method: 'POST',
-            headers: {
-                token: Cookies.load('token')
-            },
-            body: previewData
-        }).then(
-            function (response) {
-                if (response.status !== 200) {
-                    return;
-                }
-                response.json().then(function (json) {
-                    if (json.code === 0) {
-                        const fileList = self.state.fileList
-                        self.setState({fileList:fileList})
-                    }else{
-                        deli.common.notification.hidePreloader();
-                        deli.common.notification.prompt({
-                            "type": "error",
-                            "text": json.msg,
-                            "duration": 2
-                        },function(data){},function(resp){});
-                    }
-                });
-            }
-        ).catch(function (err) {
-            deli.common.notification.hidePreloader();
-            console.log("错误:" + err);
+        const self = this;
+        const printData = Object.assign({}, Cookies.load('printData'), { 'copyCount': value })
+        self.setState({
+            [name]: value,
+            'printData': printData
+        }, function(){
+            Cookies.save('printData', printData, { path: '/' });
+            Cookies.save('printPreviewData', self.state.fileList, { path: '/' });
+            Cookies.save('printChildrens', self.state.printChildrens, { path: '/' });
         });
     }
 
@@ -478,7 +273,6 @@ class Index extends React.Component {
                 result.push(<div key={`page-img-${i}`} className="swiper-slide"><div className="swiper-slide-img"><img src={imgItem[i].previewUrl} /></div></div>);
             }
         }
-        
         return result;
     }
     
@@ -518,7 +312,7 @@ class Index extends React.Component {
                                     </Box>
                                     <Box>
                                         <Box className="print-list-text-content-single">
-                                            <p className="print-list-title-single omit left">{this.state.printertData.printerName}</p>
+                                            <p className="print-list-title-single print-list-title-single-name omit left">{this.state.printertData.printerName}</p>
                                             <Icon className="print-list-arrow right" name='direction-right' fill="#ccc" width="7rem" height="3rem" />
                                         </Box>
                                     </Box>

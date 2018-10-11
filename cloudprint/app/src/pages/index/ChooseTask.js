@@ -81,7 +81,7 @@ class ChooseTask extends React.Component {
                 fileExt: this.state.fileItemData.fileType
             }
             const sn = this.state.printer.sn
-            const name = this.state.printer.sn
+            const name = this.state.printer.name
             const status = this.state.printer.status
             const fileItemData = this.state.fileItemData
             return <Redirect push to={

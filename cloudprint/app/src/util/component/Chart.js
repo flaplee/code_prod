@@ -41,7 +41,7 @@ class PrintChart extends Component {
                 ctx.strokeStyle = '#CCCCCC'
                 ctx.rotate(-Math.PI / 2)
                 ctx.beginPath()
-                ctx.arc(0, 0, 100, 0, Math.PI * 2, false)
+                ctx.arc(0, 0, Math.round((375 / 750) * document.documentElement.clientWidth / window.dpr), 0, Math.PI * 2, false)
                 ctx.stroke()
                 ctx.restore()
 

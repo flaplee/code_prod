@@ -41,7 +41,7 @@ class PrintInk extends React.Component {
             Cookies.remove('userId');
             Cookies.remove('orgId');
             Cookies.remove('token');
-        }, function (resp) { });
+        }, function (resp) {});
     }
 
     // 屏蔽触摸移动

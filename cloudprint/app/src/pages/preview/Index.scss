@@ -103,7 +103,7 @@
 }
 
 .t-slot-body li{
-    font-size: 2.5rem;
+    font-size: 3rem;
 }
 
 .t-slot-header{
@@ -123,18 +123,21 @@
 }
 
 .t-slot-pane{
-    >.t-slot-columns{
+    touch-action: pan-y pinch-zoom;
+    .t-slot-columns{
         font-size: 2.5rem;
         height: 6rem;
         line-height: 6rem;
     }
-    >.t-slot-body{
+    .t-slot-body{
         height: 24rem;
-        >.t-scroller{
-            .t-slot-body li{
-                height: 4rem;
-                line-height: 4rem;
-                font-size: 2rem;
+        .t-slot-body{
+            ul{
+                li{
+                    font-size: 3rem;
+                    height: 4rem;
+                    line-height: 4rem;
+                }
             }
         }
     }
@@ -163,10 +166,11 @@
     padding-bottom: 0;
     &.print-list-title-single-name{
         font-size: 2.5rem;
-        width: 32rem;
+        max-width: 32rem;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        text-align:right;
     }
 }
 

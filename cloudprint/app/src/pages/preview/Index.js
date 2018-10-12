@@ -25,6 +25,7 @@ class Index extends React.Component {
             printLoading: false,
             sn: (new URLSearchParams(props.location.search)).get('sn') || '',
             file: (props.location.state && props.location.state.file) || '',
+            fileType: (props.location.state && props.location.state.fileType) || '',
             fileList: (props.location.state && props.location.state.fileList) || Cookies.load('printPreviewData') || [],
             printer:{
                 sn: (new URLSearchParams(props.location.search)).get('sn') || '',
@@ -111,10 +112,13 @@ class Index extends React.Component {
             "text": "设置"
         }, function (data) {
             const tranData = self.state
-            self.handlePrintPage((tranData.fileList[0] && tranData.fileList[0].totalPage) || 0)
+            const totalPage = (tranData.fileType == 'image') ? tranData.fileList.length : tranData.fileList[0].totalPage
+            Cookies.save('printCountData', { 'totalPage': totalPage, 'startPage': 1, 'statusPage': ((Cookies.load('printCountData') && Cookies.load('printCountData').statusPage) ? (Cookies.load('printCountData') && Cookies.load('printCountData').statusPage):  false), 'endPage': totalPage}, { path: '/' });
             self.setState({ redirectPrintSetup: true });
         }, function (resp) {});
-
+        const tranData = self.state
+        const totalPage = (tranData.fileType == 'image') ? tranData.fileList.length : tranData.fileList[0].totalPage
+        Cookies.save('printCountData', { 'totalPage': totalPage, 'startPage': 1, 'statusPage': ((Cookies.load('printCountData') && Cookies.load('printCountData').statusPage) ? (Cookies.load('printCountData') && Cookies.load('printCountData').statusPage) : false), 'endPage': totalPage }, { path: '/' });
         // 关闭
         deli.common.navigation.close({}, function (data) {
             // 重置
@@ -187,24 +191,6 @@ class Index extends React.Component {
         });
     }
 
-    // 打印页面设置
-    handlePrintPage(total){
-        const self = this
-        const printChildrens = []
-        for (let i = 1; i <= total; i++){
-            printChildrens.push({
-                value: i,
-                label: i
-            })
-        }
-        self.setState({
-            printChildrens: printChildrens
-        }, function () {
-            Cookies.save('printPreviewData', self.state.fileList, { path: '/' });
-            Cookies.save('printChildrens', self.state.printChildrens, { path: '/' });
-        })
-    }
-
     //任务设置打印机打印
     handlePrinterStart(task, fileMsg){
         const self = this
@@ -266,14 +252,23 @@ class Index extends React.Component {
 
     // 渲染图片
     rederPrintImgItem(){
-        const imgItem = this.state.fileList;
-        const result = [];
-        if(imgItem.length > 0){
-            for (let i = 0; i < imgItem.length; i++) {
-                result.push(<div key={`page-img-${i}`} className="swiper-slide"><div className="swiper-slide-img"><img src={imgItem[i].previewUrl} /></div></div>);
+        const result = []
+        const imgList = this.rederPrintImgList(this.state.fileList[0])
+        if (imgList.length > 0){
+            for (let i = 0; i < imgList.length; i++) {
+                result.push(<div key={`page-img-${i}`} className="swiper-slide"><div className="swiper-slide-img"><img src={imgList[i].previewUrl} /></div></div>);
             }
         }
         return result;
+    }
+
+    // 生成预览图片数据
+    rederPrintImgList(item){
+        const imgList = []
+        for (let i = 0; i < item.totalPage; i++){
+            imgList.push((convertURL + '/file/preview/' + item.id + '_'+ i +'_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + ''))
+        }
+        return imgList;
     }
     
     render() {

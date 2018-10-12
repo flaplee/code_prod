@@ -68,7 +68,7 @@ class TaskItem extends Component{
                     </HBox>
                     <HBox flex={1}>
                         <Box className="print-list-text-content-single" flex={1}>
-                            <p className="print-list-text-info">{dataItem.printedPageCount}/{dataItem.printPageCount} 页</p>
+                            <p className="print-list-text-info">{dataItem.printPageCount}/{dataItem.printedPageCount} 页</p>
                         </Box>
                     </HBox>
                     <Box>

@@ -402,16 +402,15 @@ class Nav extends Component {
         }, function (json) {
             //单个文件处理
             if (json[0].status == 1) {
-                for (let i = 1; i <= json[0].totalPage; i++) {
-                    docFileList.push({
-                        'fileSuffix': json[0].fileType,
-                        'fileSourceName': json[0].fileName,
-                        'totalPage': json[0].totalPage,
-                        'pdfMd5': json[0].pdfMd5,
-                        'fileSourceUrl': json[0].printUrl,
-                        'previewUrl': (convertURL + '/file/preview/' + json[0].id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + '')
-                    })
-                }
+                //for (let i = 1; i <= json[0].totalPage; i++) {}
+                docFileList.push({
+                    'fileSuffix': json[0].fileType,
+                    'fileSourceName': json[0].fileName,
+                    'totalPage': json[0].totalPage,
+                    'pdfMd5': json[0].pdfMd5,
+                    'fileSourceUrl': json[0].printUrl
+                    //'previewUrl': (convertURL + '/file/preview/' + json[0].id + '_1_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + '')
+                })
                 let tmpPrintData = Object.assign({}, self.state.printData, { printStartPage: 1, printEndPage: json[0].totalPage })
                 self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList }, function () {
                     Cookies.save('printPreviewData', docFileList, { path: '/' });
@@ -423,16 +422,16 @@ class Nav extends Component {
             } else {
                 // 处理文件转化未完成
                 self.startConvertPoll(json[0].id, function(trans){
-                    for (let i = 1; i <= trans.totalPage; i++) {
-                        docFileList.push({
-                            'fileSuffix': trans.fileType,
-                            'fileSourceName': trans.fileName,
-                            'totalPage': trans.totalPage,
-                            'pdfMd5': trans.pdfMd5,
-                            'fileSourceUrl': trans.printUrl,
-                            'previewUrl': (convertURL + '/file/preview/' + trans.id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + '')
-                        })
-                    }
+                    //for (let i = 1; i <= trans.totalPage; i++) {}
+                    docFileList.push({
+                        'fileSuffix': trans.fileType,
+                        'fileSourceName': trans.fileName,
+                        'totalPage': trans.totalPage,
+                        'pdfMd5': trans.pdfMd5,
+                        'fileSourceUrl': trans.printUrl
+                        //'previewUrl': (convertURL + '/file/preview/' + trans.id + '_1_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + '')
+                    })
+                    
                     let tmpPrintData = Object.assign({}, self.state.printData, { printStartPage: 1, printEndPage: trans.totalPage })
                     self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList }, function () {
                         Cookies.save('printPreviewData', docFileList, { path: '/' });
@@ -449,7 +448,7 @@ class Nav extends Component {
                 "type": "error",
                 "text": '网络错误，请重试',
                 "duration": 2
-            }, function (data) { }, function (resp) { });
+            }, function (data) {}, function (resp) {});
         });
     }
 
@@ -461,16 +460,15 @@ class Nav extends Component {
         self.loadPreviewUrl(data[0], 'url', function (json) {
             //单个文件处理
             if (json.status == 1) {
-                for (let i = 1; i <= json.totalPage; i++) {
-                    urlFileList.push({
-                        'fileSuffix': json.fileType,
-                        'fileSourceName': json.fileName,
-                        'totalPage': json.totalPage,
-                        'pdfMd5': json.pdfMd5,
-                        'previewUrl': (convertURL + '/file/preview/' + json.id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + ''),
-                        'fileSourceUrl': json.printUrl
-                    })
-                }
+                //for (let i = 1; i <= json.totalPage; i++) {}
+                urlFileList.push({
+                    'fileSuffix': json.fileType,
+                    'fileSourceName': json.fileName,
+                    'totalPage': json.totalPage,
+                    'pdfMd5': json.pdfMd5,
+                    //'previewUrl': (convertURL + '/file/preview/' + json.id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + ''),
+                    'fileSourceUrl': json.printUrl
+                })
                 let tmpPrintData = Object.assign({}, self.state.printData, { printStartPage: 1, printEndPage: json.totalPage })
                 self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: urlFileList }, function () {
                     Cookies.save('printPreviewData', urlFileList, { path: '/' });
@@ -488,7 +486,7 @@ class Nav extends Component {
                             'fileSourceName': trans.fileName,
                             'totalPage': trans.totalPage,
                             'pdfMd5': trans.pdfMd5,
-                            'previewUrl': (convertURL + '/file/preview/' + trans.id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + ''),
+                            //'previewUrl': (convertURL + '/file/preview/' + trans.id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + ''),
                             'fileSourceUrl': trans.printUrl
                         })
                     }

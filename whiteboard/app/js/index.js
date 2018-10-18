@@ -8,15 +8,25 @@ seajs.config({
     }
 });
 seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sockjs, stomp) {
-    util.delCookie('sign'), util.delCookie('appId'), util.delCookie('timestamp');
-    var timestampPage = (Date.now().toString()), nonceStrPage = "abcdefg";
-    util.getSignature(util.getCookie('sign'), util.config.apiurl + '/auth/config', timestampPage, nonceStrPage, function(response) {
+    var signPage = util.getCookie('sign'), timestampPage, nonceStrPage;
+    if(util.getCookie('sign') && util.getCookie('timestamp') && util.getCookie('nonceStr')){
+        signPage = util.getCookie('sign'),
+        timestampPage = util.getCookie('timestamp'),
+        nonceStrPage = util.getCookie('nonceStr');
+    }else{
+        timestampPage = (Date.now().toString()),
+        nonceStrPage = "abcdefg";
+    }
+
+    util.getSignature(signPage, util.config.apiurl + '/auth/config', timestampPage, nonceStrPage, function(response) {
         var sign, appId;
         if (response && response.signStr) {
             sign = response.signStr,
             appId = response.appId;
             util.setCookie('sign', sign, 7);
             util.setCookie('appId', appId, 7);
+            util.setCookie('timestamp', timestampPage, 7);
+            util.setCookie('nonceStr', nonceStrPage, 7);
         }
         // 注入配置信息
         deli.config({
@@ -82,7 +92,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                 Page.methods.menuAddOrAt(((util.localStorage.get('meetingStatus') && util.localStorage.get('meetingStatus') == '1') ? 1 : 0), $navAdd);
                 // 初始化 socket
                 Page.methods.initSocket();
-                
+
                 //ppt 水平方向切换动画
                 bespoke.from('article', {
                     fx: {
@@ -276,7 +286,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                 util.fixIosScrolling(pageCtn);
                 pageCtn.addEventListener('scroll', function(evt) {}, false);
                 deli.common.navigation.setTitle({
-                    "title": "共享翻页笔"
+                    "title": "共享白板"
                 }, function(data) {}, function(resp) {});
 
                 deli.common.navigation.setRight({
@@ -375,7 +385,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                     }
                     
                     deli.common.navigation.setTitle({
-                        "title": "共享翻页笔"
+                        "title": "共享白板"
                     }, function(data) {}, function(resp) {});
 
                     deli.common.navigation.setRight({
@@ -557,11 +567,11 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                             } else {
                                 $.toast(res.msg, 'cancel', {'duration':1500,'newname':'weui-toast_modify'});
                             };
-                            $.hideLoading();
+                            //$.hideLoading();
                         },
                         error: function() {
                             $.toast('网络错误，请重试', 'cancel', {'duration':1500,'newname':'weui-toast_modify'});
-                            $.hideLoading();
+                            //$.hideLoading();
                         }
                     });
                 },
@@ -765,6 +775,13 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                             self.dataHandler.meetShot.call(self, JSON.parse(resp.body));
                                         }
                                     );
+                                    //订阅白板实时数据 update 20181015
+                                    boardatClient.client.subscribe(
+                                        ("/topic/whiteBoard/{0}".format(meetId)),
+                                        function(resp) {
+                                            self.dataHandler.meetShot.call(self, JSON.parse(resp.body));
+                                        }
+                                    );
                                     self.viewHandler.showMeeting.call(self, meeting);
                                 }else{
                                     //订阅会议结束
@@ -853,8 +870,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
         });
         // 验证签名失败
         deli.error(function(resp) {
-            util.delCookie('sign');
-            util.delCookie('appId');
+            util.delCookie('sign'), util.delCookie('appId'), util.delCookie('timestamp'), util.delCookie('nonceStr');
             alert(JSON.stringify(resp));
         });
     });

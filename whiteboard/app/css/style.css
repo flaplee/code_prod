@@ -105,7 +105,6 @@ to{opacity:1}
 to{opacity:1}
 }
 
-
 /* wexin */
 #page .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before{color: #00d8d6;}
 #page .datum-o-select .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before{border-radius: 50%; -webkit-border-radius: 50%; -moz-border-radius: 50%; -ms-border-radius: 50%; -o-border-radius:50%;background-color: #fff;}

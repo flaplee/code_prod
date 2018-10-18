@@ -41,9 +41,9 @@ define(['svgicons'], function(svgicons) {
     };
     var util = {
         config: {
-            version: '20180612',
-            domain: 'https://eapp.delicloud.com/boardat/app',
-            apiurl: 'https://eapp-api.delicloud.com/boardat'
+            version: '20181015',
+            domain: 'http://eapp.delicloud.xin/whiteboard/app',
+            apiurl: 'http://eapp-api.delicloud.xin/whiteboard'
         },
         getQuery: function(param) {
             var url = window.location.href;
@@ -271,6 +271,7 @@ define(['svgicons'], function(svgicons) {
                         }
                     }
                 });
+
             }
         }
     };

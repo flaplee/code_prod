@@ -6,15 +6,25 @@ seajs.config({
     }
 });
 seajs.use(['util', 'svgicons'], function(util, svgicons) {
-    util.delCookie('sign'), util.delCookie('appId'), util.delCookie('timestamp');
-    var timestampPage = (Date.now().toString()), nonceStrPage = "abcdefg";
-    util.getSignature(util.getCookie('sign'), util.config.apiurl + '/auth/config', timestampPage, nonceStrPage, function(response) {
+    var signPage = util.getCookie('sign'), timestampPage, nonceStrPage;
+    if(util.getCookie('sign') && util.getCookie('timestamp') && util.getCookie('nonceStr')){
+        signPage = util.getCookie('sign'),
+        timestampPage = util.getCookie('timestamp'),
+        nonceStrPage = util.getCookie('nonceStr');
+    }else{
+        timestampPage = (Date.now().toString()),
+        nonceStrPage = "abcdefg";
+    }
+
+    util.getSignature(signPage, util.config.apiurl + '/auth/config', timestampPage, nonceStrPage, function(response) {
         var sign, appId;
         if (response && response.signStr) {
             sign = response.signStr,
             appId = response.appId;
             util.setCookie('sign', sign, 7);
             util.setCookie('appId', appId, 7);
+            util.setCookie('timestamp', timestampPage, 7);
+            util.setCookie('nonceStr', nonceStrPage, 7);
         }
         // 注入配置信息
         deli.config({
@@ -23,6 +33,7 @@ seajs.use(['util', 'svgicons'], function(util, svgicons) {
             timestamp: timestampPage, // 必填，生成签名的时间戳
             signature: sign || util.getCookie('sign') // 必填，服务端生成的签名 26fcd1cab8ff455bfea0ee59a67bf122
         });
+
         var Page = {
             init: function() {
                 var self = this;
@@ -398,8 +409,7 @@ seajs.use(['util', 'svgicons'], function(util, svgicons) {
         });
         // 验证签名失败
         deli.error(function(resp) {
-            util.delCookie('sign');
-            util.delCookie('appId');
+            util.delCookie('sign'), util.delCookie('appId'), util.delCookie('timestamp'), util.delCookie('nonceStr');
             alert(JSON.stringify(resp));
         });
     });

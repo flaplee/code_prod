@@ -66,6 +66,7 @@ var browser = (function() {
         if (zoom > 1) {
             zoom = Math.floor(Math.sqrt(zoom) / step) * step;
         }
+        window.zoom = zoom;
         return zoom;
     }
 })();

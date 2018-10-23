@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="./css/weui.min.css?v=2018061309">
   <link rel="stylesheet" href="./css/jquery-weui.min.css?v=2018061309">
   <link rel="stylesheet" href="./css/main.css?v=2018061309" media="all"/>
-  <link rel="stylesheet" href="./css/style.css?v=2018061309" media="all"/>
+  <link rel="stylesheet" href="./css/style.css" media="all"/>
   <style>
     #page{
       visibility: visible;
@@ -65,6 +65,7 @@
         </div>
         <div class="wrap-live">
           <div class="live-content">
+            <div class="live-draw" id="live-draw"></div>
             <div class="live-empty">
               <div class="empty-text meeting-ongoing">
                 <p class="empty-text-top">当前会议未开始</p>
@@ -139,7 +140,17 @@
 <script src='./js/src/bespoke/modernizr.custom.js?v=2018061309'></script>
 <script src='./js/src/bespoke/bespoke.js?v=2018061309'></script>
 <script src='./js/src/bespoke/bespoke-fx.min.js?v=2018061309'></script>
+<script src='./js/src/drawboard.min.js'></script>
 <script src='./js/src/sea.js?v=2018061309'></script>
-<script src='./js/index.js?v=2018061309'></script>
+<script type="text/javascript">
+  // 程序开始时，setup() 函数中的语句执行一次。
+  function setup() {
+    var domCanvas = createCanvas(displayWidth, Math.floor(212 / 667 * displayHeight));
+    domCanvas.parent('live-draw');
+  }
+  // draw() 中的语句一直执行到程序停止为止。每个语句都按顺序执行，并且在读取最后一行之后，将再次执行第一行。
+  function draw() {}
+</script>
+<script src='./js/index.js'></script>
 </body>
 </html>

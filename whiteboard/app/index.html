@@ -145,6 +145,8 @@
 <script type="text/javascript">
   // 程序开始时，setup() 函数中的语句执行一次。
   function setup() {
+    window.displayWidth = displayWidth;
+    window.displayHeight = displayHeight;
     var domCanvas = createCanvas(displayWidth, Math.floor(212 / 667 * displayHeight));
     domCanvas.parent('live-draw');
   }

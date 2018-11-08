@@ -290,7 +290,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                 }
                                 Page.data.socketIndex ++;
                             },
-                            drawPicture: function(data){
+                            drawPicture: function(data, displayWidth){
                                 console.log("drawPicture", data);
                                 //白板内容绘画
                                 if(data.img_url){
@@ -552,6 +552,30 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                     Page.methods.menuAddOrAt(0, $navAdd);
                     indexLeaveMeet(param);
                 });
+
+                setTimeout(function(){
+                    //手动画图测试
+                    $.getJSON("../json/whiteBoard.json",function(data){
+                        console.log("data", data);
+                        $('#page').removeClass('loading');
+                        $('#home-page-skeleton').removeClass('loading');
+                        //白板直播开始
+                        $boardatWrap.show();
+                        Page.data.isMeeting = true;
+                        $boardatWrap.removeClass('meet-live');
+                        $wrapTop.find('a#play').hide();
+                        $wrapTop.find('a#stop').show();
+                        $wrapLive.show();
+                        $wrapLiveArticle.show();
+                        $wrapLiveEmpty.hide();
+                        $wrapLiveEmpty.find('.empty-text').css({
+                            'display': 'none'
+                        }).filter('.meeting-ongoing').css({
+                            'display': 'table-cell'
+                        });
+                        Page.methods.drawPicture(data);
+                    });
+                }, 2000);
             },
             methods: {
                 getIndexList: function(data1, data2, func) {
@@ -990,12 +1014,104 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                             });
                         });
                     }
+                },
+                drawPicture: function(data){
+                    console.log("drawPicture", data);
+                    //白板内容绘画
+                    if(data.img_url){
+                        console.log("draw image");
+                    }
+                    // 绘制白色的点
+                    for(var i = 0; i < data.white_board_lives.length; i++){
+                        //4种画布显示情况
+                        var dev_w, dev_h, draw_w, draw_h;
+                        if(data.white_board_lives[i].len_unit == 0){
+                            dev_w = data.white_board_lives[i].dev_width,
+                            dev_h = data.white_board_lives[i].dev_height,
+                            draw_w = displayWidth,
+                            draw_h = Math.floor(212 / 667 * displayHeight);
+                        }else{
+                            dev_w = data.white_board_lives[i].dev_width * util.getDPI()[0] / 25.4,
+                            dev_h = data.white_board_lives[i].dev_height* util.getDPI()[1] / 25.4,
+                            draw_w = displayWidth,
+                            draw_h = Math.floor(212 / 667 * displayHeight);
+                        }
+                        var point_x = 0, point_y = 0;
+                        if(draw_w > dev_w && draw_h > dev_h){
+                            //坐标原点
+                            point_x = Math.floor((draw_w - dev_w) / 2);
+                            point_y = Math.floor((draw_h - dev_h) / 2);
+                            console.log("test1");
+                        }else if(draw_w > dev_w && draw_h < dev_h){
+                            //坐标原点
+                            point_x = 0;
+                            point_y = Math.floor((dev_h - draw_h) / 2);
+                            console.log("test2");
+                        }else if(draw_w < dev_w && draw_h > dev_h){
+                            //坐标原点
+                            point_x = Math.floor((dev_w - draw_w) / 2);
+                            point_y = 0;
+                            console.log("test3");
+                        }else if(draw_w < dev_w && draw_h < dev_h){
+                            //坐标原点
+                            point_x = 0;
+                            point_y = 0;
+                            console.log("test4");
+                        }
+                        for(var j = 0; j < data.white_board_lives[i].frames[0].length; j++){
+                            fill(0, 0, 255);
+                            strokeWeight(data.white_board_lives[i].frames[0][j].pt.w);
+                            //stroke(255); 设置画笔颜色
+                            switch(data.white_board_lives[i].frames[0][j].pt.c){
+                              case 0:
+                                stroke(51);
+                                break;
+                              case 1:
+                                stroke(255, 0, 0);
+                                break;
+                              case 2:
+                                stroke(0, 255, 0);
+                                break;
+                              case 3:
+                                stroke(0, 0, 255);
+                                break;
+                              default:
+                                stroke(0, 0, 0);
+                            }
+                            
+                            // 触摸点类型
+                            /*switch(data.white_board_lives[i].frames[0][j].t){
+                              case 0:
+                                stroke(51);
+                                break;
+                              case 1:
+                                stroke(255);
+                                alpha(color(255, 255, 255, 0));
+                                break;
+                            case 4:
+                                console.log("清屏");
+                                stroke(255);
+                                fill(color(255, 255, 255, 0));
+                                rect(0, 0, displayWidth, Math.floor(212 / 667 * displayHeight));
+                                clear();
+                                break;
+                              default:
+                                stroke(255);
+                            }*/
+                            //画点
+                            //point(data.white_board_lives[i].frames[0][j].pt.x, data.white_board_lives[i].frames[0][j].pt.y);
+                            point(data.white_board_lives[i].frames[0][j].pt.x , data.white_board_lives[i].frames[0][j].pt.y);
+                            console.log("Point: " + data.white_board_lives[i].frames[0][j].pt.x + " " + data.white_board_lives[i].frames[0][j].pt.y);
+                        }
+                    }
                 }
             }
         };
 
         if (!deli.isDeliApp()) {
-            Page.init();
+            $(function(){
+                Page.init();
+            });
         }
         // 验证签名成功
         deli.ready(function() {

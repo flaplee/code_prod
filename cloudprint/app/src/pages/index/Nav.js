@@ -46,22 +46,18 @@ class Nav extends Component {
             fileNum : 0,
             fileList : [],
             printData: {
-                'fileSource': 'CLOUD',
                 'duplexMode': 1,
-                'fileSourceUrl': '',
-                'fileSuffix': '',
-                'fileSourceName': '',
                 'taskSource': (deli.android ? 'ANDROID' : (deli.ios ? 'IOS' : 'WBE')),
-                'printDirection': 1,
+                'printDirection': 2,
                 'printEndPage': 1,
-                'pagesPre': 1,
                 'copyCount': 1,
                 'printDpi': 600,
-                'printPageSize': 'A4',
+                'paperSize': 'A4',
                 'printColorMode': 'black',
-                'isPrintWhole': 0,
+                'printWhole': 0,
                 'printStartPage': 1
             },
+            timer:''
         }
         console.log("props", props)
     }
@@ -71,9 +67,9 @@ class Nav extends Component {
         if (transProps.printer) {
             this.setState({
                 printer: transProps.printer,
-            }, function () {
-                
-            });
+                timer: transProps.timer,
+                transTimer: transProps.transTimer
+            }, function () {});
         }
     }
 
@@ -86,7 +82,18 @@ class Nav extends Component {
         console.log("props", props)
         console.log("state", state)
     }
-    
+
+    componentDidMount(){
+        // 允许触摸移动
+        document.getElementById('content-nav').addEventListener("touchmove", (e) => {
+            this.ableTouchMove(e)
+        })
+    }
+
+    ableTouchMove(e){
+        e.stopPropagation();
+    }
+
     //下载图片获取图片宽高
     getPreviewImg(url){
         //获取图片数据
@@ -128,14 +135,12 @@ class Nav extends Component {
     // url转换，下载预览图片
     loadPreviewUrl(data, type, callback){
         const self = this
-        let previewData = new FormData();
-        //previewData.append();
         //上传文件 第三方url转PDF
         fetch(convertURL + '/file/uploadByUrl', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
-                "token": Cookies.load('token'),
+                "MP_TOKEN": Cookies.load('token'),
             },
             body: JSON.stringify({
                 "converterUrlVos": [{
@@ -176,11 +181,10 @@ class Nav extends Component {
             }
         ).catch(function (err) {
             deli.common.notification.hidePreloader();
-            deli.common.notification.prompt({
-                "type": "error",
+            deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
-            }, function (data) {}, function (resp) {});
+            }, function (data) { }, function (resp) { });
             console.log("错误:" + err);
         });
     }
@@ -194,7 +198,7 @@ class Nav extends Component {
         fetch(convertURL + '/file/findByFileId', {
             method: 'POST',
             headers: {
-                token: Cookies.load('token')
+                "MP_TOKEN": Cookies.load('token')
             },
             body: statusData
         }).then(
@@ -232,8 +236,7 @@ class Nav extends Component {
             }
         ).catch(function (err) {
             deli.common.notification.hidePreloader();
-            deli.common.notification.prompt({
-                "type": "error",
+            deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) { }, function (resp) { });
@@ -271,47 +274,91 @@ class Nav extends Component {
                 }, function (data) {
                     if(data.length > 0){
                         let innerIndex = 0;
+                        let innerLength = data.length;
                         deli.common.notification.showPreloader();
                         for (let imgFileNum = 0; imgFileNum < data.length; imgFileNum++){
                             deli.common.file.upload({
                                 url: convertURL + '/file/uploadByFile',
                                 file: data[imgFileNum].file_path
                             }, function (json) {
-                                if(json){
+                                if (json && json instanceof Array && json.length > 0){
                                     innerIndex++;
                                     for (let i = 0; i < json.length; i++) {
                                         (function (i) {
                                             self.loadPreviewImg(json[i], 'image', function (inner) {
                                                 imgFileList.push({
+                                                    'id': json[i].id,
                                                     'fileSuffix': json[i].fileType,
-                                                    'pdfMd5': json[i].pdfMd5,
-                                                    'fileSourceName': json[i].fileName,
+                                                    'printMd5': json[i].fileMd5,
+                                                    'fileName': json[i].fileName,
                                                     'totalPage': json[i].totalPage,
                                                     'previewUrl': inner,
-                                                    'fileSourceUrl': json[i].printUrl
+                                                    'printUrl': json[i].printUrl,
+                                                    'fileSource': json[i].fileSource,
+                                                    'printPDF': false
                                                 })
                                                 let tmpPrintData = Object.assign({}, self.state.printData, { printStartPage: 1, printEndPage: json[i].totalPage })
                                                 if (innerIndex == data.length) {
                                                     self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {
-                                                        Cookies.save('printPreviewData', imgFileList, { path: '/' });
+                                                        localStorage.removeItem('printPreviewData')
+                                                        localStorage.setItem('printPreviewData', JSON.stringify(imgFileList))
+                                                        Cookies.save('printPreviewType', 'image', { path: '/' });
                                                         Cookies.save('printData', tmpPrintData, { path: '/' });
                                                         deli.common.notification.hidePreloader();
+                                                        if (data.length != innerLength){
+                                                            deli.common.notification.toast({
+                                                                "text": (data.length - innerLength) + "张图片上传失败",
+                                                                "duration": 3
+                                                            }, function (data) {}, function (resp) {});
+                                                        }
                                                     });
                                                 } else {
                                                     self.setState({ fileType: 'image', fileList: imgFileList }, function () {
-                                                        Cookies.save('printPreviewData', imgFileList, { path: '/' });
+                                                        localStorage.removeItem('printPreviewData')
+                                                        localStorage.setItem('printPreviewData', JSON.stringify(imgFileList))
+                                                        Cookies.save('printPreviewType', 'image', { path: '/' });
                                                         Cookies.save('printData', tmpPrintData, { path: '/' });
-                                                        deli.common.notification.hidePreloader();
                                                     })
                                                 }
                                             })
                                         })(i);
                                     }
+                                }else{
+                                    innerIndex++;
+                                    let tmpPrintData = Object.assign({}, self.state.printData, { printStartPage: 1, printEndPage: 1 })
+                                    if (innerIndex == data.length) {
+                                        if (data.length != 1){
+                                            self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {
+                                                localStorage.removeItem('printPreviewData')
+                                                localStorage.setItem('printPreviewData', JSON.stringify(imgFileList))
+                                                Cookies.save('printPreviewType', 'image', { path: '/' });
+                                                Cookies.save('printData', tmpPrintData, { path: '/' });
+                                                deli.common.notification.hidePreloader();
+                                                if (data.length != innerLength) {
+                                                    deli.common.notification.toast({
+                                                        "text": (data.length - innerLength) + "张图片上传失败",
+                                                        "duration": 3
+                                                    }, function (data) { }, function (resp) { });
+                                                }
+                                            });
+                                        }else{
+                                            deli.common.notification.toast({
+                                                "text": "1张图片上传失败",
+                                                "duration": 3
+                                            }, function (data) { }, function (resp) { });
+                                        }
+                                    } else {
+                                        self.setState({ fileType: 'image', fileList: imgFileList }, function () {
+                                            localStorage.removeItem('printPreviewData')
+                                            localStorage.setItem('printPreviewData', JSON.stringify(imgFileList))
+                                            Cookies.save('printPreviewType', 'image', { path: '/' });
+                                        })
+                                    }
+                                    innerLength--;
                                 }
                             }, function (resp) {
                                 deli.common.notification.hidePreloader();
-                                deli.common.notification.prompt({
-                                    "type": "error",
+                                deli.common.notification.toast({
                                     "text": '网络错误，请重试',
                                     "duration": 2
                                 }, function (data) {}, function (resp) {});
@@ -320,8 +367,7 @@ class Nav extends Component {
                     }
                 }, function (resp) {
                     deli.common.notification.hidePreloader();
-                    deli.common.notification.prompt({
-                        "type": "error",
+                    deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
                     }, function (data) {}, function (resp) {});
@@ -353,7 +399,7 @@ class Nav extends Component {
                 let docFileList = []
                 self.setState({ layerView: false });
                 deli.common.file.choose({
-                    types: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'pdf'],
+                    types: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'pdf', 'jpg', 'jpeg', 'bmg', 'png', 'pic', 'tif', 'gif', 'wmf', 'ico'],
                     max_size: 52428800
                 }, function(data) {
                     if(data.length > 0){
@@ -366,8 +412,7 @@ class Nav extends Component {
                     }
                 }, function (resp) {
                     deli.common.notification.hidePreloader();
-                    deli.common.notification.prompt({
-                        "type": "error",
+                    deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
                     }, function (data) { }, function (resp) { });
@@ -402,18 +447,22 @@ class Nav extends Component {
         }, function (json) {
             //单个文件处理
             if (json[0].status == 1) {
-                //for (let i = 1; i <= json[0].totalPage; i++) {}
+                let file_name = data[docFileNum].file_name
                 docFileList.push({
+                    'id': json[0].id,
                     'fileSuffix': json[0].fileType,
-                    'fileSourceName': json[0].fileName,
+                    'fileName': json[0].fileName,
                     'totalPage': json[0].totalPage,
-                    'pdfMd5': json[0].pdfMd5,
-                    'fileSourceUrl': json[0].printUrl
-                    //'previewUrl': (convertURL + '/file/preview/' + json[0].id + '_1_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + '')
+                    'printMd5': json[0].pdfMd5,
+                    'printUrl': json[0].printUrl,
+                    'fileSource': json[0].fileSource,
+                    'printPDF': (file_name.substring(file_name.lastIndexOf("\.") + 1, file_name.length) in ['jpg', 'jpeg', 'bmg', 'png', 'pic', 'tif', 'gif', 'wmf', 'ico']) ? true : false
                 })
                 let tmpPrintData = Object.assign({}, self.state.printData, { printStartPage: 1, printEndPage: json[0].totalPage })
                 self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList }, function () {
-                    Cookies.save('printPreviewData', docFileList, { path: '/' });
+                    localStorage.removeItem('printPreviewData')
+                    localStorage.setItem('printPreviewData', JSON.stringify(docFileList))
+                    Cookies.save('printPreviewType', 'file', { path: '/' });
                     Cookies.save('printData', tmpPrintData, { path: '/' });
                     deli.common.notification.hidePreloader();
                 });
@@ -422,19 +471,22 @@ class Nav extends Component {
             } else {
                 // 处理文件转化未完成
                 self.startConvertPoll(json[0].id, function(trans){
-                    //for (let i = 1; i <= trans.totalPage; i++) {}
                     docFileList.push({
+                        'id': trans.id,
                         'fileSuffix': trans.fileType,
-                        'fileSourceName': trans.fileName,
+                        'fileName': trans.fileName,
                         'totalPage': trans.totalPage,
-                        'pdfMd5': trans.pdfMd5,
-                        'fileSourceUrl': trans.printUrl
-                        //'previewUrl': (convertURL + '/file/preview/' + trans.id + '_1_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + '')
+                        'printMd5': trans.pdfMd5,
+                        'printUrl': trans.printUrl,
+                        'fileSource': trans.fileSource,
+                        'printPDF': true
                     })
                     
                     let tmpPrintData = Object.assign({}, self.state.printData, { printStartPage: 1, printEndPage: trans.totalPage })
                     self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList }, function () {
-                        Cookies.save('printPreviewData', docFileList, { path: '/' });
+                        localStorage.removeItem('printPreviewData')
+                        localStorage.setItem('printPreviewData', JSON.stringify(docFileList))
+                        Cookies.save('printPreviewType', 'file', { path: '/' });
                         Cookies.save('printData', tmpPrintData, { path: '/' });
                         deli.common.notification.hidePreloader();
                     });
@@ -444,11 +496,10 @@ class Nav extends Component {
             }
         }, function (resp) {
             deli.common.notification.hidePreloader();
-            deli.common.notification.prompt({
-                "type": "error",
+            deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
-            }, function (data) {}, function (resp) {});
+            }, function (data) { }, function (resp) { });
         });
     }
 
@@ -460,18 +511,21 @@ class Nav extends Component {
         self.loadPreviewUrl(data[0], 'url', function (json) {
             //单个文件处理
             if (json.status == 1) {
-                //for (let i = 1; i <= json.totalPage; i++) {}
                 urlFileList.push({
+                    'id': json.id,
                     'fileSuffix': json.fileType,
-                    'fileSourceName': json.fileName,
+                    'fileName': json.fileName,
                     'totalPage': json.totalPage,
-                    'pdfMd5': json.pdfMd5,
-                    //'previewUrl': (convertURL + '/file/preview/' + json.id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + ''),
-                    'fileSourceUrl': json.printUrl
+                    'printMd5': json.pdfMd5,
+                    'printUrl': json.printUrl,
+                    'fileSource': json.fileSource,
+                    'printPDF': true
                 })
                 let tmpPrintData = Object.assign({}, self.state.printData, { printStartPage: 1, printEndPage: json.totalPage })
                 self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: urlFileList }, function () {
-                    Cookies.save('printPreviewData', urlFileList, { path: '/' });
+                    localStorage.removeItem('printPreviewData')
+                    localStorage.setItem('printPreviewData', JSON.stringify(urlFileList))
+                    Cookies.save('printPreviewType', 'file', { path: '/' });
                     Cookies.save('printData', tmpPrintData, { path: '/' });
                     deli.common.notification.hidePreloader();
                 });
@@ -482,17 +536,21 @@ class Nav extends Component {
                 self.startConvertPoll(json.id, function (trans) {
                     for (let i = 1; i <= trans.totalPage; i++) {
                         urlFileList.push({
+                            'id': trans.id,
                             'fileSuffix': trans.fileType,
-                            'fileSourceName': trans.fileName,
+                            'fileName': trans.fileName,
                             'totalPage': trans.totalPage,
-                            'pdfMd5': trans.pdfMd5,
-                            //'previewUrl': (convertURL + '/file/preview/' + trans.id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight) + ''),
-                            'fileSourceUrl': trans.printUrl
+                            'printMd5': trans.pdfMd5,
+                            'printUrl': trans.printUrl,
+                            'fileSource': trans.fileSource,
+                            'printPDF': true
                         })
                     }
                     let tmpPrintData = Object.assign({}, self.state.printData, { printStartPage: 1, printEndPage: trans.totalPage })
                     self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: urlFileList }, function () {
-                        Cookies.save('printPreviewData', urlFileList, { path: '/' });
+                        localStorage.removeItem('printPreviewData')
+                        localStorage.setItem('printPreviewData', JSON.stringify(urlFileList))
+                        Cookies.save('printPreviewType', 'file', { path: '/' });
                         Cookies.save('printData', tmpPrintData, { path: '/' });
                         deli.common.notification.hidePreloader();
                     });
@@ -522,32 +580,33 @@ class Nav extends Component {
 
     render() {
         const sn = this.state.printer.printerSn
-        const file = this.state.file
+        const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == 1 ? 1 : 2))
         const fileList = this.state.fileList
         const fileOuter = this.state.fileOuter
         const fileType = this.state.fileType
         if (this.state.redirect.imgNav) {
             return <Redirect push to={
-                { pathname: "/previewindex", search: "?sn=" + sn + "", state: { "sn": sn, "file": file, "fileList": fileList, "fileType": fileType }  }
+                { pathname: "/previewindex", search: "?sn=" + sn + "&status=" + status + "&type=upload", state: { "sn": sn, "fileList": fileList, "fileType": fileType, 'printType': 'upload', "status": status }  }
             } />;
         }
         if (this.state.redirect.fileNav) {
             return <Redirect push to={
-                { pathname: "/previewindex", search: "?sn=" + sn + "", state: { "sn": sn, "file": file, "fileList": fileList, "fileType": fileType, "fileOuter":fileOuter   }  }
+                { pathname: "/previewindex", search: "?sn=" + sn + "&status=" + status + "&type=upload", state: { "sn": sn, "fileList": fileList, "fileType": fileType, 'printType': 'upload', "fileOuter": fileOuter, "status": status   }  }
             } />;
         }
         if (this.state.redirect.taskNav) {
+            this.state.transTimer(this.state.timer);
             return <Redirect push to={
-                { pathname: "/printtask", search: "?sn=" + sn + "", state: { "sn": sn }  }
+                { pathname: "/printtask", search: "?sn=" + sn + "&status=" + status +"", state: { "sn": sn, "status": status }  }
             } />;
         }
         if (this.state.redirect.manageNav) {
             return <Redirect push to={
-                { pathname: "/printmanage", search: "?sn=" + sn + "", state: {"sn": sn } }
+                { pathname: "/printmanage", search: "?sn=" + sn + "&status=" + status + "", state: { "sn": sn, "status": status } }
             } />;
         }
         return (
-            <div className="content-nav">
+            <div className="content-nav" id="content-nav" onTouchMove={this.ableTouchMove.bind(this)}>
                 <div className="nav-item">
                     <a className="item" onClick={this.handleOnClick.bind(this, 'imgNav')}  href="javascript:;">
                         <div className="item-img"><img src={pictureimg} /></div>

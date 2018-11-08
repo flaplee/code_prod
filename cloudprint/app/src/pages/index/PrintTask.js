@@ -19,27 +19,27 @@ class ChooseTask extends React.Component {
             loading: false,
             refreshing: false,
             statusInfo:{
-                10: {
+                'create': {
                     text: '未开始',
-                    value:[5 , 4, 6]
+                    value: [5, 4, 6]
                 },
-                20: {
+                'wating': {
                     text: '等待中',
                     value: [3, 4, 6]
                 },
-                30: {
+                'doing': {
                     text: '正在打印',
                     value: [3, 4, 6]
                 },
-                40: {
+                'success': {
                     text: '打印成功',
                     value: [1, 2, 6]
                 },
-                41: {
+                'fail': {
                     text: '打印失败',
                     value: [1, 2, 6]
-                } ,
-                50: {
+                },
+                'cancel': {
                     text: '已取消',
                     value: [1, 2, 6]
                 }
@@ -67,7 +67,19 @@ class ChooseTask extends React.Component {
                 sn: (new URLSearchParams(props.location.search)).get('sn') || '',
                 name: (new URLSearchParams(props.location.search)).get('name') || '',
                 status: (new URLSearchParams(props.location.search)).get('status') || '',
-            },    
+            },
+            printData: {
+                'duplexMode': 1,
+                'taskSource': (deli.android ? 'ANDROID' : (deli.ios ? 'IOS' : 'WBE')),
+                'printDirection': 2,
+                'printEndPage': 1,
+                'copyCount': 1,
+                'printDpi': 600,
+                'paperSize': 'A4',
+                'printColorMode': 'black',
+                'printWhole': 0,
+                'printStartPage': 1
+            },
             fileList: [],
             fileItemData:{},
             layerView: false,
@@ -97,15 +109,13 @@ class ChooseTask extends React.Component {
             Cookies.remove('userId');
             Cookies.remove('orgId');
             Cookies.remove('token');
+            Cookies.remove('admin');
         }, function (resp) { });
     }
 
-    componentDidMount(){
+    componentDidMount(){}
 
-    }
-
-    onLoad(){
-    }
+    onLoad(){}
 
     //监听Tasker变化状态
     transFiler(filer) {
@@ -118,21 +128,39 @@ class ChooseTask extends React.Component {
         console.log("重新打印~~~~~~~~~~~~")
         const self = this
         self.setState({ layerView: false });
-        let docFileList = []
-        let fileList = self.state.fileList
-        let index = fileList.findIndex(element => element.taskCode === item.taskCode)
+        let fileList = item.fileList;
+        //let index = fileList.findIndex(element => element.taskCode === item.taskCode)
         //单个文件处理
-        for (let i = 1; i <= fileList[index].printPageCount; i++) {
-            docFileList.push({
-                'pdfMd5': fileList[index].pdfMd5,
-                'fileSuffix': fileList[index].fileSourceName.substring(fileList[index].fileSourceName.lastIndexOf("\.") + 1, fileList[index].fileSourceName.length),
-                'fileSourceName': fileList[index].fileSourceName,
-                'fileSourceUrl': fileList[index].printUrl,
-                'totalPage': fileList[index].totalPage,
-                'previewUrl': (convertURL + '/file/preview/' + fileList[index].id + '_' + i + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '')
-            })
+        let mixFileList = [];
+        for (let i = 0; i < fileList.length; i++) {
+            const inner = {
+                'id': fileList[i].fileId,
+                'printMd5': fileList[i].printMd5,
+                'fileSuffix': fileList[i].fileSuffix,
+                'fileName': fileList[i].fileName,
+                'printUrl': fileList[i].printUrl,
+                'totalPage': fileList[i].totalPage,
+                'fileSource': fileList[i].fileSource
+            }
+            if (fileList.length > 1 || (fileList.length == 1 && fileList[0].fileSuffix != 'pdf')){
+                inner.printPDF = false,
+                inner.previewUrl = (convertURL + '/file/preview/' + fileList[i].fileId + '_' + (i + 1) + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '')
+            }else{
+                inner.printPDF = true
+            }
+            mixFileList.push(inner)
         }
-        self.setState({ layerView: false, redirect: { previewNav: true }, fileType: 'image', fileList: docFileList },function(){
+        let tmpPrintData = Object.assign({}, self.state.printData, {
+            'taskSource': item.taskSource,
+            'printEndPage': item.printEndPage,
+            'copyCount': item.copyCount,
+            'printStartPage': item.printStartPage
+        })
+        localStorage.removeItem('printPreviewData')
+        localStorage.setItem('printPreviewData', JSON.stringify(mixFileList))
+        self.setState({ layerView: false, redirect: { previewNav: true }, printer: { sn: item.printerSn, name: item.printerName, status: 1 }, fileType: (fileList.length > 1 || (fileList.length == 1 && fileList[0].fileSuffix != 'pdf')) ? 'image' : 'file', fileList: mixFileList },function(){
+            Cookies.save('printPreviewType', self.state.fileType, { path: '/' })
+            Cookies.save('printData', tmpPrintData, { path: '/' });
             deli.common.notification.hidePreloader();
         });
     }
@@ -147,7 +175,7 @@ class ChooseTask extends React.Component {
         fetch(mpURL + '/app/printerTask/delete', {
             method: 'POST',
             headers: {
-                token: Cookies.load('token')
+                "MP_TOKEN": Cookies.load('token')
             },
             body: delData
         }).then(
@@ -176,29 +204,27 @@ class ChooseTask extends React.Component {
                             "type": 'error',
                             "text": data.msg,
                             "duration": 1.5
-                        }, function (data) { }, function (resp) { });
+                        }, function (data) {}, function (resp) {});
                     }
                 });
             }
         ).catch(function (err) {
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
-            }, function (data) {}, function (resp) {});
+            deli.common.notification.toast({
+                "text": '网络错误，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { });
         });
     }
 
     //查询任务详情
     handleQueryTask(item) {
         console.log("查询任务详情~~~~~~~~~~~~")
-        console.log("item", item)
         const self = this
         self.setState({ layerView: false});
         fetch(mpURL + '/app/printerTask/queryDetais/' + item.taskCode, {
             method: 'GET',
             headers: {
-                token: Cookies.load('token')
+                "MP_TOKEN": Cookies.load('token')
             }
         }).then(
             function (response) {
@@ -208,12 +234,21 @@ class ChooseTask extends React.Component {
                 response.json().then(function (data) {
                     console.log("~~~~~~~~~~data", data)
                     if (data.code == 0 ) {
-                        self.setState({ printer: { sn: data.data.printerSn, name: data.data.printerName, status: data.data.onlineStatus }, redirect: { manageNav: true } });
-                    } else {}
+                        self.setState({ printer: { sn: data.data.printerSn, name: item.printerName, status: 1 }, redirect: { manageNav: true } });
+                    } else {
+                        deli.common.notification.toast({
+                            "text": '网络错误，请重试',
+                            "duration": 2
+                        }, function (data) { }, function (resp) { });
+                    }
                 });
             }
         ).catch(function (err) {
             console.log("错误:" + err);
+            deli.common.notification.toast({
+                "text": '网络错误，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { });
         });
     }
 
@@ -225,7 +260,7 @@ class ChooseTask extends React.Component {
         fetch(mpURL + '/app/printerTask/cancel/' + item.taskCode, {
             method: 'GET',
             headers: {
-                token: Cookies.load('token')
+                "MP_TOKEN": Cookies.load('token')
             }
         }).then(
             function (response) {
@@ -244,19 +279,19 @@ class ChooseTask extends React.Component {
                         }, function(){
                             console.log("self.state.fileList", self.state.fileList)
                             //self.renderListItems();
-                            let fileList = self.state.fileList
-                            let index = fileList.findIndex(element => element.taskCode === item.taskCode)
-                            console.log("fileList", fileList)
-                            fileList[index].taskStatus = 50
+                            let fileListInner = self.state.fileList
+                            let indexInner = fileList.findIndex(element => element.taskCode === item.taskCode)
+                            console.log("fileList", fileListInner)
+                            fileListInner[indexInner].taskStatus = 50
                             self.setState({
-                                fileList: fileList,
+                                fileList: fileListInner,
                                 layerView: false
                             }, function(){
                                 deli.common.notification.prompt({
                                     "type": 'success',
                                     "text": '取消成功',
                                     "duration": 1.5
-                                }, function (data) { }, function (resp) { });
+                                }, function (data) {}, function (resp) {});
                             })
                         })
                     } else {
@@ -279,103 +314,139 @@ class ChooseTask extends React.Component {
         const self = this
         self.setState({ layerView: false });
         deli.app.code.scan({
+            type: 'qrcode',
             app_id: Cookies.load('appId'),
             direct: true
         }, function (data) {
-            let qrData = new FormData()
-            qrData.append('qrcode', data.text)
-            //处理扫码结果
-            fetch(mpURL + '/app/printer/scan', {
-                method: 'POST',
-                headers: {
-                    token: Cookies.load('token')
-                },
-                body: qrData
-            }).then(
-                function (response) {
-                    if (response.status !== 200) {
-                        return;
-                    }
-                    response.json().then(function (json) {
-                        if (json.code == 0) {
-                            let printerData = new FormData()
-                            printerData.append('printerSn', json.data)
-                            printerData.append('taskCode', item.taskCode)
-                            //update 20180929
-                            PrinterData.append('pdfMd5', item.pdfMd5);
-                            PrinterData.append('fileSuffix', item.fileSuffix);
-                            //任务设置打印机 
-                            fetch(mpURL + '/app/printerTask/setPrinterToPrint', {
-                                method: 'GET',
-                                headers: {
-                                    token: Cookies.load('token')
-                                },
-                                body: printerData
-                            }).then(
-                                function (response) {
-                                    if (response.status !== 200) {
-                                        return;
-                                    }
-                                    response.json().then(function (data) {
-                                        console.log("data", data)
-                                        if (data.code == 0) {
-                                            self.setState({
-                                                layerView: false
-                                            })
-                                        } else {
-                                            deli.common.notification.prompt({
-                                                "type": 'warning',
-                                                "text": data.msg,
-                                                "duration": 2
-                                            },function(data){},function(resp){});
-                                        }
-                                    });
-                                }
-                            ).catch(function (err) {
-                                console.log("错误:" + err);
-                            });
-                        } else {
-                            
+            if(data){
+                let qrData = new FormData()
+                qrData.append('qrcode', data.text)
+                //处理扫码结果
+                fetch(mpURL + '/app/printer/scan', {
+                    method: 'POST',
+                    headers: {
+                        "MP_TOKEN": Cookies.load('token')
+                    },
+                    body: qrData
+                }).then(
+                    function (response) {
+                        if (response.status !== 200) {
+                            deli.common.notification.toast({
+                                "text": '网络错误，请重试',
+                                "duration": 2
+                            }, function (data) { }, function (resp) { });
+                            return;
                         }
-                    });
-                }
-            ).catch(function (err) {
-                
-                console.log("错误:" + err);
-            });
-
-        }, function (resp) {
-            
-        });
+                        response.json().then(function (json) {
+                            if (json.code == 0) {
+                                let tmpPrintData = Object.assign({}, self.state.printData, {
+                                    'printerSn': json.data
+                                })
+                                //任务设置打印机 /v1/app/printTask/taskToPrinter/
+                                fetch(mpURL + '/v1/app/printTask/taskToPrinter/' + item.taskCode + '', {
+                                    method: 'POST',
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "MP_TOKEN": Cookies.load('token')
+                                    },
+                                    body: JSON.stringify(tmpPrintData)
+                                }).then(
+                                    function (response) {
+                                        if (response.status !== 200) {
+                                            deli.common.notification.toast({
+                                                "text": '网络错误，请重试',
+                                                "duration": 2
+                                            }, function (data) { }, function (resp) { });
+                                            return;
+                                        }
+                                        response.json().then(function (data) {
+                                            if (data.code == 0) {
+                                                self.setState({
+                                                    layerView: false
+                                                })
+                                                deli.common.notification.prompt({
+                                                    "type": 'success',
+                                                    "text": '打印成功',
+                                                    "duration": 2
+                                                }, function (data) {}, function (resp) {});
+                                            } else {
+                                                deli.common.notification.prompt({
+                                                    "type": 'warning',
+                                                    "text": data.msg,
+                                                    "duration": 2
+                                                }, function (data) {}, function (resp) {});
+                                            }
+                                        });
+                                    }
+                                ).catch(function (err) {
+                                    deli.common.notification.toast({
+                                        "text": '网络错误，请重试',
+                                        "duration": 2
+                                    }, function (data) { }, function (resp) { });
+                                });
+                            } else {
+                                deli.common.notification.prompt({
+                                    "type": 'warning',
+                                    "text": json.msg,
+                                    "duration": 2
+                                }, function (data) {}, function (resp) {});
+                            }
+                        });
+                    }
+                ).catch(function (err) {
+                    deli.common.notification.toast({
+                        "text": '网络错误，请重试',
+                        "duration": 2
+                    }, function (data) { }, function (resp) { });
+                });
+            }
+        }, function (resp) {});
     }
 
     onLoad() {}
 
     //打印菜单
     handleLayerClick(value, file) {
+        const self = this
         console.log("value", value);
         console.log("file", file);
         switch (value) {
             case 1:
-                this.handleprintTask(file);
+                self.handleprintTask(file);
                 break;
             case 2:
-                this.handleDeleteTask(file);
+                deli.common.modal.show({
+                    "type": "confirm",
+                    "title": "确认删除",
+                    "content": "是否删除该打印任务? "
+                }, function (data) {
+                    if (data.confirm == true || data.confirm == 1){
+                        self.handleDeleteTask(file);
+                    }
+                }, function (resp) {});
                 break;
             case 3:
-                this.handleQueryTask(file);
+                self.handleQueryTask(file);
                 break;
             case 4:
-                this.handleCancelTask(file);
+                deli.common.modal.show({
+                    "type": "confirm",
+                    "title": "确认取消",
+                    "content": "是否取消该打印任务? "
+                }, function (data) {
+                    if (data.confirm == true || data.confirm == 1) {
+                        self.handleCancelTask(file);
+                    }
+                }, function (resp) {});
                 break;
             case 5:
-                this.handleQrcodeTask(file);
+                self.handleQrcodeTask(file);
                 break;
             case 6:
-                this.setState({ layerView: false });
+                self.setState({ layerView: false });
                 break;
             default:
-                this.setState({ layerView: false });
+                self.setState({ layerView: false });
                 break;
         }
     }
@@ -396,7 +467,6 @@ class ChooseTask extends React.Component {
                     result.push(<div key={`page-${i}`} className="setting-item" onClick={this.handleLayerClick.bind(this, valueItem, fileData)}>{textItem}</div>);
                 }
             }
-            
         }
         return result;
     }

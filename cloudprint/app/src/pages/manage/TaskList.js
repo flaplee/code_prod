@@ -44,7 +44,7 @@ class TaskList extends Component {
         fetch(mpURL + '/app/printerTask/queryPage', {
             method: 'POST',
             headers: {
-                token: Cookies.load('token')
+                "MP_TOKEN": Cookies.load('token')
             },
             body: appData
         }).then(
@@ -53,7 +53,7 @@ class TaskList extends Component {
                     return;
                 }
                 response.json().then(function (json) {
-                    if (json.code === 0) {
+                    if (json.code == 0) {
                         self.setState({ loading: false });
                         if(data.pageNo == 1 && json.data.total == 0){
                             self.setState({

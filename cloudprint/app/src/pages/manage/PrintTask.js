@@ -16,15 +16,14 @@ class ManageTask extends Component {
         super(props);
         this.state = {
             printer:{
-                sn: (new URLSearchParams(props.location.search)).get('sn'),
-                name: (new URLSearchParams(props.location.search)).get('name'),
-                status: (new URLSearchParams(props.location.search)).get('status')
+                sn: (new URLSearchParams(props.location.search)).get('sn') || '',
+                name: (new URLSearchParams(props.location.search)).get('name') || '',
+                status: (new URLSearchParams(props.location.search)).get('status') || 0
             },
             page: 0,
             loading: false,
             refreshing: false,
-            statusInfo: {
-            },
+            statusInfo: {},
             menuList: [{
                 value: 1,
                 text: '取消打印'
@@ -75,6 +74,7 @@ class ManageTask extends Component {
             Cookies.remove('userId');
             Cookies.remove('orgId');
             Cookies.remove('token');
+            Cookies.remove('admin');
         }, function (resp) {});
         
         //this.startPrinterPoll(this.state.printer.sn)
@@ -100,7 +100,7 @@ class ManageTask extends Component {
         fetch(mpURL + '/app/printer/queryStatus/' + sn, {
             method: 'GET',
             headers: {
-                token: Cookies.load('token')
+                "MP_TOKEN": Cookies.load('token')
             }
         }).then(
             function (response) {
@@ -111,22 +111,20 @@ class ManageTask extends Component {
                     console.log("data", data)
                     if (data.code == 0) {
                         if (self.state.printer.sn != data.data.printerSn || self.state.printer.name != data.data.printerName || self.state.printer.status == data.data.onlineStatus){
-                            self.setState({ sn: data.data.printerSn, name: data.data.printerName, status: data.data.onlineStatus}, function () {})
+                            self.setState({printer: {sn: data.data.printerSn, name: data.data.printerName, status: data.data.onlineStatus}}, function () {})
                         }
                     } else {
-                        deli.common.notification.prompt({
-                            "type": 'error',
-                            "text": "网络错误,请重试",
-                            "duration": 1.5
+                        deli.common.notification.toast({
+                            "text": '网络错误，请重试',
+                            "duration": 2
                         }, function (data) { }, function (resp) { });
                     }
                 });
             }
         ).catch(function (err) {
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
+            deli.common.notification.toast({
+                "text": '网络错误，请重试',
+                "duration": 2
             }, function (data) { }, function (resp) { });
         });
     }
@@ -138,7 +136,7 @@ class ManageTask extends Component {
         fetch(mpURL + '/app/printerTask/cancel/' + item.taskCode, {
             method: 'GET',
             headers: {
-                token: Cookies.load('token')
+                "MP_TOKEN": Cookies.load('token')
             }
         }).then(
             function (response) {
@@ -168,11 +166,10 @@ class ManageTask extends Component {
             }
         ).catch(function (err) {
             self.setState({ layerView: false });
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
-            }, function (data) {}, function (resp) {});
+            deli.common.notification.toast({
+                "text": '网络错误，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { });
         });
     }
 
@@ -184,17 +181,26 @@ class ManageTask extends Component {
 
     //打印菜单
     handleLayerClick(value, task) {
+        const self = this
         console.log("value", value);
         console.log("task", task);
         switch (value) {
             case 1:
-                this.handleCancelTask(task);
+                deli.common.modal.show({
+                    "type": "confirm",
+                    "title": "确认取消",
+                    "content": "是否取消该打印任务? "
+                }, function (data) {
+                    if (data.confirm == true || data.confirm == 1) {
+                        self.handleCancelTask(task);
+                    }
+                }, function (resp) {});
                 break;
             case 2:
-                this.setState({ layerView: false });
+                self.setState({ layerView: false });
                 break;
             default:
-                this.setState({ layerView: false });
+                self.setState({ layerView: false });
                 break;
         }
     }
@@ -223,7 +229,7 @@ class ManageTask extends Component {
         }
         return (
         <div className="print-task">
-            <Group className="print-task-list">
+                <Group className="print-task-list task-print">
                 <Group.List lineIndent={15}>
                     <div>
                         <div className="print-list-wrap-single">
@@ -232,15 +238,9 @@ class ManageTask extends Component {
                                     <Box className="print-list-text-content-single" flex={1}>
                                         <p className="print-list-title-single">打印机</p>
                                     </Box>
-                                </HBox>
-                                <HBox flex={1} className="print-list-text-content-info">
-                                    <Box className="print-list-text-content-single print-list-text-content-single-status" flex={1}>
+                                    <Box className="print-list-text-content-info">
                                         <div className={(this.state.printer.status == 0 ? 'print-img-status print-status-error' : (this.state.printer.status == 1 ? 'print-img-status print-status-success' : 'print-img-status print-status-offline'))}></div>
-                                    </Box>
-                                    <Box>
-                                        <div name="angle-right" width={20} fill="#ccc" className="print-list-name">
-                                                <p className="print-list-title-single print-list-title-single-name">{this.state.printer.name}</p>
-                                        </div>
+                                        <p className="print-list-title-single print-list-title-single-name">{this.state.printer.name}</p>
                                     </Box>
                                 </HBox>
                             </HBox>

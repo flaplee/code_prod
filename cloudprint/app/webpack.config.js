@@ -2,7 +2,12 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const htmlWebpackPlugin = new HtmlWebpackPlugin({ template: '../src/index.html' });
+const htmlWebpackPlugin = new HtmlWebpackPlugin({
+  template: '../src/index.html',
+  PUBLIC_URL: 'http://eapp-pretest.deli/cloudprint/app/build/',
+  JSSDK_URL: 'http://t.static.delicloud.com/h5/sdk/delicloud.min.js?v=test',
+  inject: true
+});
 
 const definePlugin = new webpack.DefinePlugin({
   __DEV__: JSON.stringify(JSON.parse(process.env.NODE_ENV === 'development' || 'true'))
@@ -31,7 +36,8 @@ module.exports = {
   devtool: 'source-map',
   plugins: [htmlWebpackPlugin, definePlugin],
   resolve: {
-    modules: ['node_modules', path.join(__dirname, './')]
+    modules: ['node_modules', path.join(__dirname, './')],
+    extensions: ['.js', '.json', '.scss', '.css']
   },
   module: {
     rules: [
@@ -39,10 +45,12 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader'
-      }, {
+      },
+      /* {
         test: /\.html$/,
         loader: 'html-loader'
-      }, {
+      }, */
+      {
         test: /\.css$/,
         use: stylesheetsLoaders
       },
@@ -79,7 +87,7 @@ module.exports = {
     ]
   },
   devServer: {
-    host: '192.168.2.103',
+    host: '192.168.0.110',
     port: '3000',
     historyApiFallback: true,
     compress: true,
@@ -91,6 +99,11 @@ module.exports = {
       },
       '/app/**': {
         target: 'http://mp.delicloud.xin',// http://192.168.0.202:9201
+        secure: false,
+        changeOrigin: true
+      },
+      '/v1/**': {
+        target: 'http://convert.delicloud.xin',// http://192.168.0.202:9203
         secure: false,
         changeOrigin: true
       },

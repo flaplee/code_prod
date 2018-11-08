@@ -39,7 +39,20 @@ function srcPathExtend(subpath) {
   return path.join(settings.srcPath, subpath)
 }
 
-//const uglifyPlugin = new webpack.optimize.UglifyJsPlugin({ minimize: true });
+const uglifyPlugin = new UglifyJsPlugin({
+  cache: true,
+  parallel: true,
+  sourceMap: false,
+  extractComments: true,
+  uglifyOptions: {
+    compress: {
+      warnings: false,
+      drop_debugger: true,
+      drop_console: true
+    }
+  },
+});
+
 const compressionPlugin = new CompressionPlugin();
 
 module.exports = {
@@ -64,7 +77,10 @@ module.exports = {
         verbose: true
     }),
     new HtmlWebpackPlugin({
-        template: srcPathExtend("index.html")
+        template: srcPathExtend("index.html"),
+        PUBLIC_URL: 'https://eapp.delicloud.com/cloudprint/app/build/',
+        JSSDK_URL: 'https://static.delicloud.com/h5/sdk/delicloud.min.js?v=product',
+        inject: true
     }),
     new CleanWebpackPlugin(pathsToClean, {
       root: __dirname,
@@ -76,11 +92,12 @@ module.exports = {
       beforeEmit: false
     }),
     definePlugin,
-    //uglifyPlugin,
+    uglifyPlugin,
     compressionPlugin
   ],
   resolve: {
-    modules: ['node_modules', path.join(__dirname, 'src')]
+    modules: ['node_modules', path.join(__dirname, 'src')],
+    extensions: ['.js', '.json','.scss', '.css']
   },
   optimization:{
     splitChunks: {
@@ -102,7 +119,8 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader'
-      }, {
+      }/*,
+      {
         test: /\.html$/,
         use: [ {
           loader: 'html-loader',
@@ -110,7 +128,7 @@ module.exports = {
             minimize: true
           }
         }],
-      }, {
+      } , {
         test: /\.css$/,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
@@ -141,11 +159,38 @@ module.exports = {
             loader: 'less-loader'
           }]
         })
+      }, */
+      ,
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: stylesheetsLoaders
+        })
       },
       {
+        test: /\.scss$/,
+        use: [{
+          loader: "style-loader"
+        }, {
+          loader: "css-loader"
+        }, {
+          loader: "sass-loader"
+        }]
+      }, {
+        test: /\.sass$/,
+        use: [...stylesheetsLoaders, {
+          loader: 'sass-loader',
+          options: {
+            indentedSyntax: 'sass',
+            sourceMap: true
+          }
+        }]
+      },
+      /*{
         test: /\.(ttf|eot|svg|gif)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: 'file-loader'
-      },
+      },*/
       {
         test: /\.(jpe?g|png|gif|svg|ico)$/i,
         use: [
@@ -159,7 +204,7 @@ module.exports = {
       },
     ]
   },
-  watch: true,
+  watch: false,
   node: {
     fs: 'empty',
     child_process: 'empty',

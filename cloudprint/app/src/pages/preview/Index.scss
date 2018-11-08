@@ -59,14 +59,14 @@
     }
 
     .print-list-title {
-        color : #222;
+        color : #333;
         font-size : 2rem;
         line-height : 2rem;
     }
 
     .print-list-title-single {
         font-size : 3rem;
-        color : #222;
+        color : #333;
         padding-bottom : 0;
     }
 
@@ -147,6 +147,8 @@
     box-shadow: 0px 0px 27px 0px rgba(46,57,101,0.1);}
 .swiper-slide > div{border-radius: 8px;background-size: 100% 100%; background-repeat: no-repeat;}
 .swiper-slide > div img{border-radius: 8px;}
+.swiper-slide .swiper-slide-img{display: none;}
+.swiper-slide .swiper-slide-loading-img{width:100%;height:100%;background: url(../../images/loading.gif) no-repeat center;display: block;}
 .print-list-wrap {
     padding : 2rem;
 }
@@ -246,6 +248,54 @@
         -webkit-flex: 0 0 auto;
         flex: 0 0 auto;
         width: 100%;
+        .preview-title-device{
+            position: relative;
+            .preview-title-device-text{
+                margin-right: 2rem;
+                div{
+                    float: left;
+                }
+                p{
+                    float: left;
+                    font-size: 3rem;
+                }
+            }
+            .preview-title-device-icon{
+                position: absolute;
+                right: 1rem;
+                top: 3rem;
+            }
+            .print-img-status{
+                width: 2rem;
+                height: 2rem;
+                margin: 1rem .5rem;
+                &.print-status-success, &.print-status-error, &.print-status-offline, &.print-status-empty{
+                    width: 2rem;
+                    height: 2rem;
+                    display: block;
+                    background-repeat: no-repeat;
+                    background-size: 100% 100%;
+                }
+                &.print-status-success{
+                    background-image:url(../../images/check@3x.png)
+                }
+                &.print-status-error{
+                    background-image:url(../../images/Notice@3x.png)
+                }
+                &.print-status-empty{
+                    background-image:url(../../images/Notice@3x.png)
+                }
+                &.print-status-offline{
+                    background-image:url(../../images/off_line@3x.png)
+                }
+            }
+        }
+        
+        .preview-title-sheet{
+            .preview-title-sheet-num{
+                margin-right:2rem;
+            }
+        }
     }
     .preview-box{
         position: relative;
@@ -308,6 +358,12 @@
                     height: 8rem;
                     line-height: 8rem;
                     margin: 2rem auto 2rem;
+                    &.preview-btn-disabled{
+                        color: rgba(31,56,88,.3);
+                        background: rgba(31,56,88,.04);
+                        border: 1px solid rgba(31,56,88,.2);
+                        pointer-events: none;
+                    }
                     &:active {
                         background: #35a4f2;
                         color: #fff
@@ -318,3 +374,37 @@
     }
 }
 
+@media screen and (min-width: 640px) and (max-height: 1136px){
+    .print-preview{
+        .print-list-wrap-single{padding: 1.5rem 2rem;}
+        .preview-title{
+            .preview-title-device{
+                .preview-title-device-icon {
+                    position: absolute;
+                    right: 1rem;
+                    top: 2rem;
+                }
+            }
+        }
+        .preview-box{
+            .preview-nav{
+                .preview-reference {
+                    height: 2rem;
+                    line-height: 2rem;
+                }
+            } 
+        } 
+    }
+}
+
+@media (min-width:662px){
+    .print-preview{
+        .print-list-wrap-single{padding: 2rem 2rem;}
+    }
+}
+@media (min-width:876px){
+}
+@media (min-width:1090px){}
+@media (min-width:1276px){}
+@media (min-width:1390px){}
+@media (min-width:1604px){}

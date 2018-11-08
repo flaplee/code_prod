@@ -45,6 +45,9 @@
     &:active{
       background-color: rgba(0,0,0,.1);
     }
+    &.current{
+      background-color: #E4EDFF;
+    }
     &.list-item:first-child{
       padding-top: 1rem;
     }
@@ -146,6 +149,16 @@
   }
 }
 
+.print-index{
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -ms-flex-direction: column;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
 .print-index-task{
   .scroll-view-demo{
     .t-scroll-view-inner{

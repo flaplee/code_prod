@@ -22,9 +22,9 @@ class PrintList extends React.Component {
             currentPage: 1,
             loading: false,
             refreshing: false,
-            redirectIndexNav: false
+            redirectIndexNav: false,
+            printerCurrent: (new URLSearchParams(props.location.search)).get('printercurrent') || Cookies.load('printercurrent') || 0
         };
-        console.log("printList props", props)
     }
 
     componentDidMount(){
@@ -49,6 +49,7 @@ class PrintList extends React.Component {
             Cookies.remove('userId');
             Cookies.remove('orgId');
             Cookies.remove('token');
+            Cookies.remove('admin');
         }, function (resp) {});
     };
 
@@ -62,7 +63,6 @@ class PrintList extends React.Component {
     onLoad() {
         const curr = this.state.currentPage;
         this.setState({ loading: true });
-        console.log("test")
         this.getPrinterList({
             'page': curr,
             'limit': this.state.pageSize
@@ -70,7 +70,8 @@ class PrintList extends React.Component {
     }
 
     handlePrinterClick(props){
-        this.setState({redirectIndexNav:true, sn: props.printerSn}, function(){})
+        const self = this
+        self.setState({ redirectIndexNav: true, sn: props.printerSn, printerCurrent: props.index}, function(){})
     }
 
     //获取打印机列表
@@ -83,19 +84,24 @@ class PrintList extends React.Component {
         fetch(mpURL + '/app/printer/queryPage', {
             method: 'POST',
             headers: {
-                token: Cookies.load('token')
+                "MP_TOKEN": Cookies.load('token')
             },
             body: formData
         }).then(
             function (response) {
                 if (response.status !== 200) {
+                    deli.common.notification.hidePreloader();
+                    deli.common.notification.toast({
+                        "text": '网络错误，请重试',
+                        "duration": 2
+                    }, function (data) { }, function (resp) { });
                     return;
                 }
                 response.json().then(function (json) {
-                    if (json.code === 0) {
+                    deli.common.notification.hidePreloader();
+                    if (json.code == 0) {
                         const items = json.data.rows;
                         const hasNoMore = (items.length == 0) || items.length < self.state.pageSize;
-                        
                         if (hasNoMore){
                             self.setState({
                                 loading: false,
@@ -104,7 +110,7 @@ class PrintList extends React.Component {
                                 currentPage: data.curr + 1,
                                 noMore: true,
                                 hasError: false,
-                                
+                                printerCurrent: self.state.printerCurrent
                             });
                         }else{
                             self.setState({
@@ -117,17 +123,17 @@ class PrintList extends React.Component {
                     } else {
                         deli.common.notification.prompt({
                             "type": 'error',
-                            "text": data.msg,
+                            "text": json.msg,
                             "duration": 1.5
-                        }, function (data) { }, function (resp) { });
+                        }, function (data) {}, function (resp) {});
                     }
                 });
             }
         ).catch(function (err) {
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
+            deli.common.notification.hidePreloader();
+            deli.common.notification.toast({
+                "text": '网络错误，请重试',
+                "duration": 2
             }, function (data) { }, function (resp) { });
         });
     }
@@ -136,14 +142,13 @@ class PrintList extends React.Component {
         const hashHistory = createHashHistory()
         if(this.state.redirectIndexNav){
             const sn = this.state.sn
-            hashHistory.replace({
-                pathname: '/',
-                search: "?sn=" + sn + "",
-                state: { "sn": sn }
-            })
+            const printercurrent = this.state.printerCurrent
+            Cookies.save('sn', sn)
+            Cookies.save('printercurrent', printercurrent)
+            hashHistory.goBack();
         }
         const Item = (props) =>
-            <a className="list-item" href="javascript:;" onClick={this.handlePrinterClick.bind(this, props)}>
+            <a className={(props.index == this.state.printerCurrent ? "list-item current" :"list-item")} href="javascript:;" onClick={this.handlePrinterClick.bind(this, props)}>
                 <div className="list-item-wrap">
                     <div className="list-item-info">
                         <div className="info-img">

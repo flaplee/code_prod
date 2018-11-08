@@ -64,14 +64,14 @@
     }
 
     .print-list-title {
-        color : #222;
+        color : #333;
         font-size : 2rem;
         line-height : 2rem;
     }
 
     .print-list-title-single {
         font-size : 2.5rem;
-        color : #222;
+        color : #333;
         padding-bottom : 0;
         &.print-list-title-single-sn, &.print-list-title-single-name{
             text-align: right;
@@ -92,18 +92,72 @@
 .print-task{
     background-color: #ffffff;
     
-    .print-task-list{}
-
-    .task-title {
-        background-color: #f2f8ff;
-        font-size : 2rem;
-        height : 5rem;
-        line-height : 5rem;
-        padding-left : 2rem;
+    .print-task-list{
+        height: 100%;
+        display: box;
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -o-flex-direction: column;
+        -webkit-box-orient: vertical;
+        -ms-flex-direction: column;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+        .task-print{
+            -webkit-box-flex: 0;
+            -moz-box-flex: 0 0 auto;
+            -webkit-flex: 0 0 auto;
+            -ms-flex: 0 0 auto;
+            flex: 0 0 auto;
+        }
+        .task-title {
+            background-color: #f2f8ff;
+            font-size : 2rem;
+            height : 5rem;
+            line-height : 5rem;
+            padding-left : 2rem;
+            -webkit-box-flex: 0;
+            -moz-box-flex: 0 0 auto;
+            -webkit-flex: 0 0 auto;
+            -ms-flex: 0 0 auto;
+            flex: 0 0 auto;
+        }
+        .task-list{
+            -webkit-box-flex: 1;
+            -moz-box-flex: 1 1 auto;
+            -webkit-flex: 1 1 auto;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            position: relative;
+            height: 100%;
+            .task-list-item{
+                .task-list-item-before{
+                    .task-list-item-order{width: 4rem;padding-left: .5rem;}
+                    .task-list-item-name{
+                        width: 24rem;
+                        p{
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                        }
+                    }
+                }
+            }
+        }
+        .print-list-text-content-info{
+            max-width: 50rem;
+            div{
+                float: left;
+            }
+            p{
+                float: left;
+                max-width: 40rem;
+                font-size: 3rem;
+            }
+        }
     }
-
-    .task-list{}
-
     .scroll-view-empty{
         .t-scroll-view-inner{
             height: 100%;
@@ -176,10 +230,6 @@
         margin-right : 2rem;
     }
 
-    .print-list-text-content-info{
-        max-width: 50rem;
-    }
-
     .print-list-text-content-single {
         line-height: 3rem;
         &.print-list-text-content-single-status{
@@ -191,7 +241,7 @@
     .print-img-status{
         width: 2rem;
         height: 2rem;
-        margin: .5rem 0;
+        margin: .5rem;
         &.print-status-success, &.print-status-error, &.print-status-offline, &.print-status-empty{
             width: 2rem;
             height: 2rem;
@@ -214,14 +264,14 @@
     }
 
     .print-list-title {
-        color : #222;
+        color : #333;
         font-size : 2rem;
         line-height : 2rem;
     }
 
     .print-list-title-single {
         font-size : 2.5rem;
-        color : #222;
+        color : #333;
         padding-bottom : 0;
         .print-list-title-single-name{
             width: 40rem;
@@ -233,7 +283,7 @@
 
     .print-list-text-info {
         font-size : 2rem;
-        color : #222;
+        color : #333;
         padding-bottom : 0;
     }
 

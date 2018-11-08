@@ -292,16 +292,25 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                             },
                             drawPicture: function(data){
                                 console.log("drawPicture", data);
+                                //白板内容绘画
                                 if(data.img_url){
                                     console.log("draw image");
                                 }
                                 // 绘制白色的点
                                 for(var i = 0; i < data.white_board_lives.length; i++){
                                     //4种画布显示情况
-                                    var dev_w = data.white_board_lives[i].dev_width,
+                                    var dev_w, dev_h, draw_w, draw_h;
+                                    if(data.white_board_lives[i].len_unit == 0){
+                                        dev_w = data.white_board_lives[i].dev_width,
                                         dev_h = data.white_board_lives[i].dev_height,
                                         draw_w = displayWidth,
                                         draw_h = Math.floor(212 / 667 * displayHeight);
+                                    }else{
+                                        dev_w = data.white_board_lives[i].dev_width * util.getDPI()[0] / 25.4,
+                                        dev_h = data.white_board_lives[i].dev_height* util.getDPI()[1] / 25.4,
+                                        draw_w = displayWidth,
+                                        draw_h = Math.floor(212 / 667 * displayHeight);
+                                    }
                                     var point_x = 0, point_y = 0;
                                     if(draw_w > dev_w && draw_h > dev_h){
                                         //坐标原点

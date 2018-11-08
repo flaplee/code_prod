@@ -24,7 +24,9 @@ class ChooseTask extends React.Component {
                 status: (new URLSearchParams(props.location.search)).get('status') || '',
             },    
             fileList: [],
-            fileItemData:{},
+            fileItemData: {},
+            printType: 'scan',
+            chooseData: props.location.state.printTaskInfo || JSON.parse(localStorage.getItem('chooseTaskInfo')) || {},
             redirect: {
                 previewNav: false
             }
@@ -49,11 +51,15 @@ class ChooseTask extends React.Component {
             Cookies.remove('userId');
             Cookies.remove('orgId');
             Cookies.remove('token');
+            Cookies.remove('admin');
         }, function (resp) {});
+
+        deli.common.navigation.goBack({
+            "is_go_back": true
+        }, function (data) {}, function (resp) {});
     }
 
-    componentDidMount(){
-    }
+    componentDidMount(){}
 
     onLoad(){}
 
@@ -65,9 +71,7 @@ class ChooseTask extends React.Component {
                 previewNav: true
             },
             fileItemData: filer.fileItemData
-        }, function(){
-
-        });
+        }, function(){});
     }
 
     onLoad() {}
@@ -83,14 +87,19 @@ class ChooseTask extends React.Component {
             const sn = this.state.printer.sn
             const name = this.state.printer.name
             const status = this.state.printer.status
-            const fileItemData = this.state.fileItemData
+            const printType = 'scan'
+            const printTaskInfo = this.state.fileItemData
+            const fileList = printTaskInfo.fileList
+            const fileType = (fileList.length > 1 || (fileList.length == 1 && fileList[0].fileSuffix != 'pdf')) ? 'image' : 'file'
+            localStorage.removeItem('printPreviewData')
+            localStorage.setItem('printPreviewData', JSON.stringify(fileList))
             return <Redirect push to={
-                { pathname: "/previewindex", search: "?sn=" + sn + "&name=" + name + "&status=" + status + "", state: { "sn": sn, "file": file, "fileList": fileItemData } }
+                { pathname: "/previewindex", search: "?sn=" + sn + "&name=" + name + "&status=" + status + "&type=" + printType + "", state: { "sn": sn, "fileList": fileList, "fileType": fileType, "printTaskInfo": printTaskInfo } }
             } />;
         }
         return (
             <div className="print-index-task print-list" id="print-index-task">
-                <ChooseList pages={this.state.page} files={this.state.fileList} printer={this.state.printer} transFiler={filer => this.transFiler(filer)}></ChooseList>
+                <ChooseList pages={this.state.page} files={this.state.chooseData} printer={this.state.printer} transFiler={filer => this.transFiler(filer)}></ChooseList>
             </div>);
     }
 }

@@ -25,7 +25,7 @@ class Unbind extends React.Component {
         })
 
         deli.common.navigation.setTitle({
-            "title": "得力云打印"
+            "title": "云打印"
         }, function (data) { }, function (resp) { });
 
         deli.common.navigation.setRight({
@@ -41,6 +41,7 @@ class Unbind extends React.Component {
             Cookies.remove('userId');
             Cookies.remove('orgId');
             Cookies.remove('token');
+            Cookies.remove('admin');
         }, function (resp) {});
     }
 

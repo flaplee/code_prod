@@ -1,0 +1,41 @@
+.virtual-print-login {
+    font-size: 2rem;
+   .img-wrap {
+        width: 15rem;
+        height: 10rem;
+        margin: 15rem auto 0;
+        text-align:center;
+        img{
+            width: 15rem;
+            height: 10rem;
+        }
+   } 
+   .text {
+       font-size:#333333;
+       margin-top: 2rem;
+       height: 3rem;
+       line-height: 3rem;
+       text-align:center;  
+   }
+   .bottom-btn {
+        margin-top: 48rem;
+        padding: 0 4rem;
+   }
+   .btn {
+       border-radius: 3rem;
+       line-height: 6rem;
+       text-align: center
+   }
+
+   .confirm-btn {
+        border: 1px solid #5D85E0;
+        color: #5D85E0;
+        &:active{
+            background: rgba(31,56,88,0.1);
+        }
+   }
+   .cancel-btn {
+       color: #999;
+       margin-top: 1rem;
+   }
+}

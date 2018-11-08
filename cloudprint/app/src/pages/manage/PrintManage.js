@@ -71,6 +71,7 @@ class PrintManage extends React.Component {
             Cookies.remove('userId');
             Cookies.remove('orgId');
             Cookies.remove('token');
+            Cookies.remove('admin');
         }, function (resp) {});
     }
 
@@ -106,7 +107,7 @@ class PrintManage extends React.Component {
         fetch(mpURL + '/app/printer/queryStatus/' + sn, {
             method: 'GET',
             headers: {
-                token: Cookies.load('token')
+                "MP_TOKEN": Cookies.load('token')
             }
         }).then(
             function (response) {
@@ -122,7 +123,7 @@ class PrintManage extends React.Component {
                             fetch(mpURL + '/app/inkbox/queryDetails/' + self.state.printer.inkboxSn, {
                                 method: 'POST',
                                 headers: {
-                                    token: Cookies.load('token')
+                                    "MP_TOKEN": Cookies.load('token')
                                 },
                                 body: {}
                             }).then(
@@ -140,28 +141,25 @@ class PrintManage extends React.Component {
                                     });
                                 }
                             ).catch(function (err) {
-                                deli.common.notification.prompt({
-                                    "type": 'error',
-                                    "text": "网络错误,请重试",
-                                    "duration": 1.5
+                                deli.common.notification.toast({
+                                    "text": '网络错误，请重试',
+                                    "duration": 2
                                 }, function (data) { }, function (resp) { });
                             });
                         })
                     } else {
-                        deli.common.notification.prompt({
-                            "type": 'error',
-                            "text": "网络错误,请重试",
-                            "duration": 1.5
-                        },function(data){},function(resp){});
+                        deli.common.notification.toast({
+                            "text": '网络错误，请重试',
+                            "duration": 2
+                        }, function (data) { }, function (resp) { });
                     }
                 });
             }
         ).catch(function (err) {
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
-            },function(data){},function(resp){});
+            deli.common.notification.toast({
+                "text": '网络错误，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { });
         });
     }
 
@@ -208,7 +206,7 @@ class PrintManage extends React.Component {
                             </HBox>
                         </div>
                     </div>
-                    <div>
+                    <div style={{ display: (this.state.printer.onlineStatus == 2) ? 'none' : '' }}>
                         <div className="print-list-wrap-single print-list-wrap-single-tap" onClick={this.handleOnClick.bind(this, 'ink')}>
                             <HBox vAlign="center">
                                 <HBox flex={1}>
@@ -268,11 +266,10 @@ class PrintManage extends React.Component {
                             </HBox>
                         </div>
                     </div>
-                    <div>
+                    <div style={{ display: (this.state.printer.onlineStatus == 2) ? 'none' : '' }}>
                         <div className="print-list-wrap-single">
                             <HBox vAlign="center">
                                 <HBox flex={1}>
-
                                     <Box className="print-list-text-content-single" flex={1}>
                                         <p className="print-list-title-single omit">IP地址</p>
                                     </Box>

@@ -14,29 +14,30 @@ class PreviewSetup extends React.Component {
         super(props)
         const t = this
         t.state = {
-            tranPreview: Cookies.load('printPreviewData') || {},
+            tranPreview: props.location.state || {},
             paper: { data: [{ value: 'A4', text: 'A4' }, { value: 'A5', text: 'A5' }], current: 0},
-            direction: { data: [{ value: 1, text: '横向' }, { value: 2, text: '纵向' }], current: 0},
+            direction: { data: [{ value: 2, text: '纵向' }, { value: 1, text: '横向' }], current: 0},
             mode: { data: [{ value: 0, text: '单面' }, { value: 1, text: '双面' }, { value: 2, text: '双面短边' }], current: 0},
-            color: { data: [{ value: 'black', text: '黑色' }, { value: 'white', text: '白色' }], current: 0}, 
+            color: { data: [{ value: 'black', text: '黑白' }], current: 0}, 
             range: {},
             layerView: false,
             type: 'paper',
+            printer: {
+                sn: (new URLSearchParams(props.location.search)).get('sn') || '',
+                name: (new URLSearchParams(props.location.search)).get('name') || '',
+                status: (new URLSearchParams(props.location.search)).get('status') || ''
+            },
+            printType: (new URLSearchParams(props.location.search)).get('type') || 'upload',
             printSetupData: Cookies.load('printData') || {
-                'fileSource': 'CLOUD',
                 'duplexMode': 1,
-                'fileSourceUrl': '',
-                'fileSuffix': '',
-                'fileSourceName': '',
                 'taskSource': (deli.android ? 'ANDROID' : (deli.ios ? 'IOS' : 'WBE')),
-                'printDirection': 1,
+                'printDirection': 2,
                 'printEndPage': 1,
-                'pagesPre': 1,
                 'copyCount': 1,
                 'printDpi': 600,
-                'printPageSize': 'A4',
+                'paperSize': 'A4',
                 'printColorMode': 'black',
-                'isPrintWhole': 0,
+                'printWhole': 0,
                 'printStartPage': 1
             },
             printCountData: Cookies.load('printCountData') || { 'totalPage': 1, 'statusPage': false, 'startPage': 1, 'endPage': 1 },
@@ -45,7 +46,7 @@ class PreviewSetup extends React.Component {
     }
 
     componentWillMount() {
-        this.setState({ paper: Object.assign({}, this.state.paper, { current: (this.state.paper.data.findIndex(element => element.value == Cookies.load('printData').printPageSize)) || 0 }) }, function () {
+        this.setState({ paper: Object.assign({}, this.state.paper, { current: (this.state.paper.data.findIndex(element => element.value == Cookies.load('printData').paperSize)) || 0 }) }, function () {
             Cookies.save('printData', this.state.printSetupData, { path: '/' });
         })
         
@@ -90,6 +91,7 @@ class PreviewSetup extends React.Component {
             Cookies.remove('userId');
             Cookies.remove('orgId');
             Cookies.remove('token');
+            Cookies.remove('admin');
         }, function (resp) {});
     }
 
@@ -119,7 +121,7 @@ class PreviewSetup extends React.Component {
         switch (type) {
             case 'paper':
                 tmpData = Object.assign({}, this.state.paper, { current: index})
-                tmpPrintData = Object.assign({}, this.state.printSetupData, { printPageSize: value })
+                tmpPrintData = Object.assign({}, this.state.printSetupData, { paperSize: value })
                 this.setState({ layerView: false, type: type, paper: tmpData , printSetupData: tmpPrintData }, function () {
                     Cookies.save('printData', tmpPrintData, { path: '/' });
                 })
@@ -196,13 +198,16 @@ class PreviewSetup extends React.Component {
         const hashHistory = createHashHistory()
         //this.setState({tranPreview : {printData : this.state.printSetupData}})
         if (this.state.redirectBack) {
-            const data = this.state.tranPreview
-            const sn = data.sn
+            const tranPreview = this.state.tranPreview;
+            const tranPrinter = this.state.printer;
+            const name = tranPrinter.name;
+            const status = tranPrinter.status;
+            const type = this.state.printType;
             hashHistory.goBack();
-            /* hashHistory.push({
+            /* hashHistory.replace({
                 pathname: '/previewindex',
-                search: "?sn=" + sn + "",
-                state: data
+                search: "?sn=" + tranPreview.sn + "&name=" + name + "&status=" + status + "&type=" + type +"",
+                state: { "sn": tranPreview.sn, "file": tranPreview.file, "fileType": tranPreview.fileType, "fileList": tranPreview.fileList, "printTaskInfo": tranPreview.printTaskInfo}
             }) */
         }
         const printCountData = this.state.printCountData

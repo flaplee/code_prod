@@ -290,52 +290,65 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                 }
                                 Page.data.socketIndex ++;
                             },
-                            drawPicture: function(data, displayWidth){
-                                console.log("drawPicture", data);
+                            drawPicture: function(data){
                                 //白板内容绘画
                                 if(data.img_url){
-                                    console.log("draw image");
+                                    console.log("draw image", data.img_url);
                                 }
+                                var p1, p2, status;
                                 // 绘制白色的点
                                 for(var i = 0; i < data.white_board_lives.length; i++){
                                     //4种画布显示情况
-                                    var dev_w, dev_h, draw_w, draw_h;
+                                    var dev_w, dev_h, draw_w, draw_h, scale = 1;
                                     if(data.white_board_lives[i].len_unit == 0){
-                                        dev_w = data.white_board_lives[i].dev_width,
-                                        dev_h = data.white_board_lives[i].dev_height,
-                                        draw_w = displayWidth,
-                                        draw_h = Math.floor(212 / 667 * displayHeight);
+                                        dev_w = parseInt(data.white_board_lives[i].dev_width),
+                                        dev_h = parseInt(data.white_board_lives[i].dev_height),
+                                        draw_w = parseInt(displayWidth),
+                                        draw_h = parseInt((new Number(212 / 667 * displayHeight)).toFixed(1));
                                     }else{
-                                        dev_w = data.white_board_lives[i].dev_width * util.getDPI()[0] / 25.4,
-                                        dev_h = data.white_board_lives[i].dev_height* util.getDPI()[1] / 25.4,
-                                        draw_w = displayWidth,
-                                        draw_h = Math.floor(212 / 667 * displayHeight);
+                                        scale = util.getDPI()[0] / 25.4;
+                                        dev_w = parseInt((new Number(data.white_board_lives[i].dev_width * scale)).toFixed(1)),
+                                        dev_h = parseInt((new Number(data.white_board_lives[i].dev_height * scale)).toFixed(1)),
+                                        draw_w = parseInt(displayWidth),
+                                        draw_h = parseInt((new Number(212 / 667 * displayHeight)).toFixed(1));
+                                        console.log("scale", scale);
+                                        console.log("dev_w", dev_w);
+                                        console.log("dev_h", dev_h);
+                                        console.log("draw_w", draw_w);
+                                        console.log("draw_h", draw_h);
                                     }
-                                    var point_x = 0, point_y = 0;
+                                    var point_x = 0, point_y = 0, point_dev_scale = Math.floor(dev_w / dev_w), point_draw_scale = Math.floor(draw_w / draw_h);
                                     if(draw_w > dev_w && draw_h > dev_h){
                                         //坐标原点
-                                        point_x = Math.floor((draw_w - dev_w) / 2);
-                                        point_y = Math.floor((draw_h - dev_h) / 2);
+                                        point_x = (new Number((draw_w - dev_w) / 2 / scale)).toFixed(1);
+                                        point_y = (new Number((draw_h - dev_h) / 2 / scale)).toFixed(1);
                                         console.log("test1");
                                     }else if(draw_w > dev_w && draw_h < dev_h){
                                         //坐标原点
                                         point_x = 0;
-                                        point_y = Math.floor((dev_h - draw_h) / 2);
+                                        point_y = (new Number((dev_h - draw_h) / 2 / scale)).toFixed(1);
                                         console.log("test2");
                                     }else if(draw_w < dev_w && draw_h > dev_h){
                                         //坐标原点
-                                        point_x = Math.floor((dev_w - draw_w) / 2);
+                                        point_x = (new Number((dev_w - draw_w) / 2 / scale)).toFixed(1);
                                         point_y = 0;
                                         console.log("test3");
                                     }else if(draw_w < dev_w && draw_h < dev_h){
-                                        //坐标原点
-                                        point_x = 0;
-                                        point_y = 0;
                                         console.log("test4");
+                                        if(draw_w > draw_h){
+                                            //坐标原点
+                                            point_x = parseInt((new Number((draw_w- draw_h) / 2)).toFixed(1));
+                                            point_y = 0;
+                                        }else if(draw_w < draw_h){
+                                            //坐标原点
+                                            point_x = 0;
+                                            point_y = parseInt((new Number((draw_h- draw_w) / 2)).toFixed(1));
+                                        }
                                     }
+
                                     for(var j = 0; j < data.white_board_lives[i].frames[0].length; j++){
                                         fill(0, 0, 255);
-                                        strokeWeight(data.white_board_lives[i].frames[0][j].pt.w);
+                                        strokeWeight(data.white_board_lives[i].frames[0][j].pt.w / scale);
                                         //stroke(255); 设置画笔颜色
                                         switch(data.white_board_lives[i].frames[0][j].pt.c){
                                           case 0:
@@ -356,27 +369,51 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                         
                                         // 触摸点类型
                                         switch(data.white_board_lives[i].frames[0][j].t){
-                                          case 0:
-                                            stroke(51);
-                                            break;
-                                          case 1:
-                                            stroke(255);
-                                            alpha(color(255, 255, 255, 0));
-                                            break;
-                                        case 4:
-                                            console.log("清屏");
-                                            stroke(255);
-                                            fill(color(255, 255, 255, 0));
-                                            rect(0, 0, displayWidth, Math.floor(212 / 667 * displayHeight));
-                                            clear();
-                                            break;
-                                          default:
-                                            stroke(255);
+                                            case 0:
+                                                stroke(51);
+                                                break;
+                                            case 1:
+                                                stroke(255);
+                                                alpha(color(255, 255, 255, 0));
+                                                break;
+                                            case 2:
+                                                break;
+                                            case 3:
+                                                break;
+                                            case 4:
+                                                console.log("清屏");
+                                                stroke(255);
+                                                fill(color(255, 255, 255, 0));
+                                                rect(0, 0, displayWidth, Math.floor(212 / 667 * displayHeight));
+                                                clear();
+                                                break;
+                                            case 5:
+                                                break;
+                                            default:
+                                                stroke(255);
                                         }
-                                        //画点
-                                        //point(data.white_board_lives[i].frames[0][j].pt.x, data.white_board_lives[i].frames[0][j].pt.y);
-                                        point(data.white_board_lives[i].frames[0][j].pt.x , data.white_board_lives[i].frames[0][j].pt.y);
-                                        console.log("Point: " + data.white_board_lives[i].frames[0][j].pt.x + " " + data.white_board_lives[i].frames[0][j].pt.y);
+
+                                        // 区分画线和画点
+                                        status = data.white_board_lives[i].frames[0][((j > 1) ? (j - 1) : 0)].pt.s;
+                                        if(i > 1){
+                                            p1 = (data.white_board_lives[i].frames[0][((j > 1) ? (j - 1) : 0)].pt.x / scale + point_x);
+                                            p2 = (data.white_board_lives[i].frames[0][((j > 1) ? (j - 1) : 0)].pt.y / scale + point_y);
+                                        }else{
+                                            if(j > 1){
+                                                p1 = (data.white_board_lives[i].frames[0][j - 1].pt.x / scale + point_x);
+                                                p2 = (data.white_board_lives[i].frames[0][j - 1].pt.y / scale + point_y);
+                                            }else{
+                                                p1 = (data.white_board_lives[i].frames[0][0].pt.x / scale + point_x);
+                                                p2 = (data.white_board_lives[i].frames[0][0].pt.y / scale + point_y);
+                                            }
+                                        }
+
+                                        if((status == data.white_board_lives[i].frames[0][j].pt.s && status == 1) || status == 2){
+                                            line(p1, p2, data.white_board_lives[i].frames[0][j].pt.x / scale + point_x, data.white_board_lives[i].frames[0][j].pt.y / scale + point_y);
+                                        }else{
+                                            point(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x, data.white_board_lives[i].frames[0][j].pt.y / scale + point_y);
+                                            console.log("Point: " + (data.white_board_lives[i].frames[0][j].pt.x / scale+ point_x )+ " " + (data.white_board_lives[i].frames[0][j].pt.y / scale + point_y));
+                                        }
                                     }
                                 }
                             },
@@ -555,7 +592,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
 
                 setTimeout(function(){
                     //手动画图测试
-                    $.getJSON("../json/whiteBoard.json",function(data){
+                    $.getJSON("../json/whiteBoard.json?v=1",function(data){
                         console.log("data", data);
                         $('#page').removeClass('loading');
                         $('#home-page-skeleton').removeClass('loading');
@@ -1016,51 +1053,64 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                     }
                 },
                 drawPicture: function(data){
-                    console.log("drawPicture", data);
                     //白板内容绘画
                     if(data.img_url){
-                        console.log("draw image");
+                        console.log("draw image", data.img_url);
                     }
+                    var p1, p2, status;
                     // 绘制白色的点
                     for(var i = 0; i < data.white_board_lives.length; i++){
                         //4种画布显示情况
-                        var dev_w, dev_h, draw_w, draw_h;
+                        var dev_w, dev_h, draw_w, draw_h, scale = 1;
                         if(data.white_board_lives[i].len_unit == 0){
-                            dev_w = data.white_board_lives[i].dev_width,
-                            dev_h = data.white_board_lives[i].dev_height,
-                            draw_w = displayWidth,
-                            draw_h = Math.floor(212 / 667 * displayHeight);
+                            dev_w = parseInt(data.white_board_lives[i].dev_width),
+                            dev_h = parseInt(data.white_board_lives[i].dev_height),
+                            draw_w = parseInt(displayWidth),
+                            draw_h = parseInt((new Number(212 / 667 * displayHeight)).toFixed(1));
                         }else{
-                            dev_w = data.white_board_lives[i].dev_width * util.getDPI()[0] / 25.4,
-                            dev_h = data.white_board_lives[i].dev_height* util.getDPI()[1] / 25.4,
-                            draw_w = displayWidth,
-                            draw_h = Math.floor(212 / 667 * displayHeight);
+                            scale = util.getDPI()[0] / 25.4;
+                            dev_w = parseInt((new Number(data.white_board_lives[i].dev_width * scale)).toFixed(1)),
+                            dev_h = parseInt((new Number(data.white_board_lives[i].dev_height * scale)).toFixed(1)),
+                            draw_w = parseInt(displayWidth),
+                            draw_h = parseInt((new Number(212 / 667 * displayHeight)).toFixed(1));
+                            console.log("scale", scale);
+                            console.log("dev_w", dev_w);
+                            console.log("dev_h", dev_h);
+                            console.log("draw_w", draw_w);
+                            console.log("draw_h", draw_h);
                         }
-                        var point_x = 0, point_y = 0;
+                        var point_x = 0, point_y = 0, point_dev_scale = Math.floor(dev_w / dev_w), point_draw_scale = Math.floor(draw_w / draw_h);
                         if(draw_w > dev_w && draw_h > dev_h){
                             //坐标原点
-                            point_x = Math.floor((draw_w - dev_w) / 2);
-                            point_y = Math.floor((draw_h - dev_h) / 2);
+                            point_x = (new Number((draw_w - dev_w) / 2 / scale)).toFixed(1);
+                            point_y = (new Number((draw_h - dev_h) / 2 / scale)).toFixed(1);
                             console.log("test1");
                         }else if(draw_w > dev_w && draw_h < dev_h){
                             //坐标原点
                             point_x = 0;
-                            point_y = Math.floor((dev_h - draw_h) / 2);
+                            point_y = (new Number((dev_h - draw_h) / 2 / scale)).toFixed(1);
                             console.log("test2");
                         }else if(draw_w < dev_w && draw_h > dev_h){
                             //坐标原点
-                            point_x = Math.floor((dev_w - draw_w) / 2);
+                            point_x = (new Number((dev_w - draw_w) / 2 / scale)).toFixed(1);
                             point_y = 0;
                             console.log("test3");
                         }else if(draw_w < dev_w && draw_h < dev_h){
-                            //坐标原点
-                            point_x = 0;
-                            point_y = 0;
                             console.log("test4");
+                            if(draw_w > draw_h){
+                                //坐标原点
+                                point_x = parseInt((new Number((draw_w- draw_h) / 2)).toFixed(1));
+                                point_y = 0;
+                            }else if(draw_w < draw_h){
+                                //坐标原点
+                                point_x = 0;
+                                point_y = parseInt((new Number((draw_h- draw_w) / 2)).toFixed(1));
+                            }
                         }
+
                         for(var j = 0; j < data.white_board_lives[i].frames[0].length; j++){
                             fill(0, 0, 255);
-                            strokeWeight(data.white_board_lives[i].frames[0][j].pt.w);
+                            strokeWeight(data.white_board_lives[i].frames[0][j].pt.w / scale);
                             //stroke(255); 设置画笔颜色
                             switch(data.white_board_lives[i].frames[0][j].pt.c){
                               case 0:
@@ -1080,28 +1130,52 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                             }
                             
                             // 触摸点类型
-                            /*switch(data.white_board_lives[i].frames[0][j].t){
-                              case 0:
-                                stroke(51);
-                                break;
-                              case 1:
-                                stroke(255);
-                                alpha(color(255, 255, 255, 0));
-                                break;
-                            case 4:
-                                console.log("清屏");
-                                stroke(255);
-                                fill(color(255, 255, 255, 0));
-                                rect(0, 0, displayWidth, Math.floor(212 / 667 * displayHeight));
-                                clear();
-                                break;
-                              default:
-                                stroke(255);
-                            }*/
-                            //画点
-                            //point(data.white_board_lives[i].frames[0][j].pt.x, data.white_board_lives[i].frames[0][j].pt.y);
-                            point(data.white_board_lives[i].frames[0][j].pt.x , data.white_board_lives[i].frames[0][j].pt.y);
-                            console.log("Point: " + data.white_board_lives[i].frames[0][j].pt.x + " " + data.white_board_lives[i].frames[0][j].pt.y);
+                            switch(data.white_board_lives[i].frames[0][j].t){
+                                case 0:
+                                    stroke(51);
+                                    break;
+                                case 1:
+                                    stroke(255);
+                                    alpha(color(255, 255, 255, 0));
+                                    break;
+                                case 2:
+                                    break;
+                                case 3:
+                                    break;
+                                case 4:
+                                    console.log("清屏");
+                                    stroke(255);
+                                    fill(color(255, 255, 255, 0));
+                                    rect(0, 0, displayWidth, Math.floor(212 / 667 * displayHeight));
+                                    clear();
+                                    break;
+                                case 5:
+                                    break;
+                                default:
+                                    stroke(255);
+                            }
+
+                            // 区分画线和画点
+                            status = data.white_board_lives[i].frames[0][((j > 1) ? (j - 1) : 0)].pt.s;
+                            if(i > 1){
+                                p1 = (data.white_board_lives[i].frames[0][((j > 1) ? (j - 1) : 0)].pt.x / scale + point_x);
+                                p2 = (data.white_board_lives[i].frames[0][((j > 1) ? (j - 1) : 0)].pt.y / scale + point_y);
+                            }else{
+                                if(j > 1){
+                                    p1 = (data.white_board_lives[i].frames[0][j - 1].pt.x / scale + point_x);
+                                    p2 = (data.white_board_lives[i].frames[0][j - 1].pt.y / scale + point_y);
+                                }else{
+                                    p1 = (data.white_board_lives[i].frames[0][0].pt.x / scale + point_x);
+                                    p2 = (data.white_board_lives[i].frames[0][0].pt.y / scale + point_y);
+                                }
+                            }
+
+                            if((status == data.white_board_lives[i].frames[0][j].pt.s && status == 1) || status == 2){
+                                line(p1, p2, data.white_board_lives[i].frames[0][j].pt.x / scale + point_x, data.white_board_lives[i].frames[0][j].pt.y / scale + point_y);
+                            }else{
+                                point(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x, data.white_board_lives[i].frames[0][j].pt.y / scale + point_y);
+                                console.log("Point: " + (data.white_board_lives[i].frames[0][j].pt.x / scale+ point_x )+ " " + (data.white_board_lives[i].frames[0][j].pt.y / scale + point_y));
+                            }
                         }
                     }
                 }

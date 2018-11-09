@@ -1057,29 +1057,29 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                     if(data.img_url){
                         console.log("draw image", data.img_url);
                     }
-                    var p1, p2, status;
+                    var p1, p2, pid;
                     // 绘制白色的点
                     for(var i = 0; i < data.white_board_lives.length; i++){
                         //4种画布显示情况
-                        var dev_w, dev_h, draw_w, draw_h, scale = 1;
+                        var dev_w, dev_h, draw_w, draw_h, scale = 1, id, color, touch = 0, draw_x = 0, draw_y = 0, point_x = 0, point_y = 0, point_dev_scale = 1, point_draw_scale = 1;
                         if(data.white_board_lives[i].len_unit == 0){
                             dev_w = parseInt(data.white_board_lives[i].dev_width),
                             dev_h = parseInt(data.white_board_lives[i].dev_height),
                             draw_w = parseInt(displayWidth),
                             draw_h = parseInt((new Number(212 / 667 * displayHeight)).toFixed(1));
                         }else{
-                            scale = util.getDPI()[0] / 25.4;
+                            scale = util.getDPI()[0] / 25.4 / 2;
                             dev_w = parseInt((new Number(data.white_board_lives[i].dev_width * scale)).toFixed(1)),
                             dev_h = parseInt((new Number(data.white_board_lives[i].dev_height * scale)).toFixed(1)),
                             draw_w = parseInt(displayWidth),
-                            draw_h = parseInt((new Number(212 / 667 * displayHeight)).toFixed(1));
+                            draw_h = parseInt(Math.floor(212 / 667 * displayHeight));
                             console.log("scale", scale);
                             console.log("dev_w", dev_w);
                             console.log("dev_h", dev_h);
                             console.log("draw_w", draw_w);
                             console.log("draw_h", draw_h);
                         }
-                        var point_x = 0, point_y = 0, point_dev_scale = Math.floor(dev_w / dev_w), point_draw_scale = Math.floor(draw_w / draw_h);
+                        point_dev_scale = dev_w / dev_w, point_draw_scale = draw_w / draw_h;
                         if(draw_w > dev_w && draw_h > dev_h){
                             //坐标原点
                             point_x = (new Number((draw_w - dev_w) / 2 / scale)).toFixed(1);
@@ -1099,82 +1099,159 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                             console.log("test4");
                             if(draw_w > draw_h){
                                 //坐标原点
-                                point_x = parseInt((new Number((draw_w- draw_h) / 2)).toFixed(1));
+                                point_x =  parseInt((new Number(((draw_w - point_dev_scale * draw_h) / 2)).toFixed(1)));
                                 point_y = 0;
+                                console.log("point_x", point_x)
                             }else if(draw_w < draw_h){
                                 //坐标原点
                                 point_x = 0;
-                                point_y = parseInt((new Number((draw_h- draw_w) / 2)).toFixed(1));
+                                point_y =  parseInt((new Number(((draw_h - draw_w / point_dev_scale) / 2)).toFixed(1)));
+                                console.log("point_y", point_y)
                             }
                         }
 
-                        for(var j = 0; j < data.white_board_lives[i].frames[0].length; j++){
-                            fill(0, 0, 255);
-                            strokeWeight(data.white_board_lives[i].frames[0][j].pt.w / scale);
-                            //stroke(255); 设置画笔颜色
-                            switch(data.white_board_lives[i].frames[0][j].pt.c){
-                              case 0:
-                                stroke(51);
-                                break;
-                              case 1:
-                                stroke(255, 0, 0);
-                                break;
-                              case 2:
-                                stroke(0, 255, 0);
-                                break;
-                              case 3:
-                                stroke(0, 0, 255);
-                                break;
-                              default:
-                                stroke(0, 0, 0);
-                            }
-                            
-                            // 触摸点类型
-                            switch(data.white_board_lives[i].frames[0][j].t){
-                                case 0:
-                                    stroke(51);
-                                    break;
-                                case 1:
-                                    stroke(255);
-                                    alpha(color(255, 255, 255, 0));
-                                    break;
-                                case 2:
-                                    break;
-                                case 3:
-                                    break;
-                                case 4:
-                                    console.log("清屏");
-                                    stroke(255);
-                                    fill(color(255, 255, 255, 0));
-                                    rect(0, 0, displayWidth, Math.floor(212 / 667 * displayHeight));
-                                    clear();
-                                    break;
-                                case 5:
-                                    break;
-                                default:
-                                    stroke(255);
-                            }
-
-                            // 区分画线和画点
-                            status = data.white_board_lives[i].frames[0][((j > 1) ? (j - 1) : 0)].pt.s;
-                            if(i > 1){
-                                p1 = (data.white_board_lives[i].frames[0][((j > 1) ? (j - 1) : 0)].pt.x / scale + point_x);
-                                p2 = (data.white_board_lives[i].frames[0][((j > 1) ? (j - 1) : 0)].pt.y / scale + point_y);
-                            }else{
-                                if(j > 1){
-                                    p1 = (data.white_board_lives[i].frames[0][j - 1].pt.x / scale + point_x);
-                                    p2 = (data.white_board_lives[i].frames[0][j - 1].pt.y / scale + point_y);
-                                }else{
-                                    p1 = (data.white_board_lives[i].frames[0][0].pt.x / scale + point_x);
-                                    p2 = (data.white_board_lives[i].frames[0][0].pt.y / scale + point_y);
+                        if(data.white_board_lives[i].frames[0].length >= 1){
+                            for(var j = 0; j < data.white_board_lives[i].frames[0].length; j++){
+                                fill(0, 0, 255);
+                                strokeWeight(data.white_board_lives[i].frames[0][j].pt.w / scale);
+                                
+                                
+                                // 触摸点类型
+                                switch(data.white_board_lives[i].frames[0][j].t){
+                                    case 0: //指针(触摸点)
+                                        stroke(51);
+                                        color = data.white_board_lives[i].frames[0][j].pt.c; //stroke(51); 设置画笔颜色
+                                        switch(color){
+                                          case 0:
+                                            stroke(51);
+                                            break;
+                                          case 1:
+                                            stroke(255, 0, 0);
+                                            break;
+                                          case 2:
+                                            stroke(0, 255, 0);
+                                            break;
+                                          case 3:
+                                            stroke(0, 0, 255);
+                                            break;
+                                          default:
+                                            stroke(0, 0, 0);
+                                        }
+                                        // 区分画线和画点
+                                        id = data.white_board_lives[i].frames[0][j].pt.id;
+                                        touch = data.white_board_lives[i].frames[0][j].pt.s; // 0抬起 1 按下 2移动
+                                        if(id != pid){
+                                            switch(touch) {
+                                                case 0: //第一个点不处理抬起
+                                                    break;
+                                                case 1: 
+                                                    p1 = point_x;
+                                                    p2 = point_y;
+                                                    draw_x = point_x;
+                                                    draw_y = point_x;
+                                                    pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点的id
+                                                    break;
+                                                case 2: 
+                                                    p1 = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.x / scale  + point_x))).toFixed(1);
+                                                    p2 = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y))).toFixed(1);
+                                                    draw_x = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.x / scale  + point_x))).toFixed(1);
+                                                    draw_y = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.y / scale  + point_y))).toFixed(1);
+                                                    pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点保存临时pid
+                                                    //线段的第一个点
+                                                    strokeCap(ROUND);
+                                                    strokeJoin(ROUND);
+                                                    point(draw_x, draw_y);
+                                                    break;
+                                                }
+                                        }else{
+                                            switch (touch) {
+                                                case 0:
+                                                    pid = 0;//新的数据移除pid
+                                                    break;
+                                                case 1: 
+                                                    break;
+                                                case 2:
+                                                    draw_x = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.x / scale  + point_x))).toFixed(1);
+                                                    draw_y = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.y / scale  + point_y))).toFixed(1);
+                                                    //线段的第一个点
+                                                    strokeCap(ROUND);
+                                                    strokeJoin(ROUND);
+                                                    line(p1, p2, draw_x, draw_y);
+                                                    //更新p1, p2信息
+                                                    p1 = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.x / scale  + point_x))).toFixed(1);
+                                                    p2 = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y))).toFixed(1);
+                                                    break;
+                                            }
+                                        }
+                                        break;
+                                    case 1: //橡皮擦
+                                        stroke(255);
+                                        alpha(color(255, 255, 255, 0));
+                                        // 区分画线和画点
+                                        id = data.white_board_lives[i].frames[0][j].pt.id;
+                                        touch = data.white_board_lives[i].frames[0][j].pt.s; // 0抬起 1 按下 2移动
+                                        if(id != pid){
+                                            switch(touch) {
+                                                case 0: //第一个点不处理抬起
+                                                    break;
+                                                case 1: 
+                                                    p1 = point_x;
+                                                    p2 = point_y;
+                                                    draw_x = point_x;
+                                                    draw_y = point_x;
+                                                    pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点的id
+                                                    break;
+                                                case 2: 
+                                                    draw_x = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.x / scale  + point_x))).toFixed(1);
+                                                    draw_y = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.y / scale  + point_y))).toFixed(1);
+                                                    //线段的第一个点
+                                                    strokeCap(ROUND);
+                                                    strokeJoin(ROUND);
+                                                    point(draw_x, draw_y);
+                                                    p1 = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.x / scale  + point_x))).toFixed(1);
+                                                    p2 = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y))).toFixed(1);
+                                                    pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点保存临时pid
+                                                    break;
+                                                }
+                                        }else{
+                                            switch (touch) {
+                                                case 0:
+                                                    pid = 0;//新的数据移除pid
+                                                    break;
+                                                case 1: 
+                                                    break;
+                                                case 2:
+                                                    draw_x = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.x / scale  + point_x))).toFixed(1);
+                                                    draw_y = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.y / scale  + point_y))).toFixed(1);
+                                                    //线段的第一个点
+                                                    strokeCap(ROUND);
+                                                    strokeJoin(ROUND);
+                                                    line(p1, p2, draw_x, draw_y);
+                                                    //更新p1, p2信息
+                                                    p1 = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.x / scale  + point_x))).toFixed(1);
+                                                    p2 = parseInt((new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y))).toFixed(1);
+                                                    break;
+                                            }
+                                        }
+                                        break;
+                                    case 2: //手势
+                                        break;
+                                    case 3: // 快照
+                                        break;
+                                    case 4: // 清屏
+                                        stroke(255);
+                                        fill(color(255, 255, 255, 0));
+                                        rect(0, 0, displayWidth, Math.floor(212 / 667 * displayHeight));
+                                        clear();
+                                        break;
+                                    case 5:
+                                        break;
+                                    default:
+                                        stroke(255);
                                 }
-                            }
 
-                            if((status == data.white_board_lives[i].frames[0][j].pt.s && status == 1) || status == 2){
-                                line(p1, p2, data.white_board_lives[i].frames[0][j].pt.x / scale + point_x, data.white_board_lives[i].frames[0][j].pt.y / scale + point_y);
-                            }else{
-                                point(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x, data.white_board_lives[i].frames[0][j].pt.y / scale + point_y);
-                                console.log("Point: " + (data.white_board_lives[i].frames[0][j].pt.x / scale+ point_x )+ " " + (data.white_board_lives[i].frames[0][j].pt.y / scale + point_y));
+                               
+                                console.log("Point: " + draw_x + " " + draw_y);
                             }
                         }
                     }

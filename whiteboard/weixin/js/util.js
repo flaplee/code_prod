@@ -41,9 +41,9 @@ define([], function() {
     };
     var util = {
         config: {
-            version: '201080611',
-            domain: 'https://eapp.delicloud.com/boardat/weixin',
-            apiurl: 'https://eapp-api.delicloud.com/boardat'
+            version: '20181015',
+            domain: 'http://eapp-api.delicloud.xin/whiteboard/weixin',
+            apiurl: 'http://eapp.delicloud.xin/whiteboard'
         },
         getQuery: function(param) {
             var url = window.location.href;

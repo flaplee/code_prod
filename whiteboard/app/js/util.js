@@ -41,9 +41,9 @@ define(['svgicons'], function(svgicons) {
     };
     var util = {
         config: {
-            version: '20180612',
-            domain: 'https://eapp.delicloud.com/boardat/app',
-            apiurl: 'https://eapp-api.delicloud.com/boardat'
+            version: '20181015',
+            domain: './',//http://eapp.delicloud.xin/whiteboard/app
+            apiurl: 'http://101.132.90.164:19204'//http://eapp-api.delicloud.xin/whiteboard
         },
         getQuery: function(param) {
             var url = window.location.href;
@@ -176,6 +176,22 @@ define(['svgicons'], function(svgicons) {
             }
             svg.setAttribute('viewBox', box.x + ' ' + box.y + ' ' + box.width + ' ' + box.height);
         },
+        getDPI: function() {
+            var arrDPI = new Array();
+            if (window.screen.deviceXDPI != undefined) {
+                arrDPI[0] = window.screen.deviceXDPI;
+                arrDPI[1] = window.screen.deviceYDPI;
+            }
+            else {
+                var tmpNode = document.createElement("DIV");
+                tmpNode.style.cssText = "width:1in;height:1in;position:absolute;left:0px;top:0px;z-index:99;visibility:hidden";
+                document.body.appendChild(tmpNode);
+                arrDPI[0] = parseInt(tmpNode.offsetWidth);
+                arrDPI[1] = parseInt(tmpNode.offsetHeight);
+                tmpNode.parentNode.removeChild(tmpNode);    
+            }
+            return arrDPI;
+        },
         setCookie: function(c_name, value, exdays) {
             var exdate = new Date();
             exdate.setDate(exdate.getDate() + exdays);
@@ -271,6 +287,7 @@ define(['svgicons'], function(svgicons) {
                         }
                     }
                 });
+
             }
         }
     };

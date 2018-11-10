@@ -7,11 +7,11 @@
   <meta name="format-detection" content="email=no"/>
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" name="viewport">
   <script src="./js/src/mobile.js"></script>
-  <title>共享翻页笔</title>
+  <title>共享白板</title>
   <link rel="stylesheet" href="./css/weui.min.css?v=2018061309">
   <link rel="stylesheet" href="./css/jquery-weui.min.css?v=2018061309">
   <link rel="stylesheet" href="./css/main.css?v=2018061309" media="all"/>
-  <link rel="stylesheet" href="./css/style.css?v=2018061309" media="all"/>
+  <link rel="stylesheet" href="./css/style.css" media="all"/>
   <style>
     #page{
       visibility: visible;
@@ -19,10 +19,6 @@
     #page.loading{
       visibility: visible;
       height: 100%;
-      -background-image: url(./images/loading.svg);
-      -background-size: 20% auto;
-      -background-repeat: no-repeat;
-      -background-position: 50% 50%;
     }
     #page > div.content{
       visibility: visible;
@@ -69,6 +65,7 @@
         </div>
         <div class="wrap-live">
           <div class="live-content">
+            <div class="live-draw" id="live-draw"></div>
             <div class="live-empty">
               <div class="empty-text meeting-ongoing">
                 <p class="empty-text-top">当前会议未开始</p>
@@ -143,7 +140,25 @@
 <script src='./js/src/bespoke/modernizr.custom.js?v=2018061309'></script>
 <script src='./js/src/bespoke/bespoke.js?v=2018061309'></script>
 <script src='./js/src/bespoke/bespoke-fx.min.js?v=2018061309'></script>
+<script src='./js/src/drawboard.min.js'></script>
 <script src='./js/src/sea.js?v=2018061309'></script>
-<script src='./js/index.js?v=2018061309'></script>
+<script type="text/javascript">
+  // 程序开始时，setup() 函数中的语句执行一次。
+  function setup() {
+    var domCanvas = createCanvas(displayWidth, Math.floor(212 / 667 * displayHeight), [P2D]);
+    domCanvas.parent('live-draw');
+  }
+  // draw() 中的语句一直执行到程序停止为止。每个语句都按顺序执行，并且在读取最后一行之后，将再次执行第一行。
+  function draw() {}
+
+  deli.common.navigation.goBack({},function(data){
+    function setup() {
+      var domCanvas = createCanvas(displayWidth, Math.floor(212 / 667 * displayHeight), [P2D]);
+      domCanvas.parent('live-draw');
+    }
+    function draw() {}
+  },function(resp){});
+</script>
+<script src='./js/index.js?v=20181024'></script>
 </body>
 </html>

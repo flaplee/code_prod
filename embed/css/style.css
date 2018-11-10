@@ -1,0 +1,90 @@
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, p , form, fieldset, legend, input, button, textarea, th, td, input {
+  margin: 0;
+  padding: 0;
+}
+
+i {
+  font-style: normal;
+}
+
+ul {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+/* common css */
+body {
+  font-size: 12px;
+  font-family: Microsoft YaHei UI, "微软雅黑", Heiti SC, Droid Sans;
+  color: #666;
+  background-color: #fff;
+}
+
+a {
+  color: #666;
+  text-decoration: none;
+  hide-focus: expression(this.hideFocus=true);
+/* ie6 ie7 */
+  outline: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a.noline:hover, .noline a:hover {
+  text-decoration: none;
+}
+
+a img {
+  border: none;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.clear:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+
+.clear {
+  zoom: 1;
+}
+
+.container {
+  width: 1200px;
+  margin: 0 auto
+}
+
+/* embed */
+/* fallback */
+ @font-face {
+    font-family:'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../materialize/fonts/roboto/Roboto-Regular.woff2) format('woff2');
+}
+.material-icons {
+    font-family:'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings:'liga';
+    -webkit-font-smoothing: antialiased;
+}

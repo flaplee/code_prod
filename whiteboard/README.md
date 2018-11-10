@@ -1,7 +1,5 @@
-## 共享翻页笔h5应用
+## 共享白板h5应用
 
 ### 说明
    
-   项目前端文件由deli-cloud-app/boardat.git boardat-static 移动而来
-
-
+   项目deli-frontend-app/whiteboard.git 和 deli-frontend-app/boardat.git 后期会合二为一

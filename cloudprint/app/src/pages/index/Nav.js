@@ -135,8 +135,6 @@ class Nav extends Component {
     // url转换，下载预览图片
     loadPreviewUrl(data, type, callback){
         const self = this
-        let previewData = new FormData();
-        //previewData.append();
         //上传文件 第三方url转PDF
         fetch(convertURL + '/file/uploadByUrl', {
             method: 'POST',
@@ -183,11 +181,10 @@ class Nav extends Component {
             }
         ).catch(function (err) {
             deli.common.notification.hidePreloader();
-            deli.common.notification.prompt({
-                "type": "error",
+            deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
-            }, function (data) {}, function (resp) {});
+            }, function (data) { }, function (resp) { });
             console.log("错误:" + err);
         });
     }
@@ -239,8 +236,7 @@ class Nav extends Component {
             }
         ).catch(function (err) {
             deli.common.notification.hidePreloader();
-            deli.common.notification.prompt({
-                "type": "error",
+            deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) { }, function (resp) { });
@@ -278,13 +274,14 @@ class Nav extends Component {
                 }, function (data) {
                     if(data.length > 0){
                         let innerIndex = 0;
+                        let innerLength = data.length;
                         deli.common.notification.showPreloader();
                         for (let imgFileNum = 0; imgFileNum < data.length; imgFileNum++){
                             deli.common.file.upload({
                                 url: convertURL + '/file/uploadByFile',
                                 file: data[imgFileNum].file_path
                             }, function (json) {
-                                if(json){
+                                if (json && json instanceof Array && json.length > 0){
                                     innerIndex++;
                                     for (let i = 0; i < json.length; i++) {
                                         (function (i) {
@@ -308,6 +305,12 @@ class Nav extends Component {
                                                         Cookies.save('printPreviewType', 'image', { path: '/' });
                                                         Cookies.save('printData', tmpPrintData, { path: '/' });
                                                         deli.common.notification.hidePreloader();
+                                                        if (data.length != innerLength){
+                                                            deli.common.notification.toast({
+                                                                "text": (data.length - innerLength) + "张图片上传失败",
+                                                                "duration": 3
+                                                            }, function (data) {}, function (resp) {});
+                                                        }
                                                     });
                                                 } else {
                                                     self.setState({ fileType: 'image', fileList: imgFileList }, function () {
@@ -315,17 +318,47 @@ class Nav extends Component {
                                                         localStorage.setItem('printPreviewData', JSON.stringify(imgFileList))
                                                         Cookies.save('printPreviewType', 'image', { path: '/' });
                                                         Cookies.save('printData', tmpPrintData, { path: '/' });
-                                                        deli.common.notification.hidePreloader();
                                                     })
                                                 }
                                             })
                                         })(i);
                                     }
+                                }else{
+                                    innerIndex++;
+                                    let tmpPrintData = Object.assign({}, self.state.printData, { printStartPage: 1, printEndPage: 1 })
+                                    if (innerIndex == data.length) {
+                                        if (data.length != 1){
+                                            self.setState({ layerView: true, redirect: { imgNav: true }, fileType: 'image', fileList: imgFileList }, function () {
+                                                localStorage.removeItem('printPreviewData')
+                                                localStorage.setItem('printPreviewData', JSON.stringify(imgFileList))
+                                                Cookies.save('printPreviewType', 'image', { path: '/' });
+                                                Cookies.save('printData', tmpPrintData, { path: '/' });
+                                                deli.common.notification.hidePreloader();
+                                                if (data.length != innerLength) {
+                                                    deli.common.notification.toast({
+                                                        "text": (data.length - innerLength) + "张图片上传失败",
+                                                        "duration": 3
+                                                    }, function (data) { }, function (resp) { });
+                                                }
+                                            });
+                                        }else{
+                                            deli.common.notification.toast({
+                                                "text": "1张图片上传失败",
+                                                "duration": 3
+                                            }, function (data) { }, function (resp) { });
+                                        }
+                                    } else {
+                                        self.setState({ fileType: 'image', fileList: imgFileList }, function () {
+                                            localStorage.removeItem('printPreviewData')
+                                            localStorage.setItem('printPreviewData', JSON.stringify(imgFileList))
+                                            Cookies.save('printPreviewType', 'image', { path: '/' });
+                                        })
+                                    }
+                                    innerLength--;
                                 }
                             }, function (resp) {
                                 deli.common.notification.hidePreloader();
-                                deli.common.notification.prompt({
-                                    "type": "error",
+                                deli.common.notification.toast({
                                     "text": '网络错误，请重试',
                                     "duration": 2
                                 }, function (data) {}, function (resp) {});
@@ -334,8 +367,7 @@ class Nav extends Component {
                     }
                 }, function (resp) {
                     deli.common.notification.hidePreloader();
-                    deli.common.notification.prompt({
-                        "type": "error",
+                    deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
                     }, function (data) {}, function (resp) {});
@@ -380,8 +412,7 @@ class Nav extends Component {
                     }
                 }, function (resp) {
                     deli.common.notification.hidePreloader();
-                    deli.common.notification.prompt({
-                        "type": "error",
+                    deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
                     }, function (data) { }, function (resp) { });
@@ -465,8 +496,7 @@ class Nav extends Component {
             }
         }, function (resp) {
             deli.common.notification.hidePreloader();
-            deli.common.notification.prompt({
-                "type": "error",
+            deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) {}, function (resp) {});

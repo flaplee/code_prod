@@ -1,0 +1,7 @@
+{
+  "editor.formatOnSave": true,
+  "prettier.eslintIntegration": true,
+  "eslint.run": "onSave",
+  "files.eol": "\n",
+  "editor.tabSize": 2
+}

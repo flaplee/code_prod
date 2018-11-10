@@ -31,16 +31,24 @@ export default class Virtualprintlogin extends React.Component {
             function (response) {
                 if (response.status !== 200) {
                     deli.common.notification.hidePreloader();
+<<<<<<< HEAD
                     deli.common.notification.prompt({
                         "type": "error",
                         "text": '网络错误，请重试',
                         "duration": 2
                     }, function (data) { }, function (resp) { });
+=======
+                    deli.common.notification.toast({
+                        "text": "网络错误，请重试",
+                        "duration": 1.5
+                    }, function (data) {}, function (resp) {});
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     return;
                 }
                 response.json().then(function (json) {
                     deli.common.notification.hidePreloader();
                     if (json.code == 0) {
+<<<<<<< HEAD
                         deli.common.notification.prompt({
                             "type": "success",
                             "text": '授权成功',
@@ -51,6 +59,16 @@ export default class Virtualprintlogin extends React.Component {
                             "type": "error",
                             "text": json.msg,
                             "duration": 2
+=======
+                        deli.common.notification.toast({
+                            "text": "授权成功",
+                            "duration": 1.5
+                        }, function (data) {}, function (resp) {});
+                    } else {
+                        deli.common.notification.toast({
+                            "text": json.msg,
+                            "duration": 1.5
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                         }, function (data) {}, function (resp) {});
                     }
                     self.setState({ redirectIndexNav: true }, function () {});
@@ -58,11 +76,19 @@ export default class Virtualprintlogin extends React.Component {
             }
         ).catch(function (err) {
             deli.common.notification.hidePreloader();
+<<<<<<< HEAD
             deli.common.notification.prompt({
                 "type": "error",
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) {}, function (resp) {});
+=======
+            deli.common.notification.toast({
+                "text": "网络错误，请重试",
+                "duration": 1.5
+            }, function (data) { }, function (resp) { });
+            self.setState({ redirectIndexNav: true }, function () { });
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
     

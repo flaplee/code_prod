@@ -141,28 +141,25 @@ class PrintManage extends React.Component {
                                     });
                                 }
                             ).catch(function (err) {
-                                deli.common.notification.prompt({
-                                    "type": 'error',
-                                    "text": "网络错误,请重试",
-                                    "duration": 1.5
+                                deli.common.notification.toast({
+                                    "text": '网络错误，请重试',
+                                    "duration": 2
                                 }, function (data) { }, function (resp) { });
                             });
                         })
                     } else {
-                        deli.common.notification.prompt({
-                            "type": 'error',
-                            "text": "网络错误,请重试",
-                            "duration": 1.5
-                        },function(data){},function(resp){});
+                        deli.common.notification.toast({
+                            "text": '网络错误，请重试',
+                            "duration": 2
+                        }, function (data) { }, function (resp) { });
                     }
                 });
             }
         ).catch(function (err) {
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
-            },function(data){},function(resp){});
+            deli.common.notification.toast({
+                "text": '网络错误，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { });
         });
     }
 
@@ -209,7 +206,7 @@ class PrintManage extends React.Component {
                             </HBox>
                         </div>
                     </div>
-                    <div>
+                    <div style={{ display: (this.state.printer.onlineStatus == 2) ? 'none' : '' }}>
                         <div className="print-list-wrap-single print-list-wrap-single-tap" onClick={this.handleOnClick.bind(this, 'ink')}>
                             <HBox vAlign="center">
                                 <HBox flex={1}>
@@ -269,11 +266,10 @@ class PrintManage extends React.Component {
                             </HBox>
                         </div>
                     </div>
-                    <div>
+                    <div style={{ display: (this.state.printer.onlineStatus == 2) ? 'none' : '' }}>
                         <div className="print-list-wrap-single">
                             <HBox vAlign="center">
                                 <HBox flex={1}>
-
                                     <Box className="print-list-text-content-single" flex={1}>
                                         <p className="print-list-title-single omit">IP地址</p>
                                     </Box>

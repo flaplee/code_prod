@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="fragment" content="!" />
+	<!--Let browser know website is optimized for mobile-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>应用示例</title>
+	<!--Import Google Icon Font-->
+	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!--Import materialize.css-->
+	<link type="text/css" rel="stylesheet" href="./materialize/css/materialize.min.css"  media="screen,projection"/>
+	<link href="./css/style.css" rel="stylesheet">
+</head>
+<body>
+	<nav class="light-blue lighten-1" role="navigation" style="display: none;">
+		<div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Logo</a>
+		  <ul class="right hide-on-med-and-down">
+		    <li><a href="#">导航链接</a></li>
+		  </ul>
+
+		  <ul id="nav-mobile" class="side-nav">
+		    <li><a href="#">导航链接</a></li>
+		  </ul>
+		  <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+		</div>
+	</nav>
+	<div class="section no-pad-bot" id="index-banner">
+		<div class="container">
+		  <br><br>
+		  <div class="row center">
+		    
+		  </div>
+		  <div class="row center">
+		  </div>
+		  <br><br>
+
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="section">
+		  <!--   Icon Section   -->
+		  <div class="row">
+		    <div class="col s12 m4">
+		      <div class="icon-block">
+		        <h2 class="center light-blue-text"><i class="material-icons">flash_on</i></h2>
+		        <h5 class="center">快速开发</h5>
+
+		        <p class="light">我们做最繁重的工作为你提供一个默认的风格，把我们的自定义组件。此外，我们精致的动画和转换，为开发人员提供一个更流畅的体验。</p>
+		      </div>
+		    </div>
+
+		    <div class="col s12 m4">
+		      <div class="icon-block">
+		        <h2 class="center light-blue-text"><i class="material-icons">group</i></h2>
+		        <h5 class="center">用户体验</h5>
+
+		        <p class="light">通过利用元素和素材设计的原则，我们创建一个框架，采用组件和动画，提供更多的方便给用户。此外，一个单一的底层响应系统在所有平台上允许一个更统一的用户体验。</p>
+		      </div>
+		    </div>
+
+		    <div class="col s12 m4">
+		      <div class="icon-block">
+		        <h2 class="center light-blue-text"><i class="material-icons">settings</i></h2>
+		        <h5 class="center">简单使用</h5>
+
+		        <p class="light">我们已经提供了详细的文档，以及特定的代码示例，以帮助新用户开始使用。我们也总是开放的反馈，并可以回答任何问题，用户可能有关于实现。</p>
+		      </div>
+		    </div>
+		  </div>
+
+		</div>
+		<br><br>
+
+		<div class="section">
+
+		</div>
+	</div>
+
+	<footer class="page-footer orange" style="display: none;">
+	<div class="container">
+	  <div class="row">
+	    <div class="col l6 s12">
+	      <h5 class="white-text">我们的团队</h5>
+	      <p class="grey-text text-lighten-4">我们是一个在这个项目上工作的大学生团队，就像是我们的全职工作。任何金额将有助于支持和继续在这个项目上的发展，并不胜感激。</p>
+
+
+	    </div>
+	    <div class="col l3 s12">
+	      <h5 class="white-text">设置</h5>
+	      <ul>
+	        <li><a class="white-text" href="#!">链接 1</a></li>
+	        <li><a class="white-text" href="#!">链接 2</a></li>
+	        <li><a class="white-text" href="#!">链接 3</a></li>
+	        <li><a class="white-text" href="#!">链接 4</a></li>
+	      </ul>
+	    </div>
+	    <div class="col l3 s12">
+	      <h5 class="white-text">链接</h5>
+	      <ul>
+	        <li><a class="white-text" href="#!">链接 1</a></li>
+	        <li><a class="white-text" href="#!">链接 2</a></li>
+	        <li><a class="white-text" href="#!">链接 3</a></li>
+	        <li><a class="white-text" href="#!">链接 4</a></li>
+	      </ul>
+	    </div>
+	  </div>
+	</div>
+	<div class="footer-copyright">
+	  <div class="container">
+	  Made by <a class="orange-text text-lighten-3" href="http://www.materializecss.cn">Materialize</a>
+	  </div>
+	</div>
+	</footer>
+	<!--Import jQuery before materialize.js-->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="./materialize/js/materialize.min.js"></script>
+	<script>
+		(function(o, s, id){
+			var js, fjs = o.getElementsByTagName(s)[0];
+			if (o.getElementById(id)) {return;}
+			js = o.createElement(s); js.id = id;
+			js.src = "./js/delicloud-web.js";//./js/delicloud-web.js  ./js/delicloud-web.min-test.js
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'deli-sdk-pc'));
+		window.deliAsyncInit = function(){
+			var Page = {
+		        init: function() {
+		            var that = this;
+		            var i = 0;
+		            $("[data-type]").on("click", function(a) {
+		                var d = $(a.target),
+		                    e = d.attr("data-type");
+		                switch (e) {
+		                    case "supbrowser":
+		                        deli.common.supbrowser({
+		                            "ie": 8
+		                        }, function(data) {
+		                            console.log("supbrowser data", data);
+		                        }, function(resp) {
+		                            console.log("supbrowser resp", resp);
+		                        });
+		                        break;
+		                    case "onlogout":
+		                        deli.app.onlogout({}, function(data) {
+		                            alert("我设置退出~");
+		                        }, function(resp) {});
+		                        break;
+		                }
+		            });
+		        }
+		    };
+			deli.config({
+				"appId": "355373255801962497", // 必填，应用ID 
+				"noncestr": "abcdefg", // 必填，生成签名的随机串
+		        "timestamp": "1508755836143", // 必填，生成签名的时间戳
+		        "signature": "ae60fff41cc36aa39b1879528460b8fa" // 必填，服务端生成的签名
+			});
+			deli.ready(function(resp){
+        		Page.init();
+
+				/*deli.web.onrequest({
+					"type":"get",
+					"url":"http://t.delicloud.com/web/v1.0/org/482994771346849792/departments",
+					"data":{}
+				},function(data){
+					console.log("onrequest success", data);
+				},function(resp){
+					console.log("onrequest error", resp);
+				})*/
+
+				deli.web.getUsersFromOrg({
+					"user_id": "435738290713264128",
+					"dept_id": "464002681359302656",
+					"token": "37bc7c23-4937-499c-a9c3-65851a44d05c",
+					"text":"",
+					"data": {}
+				},function(data){
+					console.log("getUsersFromOrg success", data);
+				},function(resp){
+					console.log("getUsersFromOrg error", resp);
+				})
+
+				deli.web.getNextInfo({
+					"user_id": "435738290713264128",
+					"dept_id": "464002681359302656",
+					"token": "37bc7c23-4937-499c-a9c3-65851a44d05c",
+					"text":"",
+					"data": {}
+				},function(data){
+					console.log("getNextInfo success", data);
+				},function(resp){
+					console.log("getNextInfo error", resp);
+				})
+
+
+			});
+			deli.error(function(resp){
+				console.log("error",resp);
+			});
+		};
+	</script>
+</body>
+</html>

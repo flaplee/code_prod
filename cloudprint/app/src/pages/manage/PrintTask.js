@@ -114,19 +114,17 @@ class ManageTask extends Component {
                             self.setState({printer: {sn: data.data.printerSn, name: data.data.printerName, status: data.data.onlineStatus}}, function () {})
                         }
                     } else {
-                        deli.common.notification.prompt({
-                            "type": 'error',
-                            "text": "网络错误,请重试",
-                            "duration": 1.5
+                        deli.common.notification.toast({
+                            "text": '网络错误，请重试',
+                            "duration": 2
                         }, function (data) { }, function (resp) { });
                     }
                 });
             }
         ).catch(function (err) {
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
+            deli.common.notification.toast({
+                "text": '网络错误，请重试',
+                "duration": 2
             }, function (data) { }, function (resp) { });
         });
     }
@@ -168,11 +166,10 @@ class ManageTask extends Component {
             }
         ).catch(function (err) {
             self.setState({ layerView: false });
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
-            }, function (data) {}, function (resp) {});
+            deli.common.notification.toast({
+                "text": '网络错误，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { });
         });
     }
 

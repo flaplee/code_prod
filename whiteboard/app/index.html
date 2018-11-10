@@ -147,16 +147,17 @@
   function setup() {
     var domCanvas = createCanvas(displayWidth, Math.floor(212 / 667 * displayHeight), [P2D]);
     domCanvas.parent('live-draw');
+    domCanvas.id('live-draw-board').addClass('live-draw-board');
   }
   // draw() 中的语句一直执行到程序停止为止。每个语句都按顺序执行，并且在读取最后一行之后，将再次执行第一行。
   function draw() {}
-
   deli.common.navigation.goBack({},function(data){
     function setup() {
       var domCanvas = createCanvas(displayWidth, Math.floor(212 / 667 * displayHeight), [P2D]);
       domCanvas.parent('live-draw');
+      domCanvas.id('live-draw-board').addClass('live-draw-board');
     }
-    function draw() {}
+    function draw(){}
   },function(resp){});
 </script>
 <script src='./js/index.js?v=20181024'></script>

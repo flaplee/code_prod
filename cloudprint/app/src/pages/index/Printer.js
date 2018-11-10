@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Redirect } from 'react-router-dom';
+import Cookies from 'react-cookies'
 import printimg from '../../images/L1000DNW@3x.png'
 import printimgNone from '../../images/Printer_management01@3x.png'
 import { Progress } from 'saltui';
@@ -11,6 +12,7 @@ class Printer extends Component {
         const t = this;
         t.state = {
             printer: {},
+            printerCurrent: Cookies.load('printercurrent') || 0,
             inkbox: {
                 percent: 0
             },
@@ -31,16 +33,14 @@ class Printer extends Component {
         if (transProps.user && transProps.printer && transProps.inkbox){
             this.setState({
                 printer: transProps.printer,
+                printerCurrent: transProps.printerCurrent
             }, function() {
-                console.log("test4")
                 if (transProps.inkbox.inkboxColors){
                     this.setState({
                         inkbox: {
                             percent: parseInt(transProps.inkbox.inkboxColors[0].tonerRemain)
                         }
-                    }, function () {
-                        console.log("test5")
-                    });
+                    }, function () {});
                 }
             });
             /* this.setState({
@@ -69,7 +69,7 @@ class Printer extends Component {
     render() {
         if (this.state.redirect) {
             return <Redirect push to={
-                { pathname: "/printlist", search: "", state: {}  }
+                { pathname: "/printlist", search: "?printercurrent=" + this.state.printerCurrent + "", state: { "printercurrent": this.state.printerCurrent}  }
             } />;
         }
         return (
@@ -91,7 +91,7 @@ class Printer extends Component {
                         </div>
                         <div className="print-title">
                             <p className="print-title-sup">{this.state.printer.printerName}</p>
-                            <div className="print-title-sub"><i className="icon icon-notice"></i>{this.state.printer.errorMsg}</div>
+                            <div className="print-title-sub"><i className={(this.state.printer.errorMsg ? 'icon icon-notice' : 'icon')}></i><span>{this.state.printer.errorMsg}</span></div>
                         </div>
                     </div>
                     <div className="print-switch">
@@ -113,7 +113,7 @@ class Printer extends Component {
                         </div>
                         <div className="print-title">
                             <p className="print-title-sup">尚未添加打印机</p>
-                            <div className="print-title-sub">请先为组织添加云打印机设备</div>
+                            <div className="print-title-sub"><span>请先为组织添加云打印机设备</span></div>
                         </div>
                     </div>
                     <div className="print-switch" style={{ display: 'none' }}>

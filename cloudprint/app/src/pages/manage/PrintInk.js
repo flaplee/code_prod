@@ -41,6 +41,7 @@ class PrintInk extends React.Component {
             Cookies.remove('userId');
             Cookies.remove('orgId');
             Cookies.remove('token');
+            Cookies.remove('admin');
         }, function (resp) {});
     }
 

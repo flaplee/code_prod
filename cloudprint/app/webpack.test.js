@@ -20,7 +20,7 @@ const stylesheetsLoaders = [{
 const stylesheetsPlugin = new ExtractTextPlugin('[hash].css');
 const definePlugin = new webpack.DefinePlugin({
   'process.env': {
-    NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'production')
+    NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'testing')
   }
 });
 
@@ -39,34 +39,36 @@ function srcPathExtend(subpath) {
   return path.join(settings.srcPath, subpath)
 }
 
-const uglifyPlugin = new UglifyJsPlugin({
+/* const uglifyPlugin = new UglifyJsPlugin({
   cache: true,
-  parallel: true,
+  parallel: true, // 开启并行压缩，充分利用cpu
   sourceMap: false,
-  extractComments: true,
+  extractComments: false, // 移除注释
   uglifyOptions: {
     compress: {
+      unused: true,
       warnings: false,
-      drop_debugger: true,
-      drop_console: true
+      drop_debugger: true
+    },
+    output: {
+      comments: false
     }
-  },
-});
-
+  }
+}); */
 const compressionPlugin = new CompressionPlugin();
 
 module.exports = {
   devtool: 'false',
   context: path.join(__dirname, 'src'),
   entry: {
-    vendor: ['react','react-dom','react-router-dom'], //在此处配置
-    bundle :__dirname + "/src/index.js"               //已多次提及的唯一入口文件
+    vendor: ['react', 'react-dom', 'react-router-dom'], //在此处配置
+    bundle: __dirname + "/src/index.js"               //已多次提及的唯一入口文件
   },
   output: {
     path: path.resolve(__dirname, 'build'),
     publicPath: "./",
     filename: '[name].js',
-    chunkFilename : "[id].[name].bundle.chunk.js"
+    chunkFilename: "[id].[name].bundle.chunk.js"
   },
   /* externals: {
     'react': 'React'
@@ -74,32 +76,32 @@ module.exports = {
   plugins: [
     stylesheetsPlugin,
     new CleanWebpackPlugin([settings.distPath], {
-        verbose: true
+      verbose: true
     }),
     new HtmlWebpackPlugin({
-        template: srcPathExtend("index.html"),
-        PUBLIC_URL: 'https://eapp.delicloud.com/cloudprint/app/build/',
-        JSSDK_URL: 'https://static.delicloud.com/h5/sdk/delicloud.min.js?v=product',
-        inject: true
+      template: srcPathExtend("index.html"),
+      PUBLIC_URL: 'http://eapp.delicloud.xin/cloudprint/app/build/',
+      JSSDK_URL: 'http://t.static.delicloud.com/h5/sdk/delicloud.min.js?v=test',
+      inject: true
     }),
     new CleanWebpackPlugin(pathsToClean, {
       root: __dirname,
       verbose: true,
-      dry: false,           
+      dry: false,
       watch: false,
-      exclude: [ 'files', 'to', 'ignore' ],
+      exclude: ['files', 'to', 'ignore'],
       allowExternal: false,
       beforeEmit: false
     }),
     definePlugin,
-    uglifyPlugin,
+    //uglifyPlugin,
     compressionPlugin
   ],
   resolve: {
     modules: ['node_modules', path.join(__dirname, 'src')],
-    extensions: ['.js', '.json','.scss', '.css']
+    extensions: ['.js', '.json', '.scss', '.css']
   },
-  optimization:{
+  optimization: {
     splitChunks: {
       cacheGroups: {
         vendor: {
@@ -122,7 +124,7 @@ module.exports = {
       }/*,
       {
         test: /\.html$/,
-        use: [ {
+        use: [{
           loader: 'html-loader',
           options: {
             minimize: true
@@ -194,12 +196,12 @@ module.exports = {
       {
         test: /\.(jpe?g|png|gif|svg|ico)$/i,
         use: [
-            {
-                loader: "file-loader",
-                options: {
-                    outputPath: "assets/"
-                }
+          {
+            loader: "file-loader",
+            options: {
+              outputPath: "assets/"
             }
+          }
         ]
       },
     ]

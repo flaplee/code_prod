@@ -21,6 +21,7 @@ class FileList extends Component {
             isEmpty: false,
             noMore: false, 
             force: true,
+            goon: true,
             fileList: []
         };
         console.log("fileList props", props)
@@ -37,7 +38,8 @@ class FileList extends Component {
     getListPage(data) {
         console.log("data~~~~~~~~~~~~", data)
         const self = this
-        self.setState({ loading: true });
+        self.setState({ loading: true, goon: false });
+        deli.common.notification.showPreloader();
         let pages = self.state.fileList;
         let appData = new FormData();
         appData.append('pageNo', data.pageNo);
@@ -47,7 +49,7 @@ class FileList extends Component {
         fetch(mpURL + '/app/printerTask/queryMyPage', {
             method: 'POST',
             headers: {
-                token: Cookies.load('token')
+                "MP_TOKEN": Cookies.load('token')
             },
             body: appData
         }).then(
@@ -56,8 +58,9 @@ class FileList extends Component {
                     return;
                 }
                 response.json().then(function (json) {
-                    if (json.code === 0) {
-                        self.setState({ loading: false });
+                    if (json.code == 0) {
+                        self.setState({ loading: false, goon: true });
+                        deli.common.notification.hidePreloader();
                         if(data.pageNo == 1 && json.data.total == 0){
                             self.setState({
                                 fileList: [],
@@ -77,7 +80,7 @@ class FileList extends Component {
                                 self.setState({
                                     force: false,
                                     noMore: true
-                                }, function () { })
+                                }, function () {})
                             }
                         }
                     }
@@ -85,12 +88,16 @@ class FileList extends Component {
             }
         ).catch(function (err) {
             console.log("错误:" + err);
-            self.setState({ loading: false });
+            self.setState({ loading: false, goon: true });
+            deli.common.notification.hidePreloader();
         });
     }
 
     onLoad() {
-        this.getListPage({ pageNo: this.state.page + 1, pageLimit: 12, sn: this.state.printer.sn })
+        if (this.state.goon == true){
+            this.getListPage({ pageNo: this.state.page + 1, pageLimit: 12, sn: this.state.printer.sn })
+        }
+        
         this.setState({ page: this.state.page + 1, loading: false }, function(){
             console.log("page", this.state.page)
             //this.getListPage({ pageNo: this.state.page, pageLimit: 12, sn: this.state.printer.sn })

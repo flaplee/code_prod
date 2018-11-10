@@ -8,7 +8,7 @@ class Header extends Component {
         super(props)
         this.state = {
             className: '',
-            title: '得力云打印',
+            title: '云打印',
             rightText: '扫码',
             isShow: false
         };

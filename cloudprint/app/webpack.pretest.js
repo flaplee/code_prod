@@ -20,7 +20,7 @@ const stylesheetsLoaders = [{
 const stylesheetsPlugin = new ExtractTextPlugin('[hash].css');
 const definePlugin = new webpack.DefinePlugin({
   'process.env': {
-    NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'production')
+    NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')
   }
 });
 
@@ -39,20 +39,22 @@ function srcPathExtend(subpath) {
   return path.join(settings.srcPath, subpath)
 }
 
-const uglifyPlugin = new UglifyJsPlugin({
+/* const uglifyPlugin = new UglifyJsPlugin({
   cache: true,
-  parallel: true,
+  parallel: true, // 开启并行压缩，充分利用cpu
   sourceMap: false,
-  extractComments: true,
+  extractComments: false, // 移除注释
   uglifyOptions: {
     compress: {
+      unused: true,
       warnings: false,
-      drop_debugger: true,
-      drop_console: true
+      drop_debugger: true
+    },
+    output: {
+      comments: false
     }
-  },
-});
-
+  }
+}); */
 const compressionPlugin = new CompressionPlugin();
 
 module.exports = {
@@ -77,10 +79,10 @@ module.exports = {
         verbose: true
     }),
     new HtmlWebpackPlugin({
-        template: srcPathExtend("index.html"),
-        PUBLIC_URL: 'https://eapp.delicloud.com/cloudprint/app/build/',
-        JSSDK_URL: 'https://static.delicloud.com/h5/sdk/delicloud.min.js?v=product',
-        inject: true
+      template: srcPathExtend("index.html"),
+      PUBLIC_URL: 'http://eapp-pretest.deli/cloudprint/app/build/',
+      JSSDK_URL: 'http://static-pretest.deli/h5/sdk/delicloud.min.js?v=202',
+      inject: true
     }),
     new CleanWebpackPlugin(pathsToClean, {
       root: __dirname,
@@ -92,7 +94,7 @@ module.exports = {
       beforeEmit: false
     }),
     definePlugin,
-    uglifyPlugin,
+    //uglifyPlugin,
     compressionPlugin
   ],
   resolve: {
@@ -119,8 +121,7 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader'
-      }/*,
-      {
+      }/*,{
         test: /\.html$/,
         use: [ {
           loader: 'html-loader',

@@ -27,7 +27,7 @@ class FileItem extends Component{
                         <HBox vAlign="center">
                             <HBox flex={1}>
                                 <Box className="list-item-text-content" flex={1}>
-                                    <p className="list-item-title t-omit">{dataItem.fileSourceName}</p>
+                                    <p className="list-item-title t-omit">{dataItem.fileName}</p>
                                     <p className="list-item-text t-omit">{dataItem.printerName}</p>
                                 </Box>
                             </HBox>
@@ -45,27 +45,27 @@ class FileItem extends Component{
     render() {
         const self = this
         const statusInfo = {
-            10: {
+            'create': {
                 text: '未开始',
                 value: [5, 4, 6]
             },
-            20: {
+            'wating': {
                 text: '等待中',
                 value: [3, 4, 6]
             },
-            30: {
+            'doing': {
                 text: '正在打印',
                 value: [3, 4, 6]
             },
-            40: {
+            'success': {
                 text: '打印成功',
                 value: [1, 2, 6]
             },
-            41: {
+            'fail': {
                 text: '打印失败',
                 value: [1, 2, 6]
             },
-            50: {
+            'cancel': {
                 text: '已取消',
                 value: [1, 2, 6]
             }
@@ -77,7 +77,7 @@ class FileItem extends Component{
                 <HBox vAlign="center">
                     <HBox flex={1}>
                         <Box className="list-item-text-content" flex={1}>
-                            <p className="list-item-title t-omit">{dataItem.fileSourceName}</p>
+                            <p className="list-item-title t-omit">{dataItem.taskName}</p>
                             <p className="list-item-text t-omit">{dataItem.printerName}</p>
                         </Box>
                     </HBox>

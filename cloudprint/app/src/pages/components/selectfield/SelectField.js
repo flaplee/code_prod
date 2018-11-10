@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import Cookies from 'react-cookies';
 import { Group, CascadeSelectField } from 'saltui';
 class SelectField extends React.Component {
 
@@ -16,10 +17,17 @@ class SelectField extends React.Component {
     
     handleChange(field) {
         let range = [field[0].value, field[2].value]
-        this.setState({
-            value: field
-        });
-        this.props.onChange(range);
+        if (field[0].value > field[2].value){
+            deli.common.notification.toast({
+                "text": "请选择正确页码",
+                "duration": 1.5
+            },function(data){},function(resp){});
+        }else{
+            this.setState({
+                value: field
+            });
+            this.props.onChange(range);
+        }
     }
 
     formatter(value) {

@@ -71,6 +71,7 @@ class PrintManage extends React.Component {
             Cookies.remove('userId');
             Cookies.remove('orgId');
             Cookies.remove('token');
+            Cookies.remove('admin');
         }, function (resp) {});
     }
 
@@ -106,7 +107,7 @@ class PrintManage extends React.Component {
         fetch(mpURL + '/app/printer/queryStatus/' + sn, {
             method: 'GET',
             headers: {
-                token: Cookies.load('token')
+                "MP_TOKEN": Cookies.load('token')
             }
         }).then(
             function (response) {
@@ -122,7 +123,7 @@ class PrintManage extends React.Component {
                             fetch(mpURL + '/app/inkbox/queryDetails/' + self.state.printer.inkboxSn, {
                                 method: 'POST',
                                 headers: {
-                                    token: Cookies.load('token')
+                                    "MP_TOKEN": Cookies.load('token')
                                 },
                                 body: {}
                             }).then(

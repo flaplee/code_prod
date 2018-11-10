@@ -40,9 +40,10 @@
     "webpack-tinypng-compress": "^1.0.1"
   },
   "scripts": {
-    "start": "webpack-dev-server --config ./webpack.config.js",
-    "testing": "webpack --config ./webpack.testing.config.js",
-    "build": "webpack --mode production -p --config ./webpack.production.js",
+    "start": "webpack-dev-server --config ./webpack.test.js",
+    "pretest": "cross-env NODE_ENV=development webpack --mode development -p --config ./webpack.pretest.js",
+    "test": "cross-env NODE_ENV=testing webpack --mode development -p --config ./webpack.test.js",
+    "build": "webpack --mode production -p --config ./webpack.test.js",
     "dev": "webpack-dev-server --mode development --open --hot",
     "product": "./node_modules/.bin/webpack --mode production -p --progress --colors"
   },

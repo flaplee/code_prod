@@ -736,7 +736,11 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                     indexLeaveMeet(param);
                 });
 
+<<<<<<< HEAD
                 /*setTimeout(function() {
+=======
+                setTimeout(function() {
+>>>>>>> 48ba5390f66af89b0bfe1056ef6f5433f29af840
                     $('#page').removeClass('loading');
                     $('#home-page-skeleton').removeClass('loading');
                     //白板直播开始

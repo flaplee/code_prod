@@ -147,7 +147,7 @@ class Nav extends Component {
                     "fileUrl": data.file_url,
                     "fileName": data.file_name,
                     "fileType": data.file_name.substring(data.file_name.lastIndexOf("\.") + 1, data.file_name.length),
-                    "fileSource": "disk"
+                    "fileSource": "NAS"
                 }]
             })
         }).then(
@@ -499,7 +499,7 @@ class Nav extends Component {
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
-            }, function (data) { }, function (resp) { });
+            }, function (data) {}, function (resp) {});
         });
     }
 

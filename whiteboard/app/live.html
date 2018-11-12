@@ -56,11 +56,16 @@
 <script type="text/javascript">
   // 程序开始时，setup() 函数中的语句执行一次。
   function setup() {
-    var domCanvas = createCanvas(displayWidth, displayHeight);
+    var domCanvas = createCanvas(displayWidth, displayHeight, [P2D]);
     domCanvas.parent('live-draw');
+    domCanvas.id('live-draw-board').addClass('live-draw-board');
   }
   // draw() 中的语句一直执行到程序停止为止。每个语句都按顺序执行，并且在读取最后一行之后，将再次执行第一行。
   function draw() {}
+
+  function windowResized() {
+    resizeCanvas(displayWidth, displayHeight, [true]);
+  }
 </script>
 <script src='./js/live.js?v=20181024'></script>
 </body>

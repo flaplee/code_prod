@@ -71,6 +71,7 @@ class Index extends React.Component {
                 }
             }
         };
+        alert(JSON.stringify(this.state.printer))
     }
 
     componentWillMount(){
@@ -152,6 +153,75 @@ class Index extends React.Component {
     }
 
     // 打印
+<<<<<<< HEAD
+    handlePrintClick(){
+        this.setState({printLoading: true}, function(){})
+        const self = this;
+        let printItems = {};
+        if (self.state.printType == 'scan'){
+            const printTaskInfo = self.state.printTaskInfo;
+            const qrcodePrintData = self.state.printData;
+            printItems.taskSource = printTaskInfo.taskSource;
+            printItems.fileList = printTaskInfo.fileList;
+            printItems.printerSn = printTaskInfo.printerSn || self.state.sn;
+            printItems.printStartPage = printTaskInfo.printStartPage || qrcodePrintData.printStartPage;
+            printItems.printEndPage = printTaskInfo.printEndPage || qrcodePrintData.printEndPage;
+            printItems.copyCount = printTaskInfo.copyCount || qrcodePrintData.copyCount;
+            //基础参数设置
+            printItems.printDirection = qrcodePrintData.printDirection;
+            printItems.paperSize = qrcodePrintData.paperSize;
+            printItems.printColorMode = qrcodePrintData.printColorMode;
+            printItems.printWhole = qrcodePrintData.printWhole;
+            printItems.duplexMode = qrcodePrintData.duplexMode;
+            printItems.printDpi = qrcodePrintData.printDpi;
+        }else{
+            const fileList = self.state.fileList;
+            printItems = self.state.printData;
+            printItems.printerSn = self.state.sn;
+            printItems.fileList = [];
+            for (let i = 0; i < fileList.length; i++) {
+                printItems.fileList.push({
+                    fileSource: fileList[i].fileSource,
+                    printMd5: fileList[i].printMd5,
+                    fileSuffix: fileList[i].fileSuffix,
+                    printPDF: fileList[i].printPDF,
+                    totalPage: fileList[i].totalPage,
+                    fileId: fileList[i].id,
+                    printUrl: fileList[i].printUrl,
+                    fileName: fileList[i].fileName
+                })
+            }
+        }
+        //创建打印任务和任务设置打印机
+        fetch(mpURL + ((self.state.printType == 'scan') ? '/v1/app/printTask/taskToPrinter/' + self.state.printTaskInfo.taskCode +'':'/v1/app/printTask/apply'), {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "MP_TOKEN": Cookies.load('token')
+            },
+            body: JSON.stringify(printItems)
+        }).then(
+            function (response) {
+                if (response.status !== 200) {
+                    return;
+                }
+                response.json().then(function (json) {
+                    console.log("json", json)
+                    if (json.code == 0) {
+                        self.setState({ printLoading: false, redirectPrintTask: true }, function () {})
+                    }else{
+                        deli.common.notification.toast({
+                            "text": json.msg,
+                            "duration": 1.5
+                        },function(data){},function(resp){});
+                        self.setState({ printLoading: false }, function () {})
+                    }
+                });
+            }
+        ).catch(function (err) {
+            console.log("错误:" + err);
+        });
+=======
     handlePrintClick(type){
         const self = this;
         if(type == true){
@@ -226,6 +296,7 @@ class Index extends React.Component {
                 "duration": 2
             }, function (data) {}, function (resp) {});
         }
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
     }
 
     // 打印份数
@@ -299,7 +370,11 @@ class Index extends React.Component {
         }
         if(this.state.redirectPrinter){
             return <Redirect push to={
+<<<<<<< HEAD
+                { pathname: "/printlist", search: "?printercurrent: " + this.state.printerCurrent + "", state: { "printercurrent": this.state.printerCurrent } }
+=======
                 { pathname: "/printlist", search: "?printercurrent=" + this.state.printerCurrent + "", state: { "printercurrent": this.state.printerCurrent } }
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
             } />;
         }
 

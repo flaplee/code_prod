@@ -95,11 +95,14 @@ class ChooseList extends Component {
         ).catch(function (err) {
             self.setState({ loading: false });
             deli.common.notification.hidePreloader();
+<<<<<<< HEAD
+=======
             deli.common.notification.prompt({
                 "type": "error",
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) {}, function (resp) {});
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
 

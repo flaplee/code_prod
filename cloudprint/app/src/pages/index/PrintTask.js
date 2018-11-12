@@ -236,18 +236,33 @@ class ChooseTask extends React.Component {
                     if (data.code == 0 ) {
                         self.setState({ printer: { sn: data.data.printerSn, name: item.printerName, status: 1 }, redirect: { manageNav: true } });
                     } else {
+<<<<<<< HEAD
+                        deli.common.notification.prompt({
+                            "type": 'error',
+                            "text": "网络错误,请重试",
+                            "duration": 1.5
+                        }, function (data) {}, function (resp) {});
+=======
                         deli.common.notification.toast({
                             "text": '网络错误，请重试',
                             "duration": 2
                         }, function (data) { }, function (resp) { });
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     }
                 });
             }
         ).catch(function (err) {
             console.log("错误:" + err);
+<<<<<<< HEAD
+            deli.common.notification.prompt({
+                "type": 'error',
+                "text": "网络错误,请重试",
+                "duration": 1.5
+=======
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
             }, function (data) { }, function (resp) { });
         });
     }
@@ -331,9 +346,16 @@ class ChooseTask extends React.Component {
                 }).then(
                     function (response) {
                         if (response.status !== 200) {
+<<<<<<< HEAD
+                            deli.common.notification.prompt({
+                                "type": 'error',
+                                "text": "网络错误,请重试",
+                                "duration": 1.5
+=======
                             deli.common.notification.toast({
                                 "text": '网络错误，请重试',
                                 "duration": 2
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                             }, function (data) { }, function (resp) { });
                             return;
                         }
@@ -353,9 +375,16 @@ class ChooseTask extends React.Component {
                                 }).then(
                                     function (response) {
                                         if (response.status !== 200) {
+<<<<<<< HEAD
+                                            deli.common.notification.prompt({
+                                                "type": 'error',
+                                                "text": "网络错误,请重试",
+                                                "duration": 1.5
+=======
                                             deli.common.notification.toast({
                                                 "text": '网络错误，请重试',
                                                 "duration": 2
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                                             }, function (data) { }, function (resp) { });
                                             return;
                                         }
@@ -379,10 +408,18 @@ class ChooseTask extends React.Component {
                                         });
                                     }
                                 ).catch(function (err) {
+<<<<<<< HEAD
+                                    deli.common.notification.prompt({
+                                        "type": 'error',
+                                        "text": "网络错误,请重试",
+                                        "duration": 1.5
+                                    }, function (data) {}, function (resp) {});
+=======
                                     deli.common.notification.toast({
                                         "text": '网络错误，请重试',
                                         "duration": 2
                                     }, function (data) { }, function (resp) { });
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                                 });
                             } else {
                                 deli.common.notification.prompt({
@@ -394,10 +431,18 @@ class ChooseTask extends React.Component {
                         });
                     }
                 ).catch(function (err) {
+<<<<<<< HEAD
+                    deli.common.notification.prompt({
+                        "type": 'error',
+                        "text": "网络错误,请重试",
+                        "duration": 1.5
+                    }, function (data) {}, function (resp) {});
+=======
                     deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
                     }, function (data) { }, function (resp) { });
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                 });
             }
         }, function (resp) {});

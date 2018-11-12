@@ -38,7 +38,11 @@ class FileList extends Component {
     getListPage(data) {
         console.log("data~~~~~~~~~~~~", data)
         const self = this
+<<<<<<< HEAD
+        self.setState({ loading: true, goon: false });
+=======
         self.setState({ loading: true });
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         deli.common.notification.showPreloader();
         let pages = self.state.fileList;
         let appData = new FormData();
@@ -66,7 +70,11 @@ class FileList extends Component {
                 }
                 response.json().then(function (json) {
                     if (json.code == 0) {
+<<<<<<< HEAD
+                        self.setState({ loading: false, goon: true });
+=======
                         self.setState({ loading: false});
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                         deli.common.notification.hidePreloader();
                         if(data.pageNo == 1 && json.data.total == 0){
                             self.setState({
@@ -103,6 +111,10 @@ class FileList extends Component {
             }
         ).catch(function (err) {
             console.log("错误:" + err);
+<<<<<<< HEAD
+            self.setState({ loading: false, goon: true });
+            deli.common.notification.hidePreloader();
+=======
             self.setState({ loading: false});
             deli.common.notification.hidePreloader();
             deli.common.notification.prompt({
@@ -110,11 +122,18 @@ class FileList extends Component {
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) {}, function (resp) {});
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
 
     onLoad() {
+<<<<<<< HEAD
+        if (this.state.goon == true){
+            this.getListPage({ pageNo: this.state.page + 1, pageLimit: 12, sn: this.state.printer.sn })
+        }
+=======
         this.getListPage({ pageNo: this.state.page + 1, pageLimit: 12, sn: this.state.printer.sn })
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         
         this.setState({ page: this.state.page + 1, loading: false }, function(){
             console.log("page", this.state.page)

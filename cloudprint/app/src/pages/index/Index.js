@@ -54,6 +54,9 @@ class PrintIndex extends Component{
                 scandenied: false,
                 scanunbind: false,
                 login: false
+<<<<<<< HEAD
+            }
+=======
             },
             printData: {
                 'duplexMode': 1,
@@ -68,6 +71,7 @@ class PrintIndex extends Component{
                 'printStartPage': 1
             },
             timer: ''
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         };
     };
 
@@ -174,6 +178,12 @@ class PrintIndex extends Component{
                                             org_id: odata.organization.id,
                                             token: udata.token
                                         }, self.state.sn, function(){
+<<<<<<< HEAD
+                                            if (udata._d_from && udata._d_from == 'qrCode') {
+                                                self.setState({ "redirect": { "login": true }, "user": { "task_code": udata._d_data } })
+                                            } else if (udata._d_from && udata._d_from == 'app_file') {
+                                                self.setState({ "user": { "app_file": udata._d_data } })
+=======
                                             if (udata._d_data && udata._d_from && udata._d_from == 'qrCode') {
                                                 if ((udata._d_data).indexOf('/ca/') >= 0){
                                                     self.setState({ "redirect": { "login": true }, "user": { "task_code": udata._d_data } })
@@ -232,6 +242,7 @@ class PrintIndex extends Component{
                                                         })
                                                     }
                                                 })
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                                             }
                                         });
                                     }, function (uresp) {});
@@ -295,6 +306,11 @@ class PrintIndex extends Component{
         console.log("printer", printer);
     }
 
+<<<<<<< HEAD
+    transTimer(timer){
+        this.stopGetNewListPage(timer)
+    }
+=======
     //监听Timer变化状态
     transTimer(timer){
         this.stopGetNewListPage(timer)
@@ -382,6 +398,7 @@ class PrintIndex extends Component{
             }
         }
     }
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
     
     renderPrinter() {
         const user = this.state.user;
@@ -406,9 +423,16 @@ class PrintIndex extends Component{
             function (response) {
                 if (response.status !== 200) {
                     deli.common.notification.hidePreloader();
+<<<<<<< HEAD
+                    deli.common.notification.prompt({
+                        "type": 'error',
+                        "text": "网络错误,请重试",
+                        "duration": 1.5
+=======
                     deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     }, function (data) { }, function (resp) { });
                     return;
                 }
@@ -431,9 +455,13 @@ class PrintIndex extends Component{
                                 'page': 1,
                                 'limit': 10
                             }, function(sn) {
+<<<<<<< HEAD
+                                if (sn) { self.getPrinterData(sn, callback)}
+=======
                                 if(sn){
                                     self.getPrinterData(sn, callback)
                                 }
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                                 deli.common.notification.hidePreloader();
                             });
                         }
@@ -450,10 +478,18 @@ class PrintIndex extends Component{
         ).catch(function (err) {
             console.log("错误:" + err);
             deli.common.notification.hidePreloader();
+<<<<<<< HEAD
+            deli.common.notification.prompt({
+                "type": 'error',
+                "text": "网络错误,请重试",
+                "duration": 1.5
+            },function(data){},function(resp){});
+=======
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) { }, function (resp) { });
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
 
@@ -474,10 +510,18 @@ class PrintIndex extends Component{
             function (response) {
                 if (response.status !== 200) {
                     deli.common.notification.hidePreloader();
+<<<<<<< HEAD
+                    deli.common.notification.prompt({
+                        "type": 'error',
+                        "text": "网络错误,请重试",
+                        "duration": 1.5
+                    }, function (data) {}, function (resp) {});
+=======
                     deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
                     }, function (data) { }, function (resp) { });
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     return;
                 }
                 response.json().then(function (json) {
@@ -509,10 +553,18 @@ class PrintIndex extends Component{
             }
         ).catch(function (err) {
             deli.common.notification.hidePreloader();
+<<<<<<< HEAD
+            deli.common.notification.prompt({
+                "type": 'error',
+                "text": "网络错误,请重试",
+                "duration": 1.5
+            },function(data){},function(resp){});
+=======
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) { }, function (resp) { });
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
 
@@ -528,15 +580,24 @@ class PrintIndex extends Component{
         }).then(
             function (response) {
                 if (response.status !== 200) {
+<<<<<<< HEAD
+                    deli.common.notification.prompt({
+                        "type": 'error',
+                        "text": "网络错误,请重试",
+                        "duration": 1.5
+                    }, function (data) {}, function (resp) {});
+=======
                     deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
                     }, function (data) { }, function (resp) { });
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     return;
                 }
                 response.json().then(function (resp1) {
                     console.log("resp1", resp1)
                     if (resp1.code == 0) {
+                        alert(JSON.stringify(resp1.data))
                         Cookies.save('printer', resp1.data, { path: '/' });
                         self.setState({ printer: resp1.data }, function () {
                             console.log("test2")
@@ -550,9 +611,16 @@ class PrintIndex extends Component{
                             }).then(
                                 function (response) {
                                     if (response.status !== 200) {
+<<<<<<< HEAD
+                                        deli.common.notification.prompt({
+                                            "type": 'error',
+                                            "text": "网络错误,请重试",
+                                            "duration": 1.5
+=======
                                         deli.common.notification.toast({
                                             "text": '网络错误，请重试',
                                             "duration": 2
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                                         }, function (data) { }, function (resp) { });
                                         return;
                                     }
@@ -590,10 +658,18 @@ class PrintIndex extends Component{
                 });
             }
         ).catch(function (err) {
+<<<<<<< HEAD
+            deli.common.notification.prompt({
+                "type": 'error',
+                "text": "网络错误,请重试",
+                "duration": 1.5
+            }, function (data) {}, function (resp) {});
+=======
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) { }, function (resp) { });
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
 
@@ -611,9 +687,16 @@ class PrintIndex extends Component{
         }).then(
             function (response) {
                 if (response.status !== 200) {
+<<<<<<< HEAD
+                    deli.common.notification.prompt({
+                        "type": 'error',
+                        "text": "网络错误,请重试",
+                        "duration": 1.5
+=======
                     deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     }, function (data) { }, function (resp) { });
                     return;
                 }
@@ -630,10 +713,18 @@ class PrintIndex extends Component{
             }
         ).catch(function (err) {
             console.log("错误:" + err);
+<<<<<<< HEAD
+            deli.common.notification.prompt({
+                "type": 'error',
+                "text": "网络错误,请重试",
+                "duration": 1.5
+            }, function (data) {}, function (resp) {});
+=======
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) { }, function (resp) { });
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
 
@@ -671,9 +762,16 @@ class PrintIndex extends Component{
             function (response) {
                 if (response.status !== 200) {
                     self.stopGetNewListPage(self.state.timer)
+<<<<<<< HEAD
+                    deli.common.notification.prompt({
+                        "type": 'error',
+                        "text": "网络错误,请重试",
+                        "duration": 1.5
+=======
                     deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     }, function (data) { }, function (resp) { });
                     return;
                 }
@@ -701,10 +799,18 @@ class PrintIndex extends Component{
         ).catch(function (err) {
             console.log("错误:" + err);
             self.stopGetNewListPage(self.state.timer)
+<<<<<<< HEAD
+            deli.common.notification.prompt({
+                "type": 'error',
+                "text": "网络错误,请重试",
+                "duration": 1.5
+            }, function (data) {}, function (resp) {});
+=======
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) { }, function (resp) { });
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
 
@@ -738,9 +844,16 @@ class PrintIndex extends Component{
         }).then(
             function (response) {
                 if (response.status !== 200) {
+<<<<<<< HEAD
+                    deli.common.notification.prompt({
+                        "type": 'error',
+                        "text": "网络错误,请重试",
+                        "duration": 1.5
+=======
                     deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     }, function (data) { }, function (resp) { });
                     return;
                 }
@@ -807,17 +920,28 @@ class PrintIndex extends Component{
             }
         ).catch(function (err) {
             console.log("错误:" + err);
+<<<<<<< HEAD
+            deli.common.notification.prompt({
+                "type": 'error',
+                "text": "网络错误,请重试",
+                "duration": 1.5
+            }, function (data) {}, function (resp) {});
+=======
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) { }, function (resp) { });
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
 
     render(){
         if (this.state.redirect.chooseTask) {
             const sn = this.state.printer.printerSn
+<<<<<<< HEAD
+=======
             const name = this.state.printer.printerName
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
             const fileList = this.state.fileList
             const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == 1 ? 1 : 2))
             this.stopGetNewListPage(this.state.timer)
@@ -827,12 +951,28 @@ class PrintIndex extends Component{
             localStorage.removeItem('chooseTaskInfo')
             localStorage.setItem('chooseTaskInfo', JSON.stringify(printTaskInfo))
             return <Redirect push to={
+<<<<<<< HEAD
+                { pathname: "/choosetask", search: "?sn=" + sn + "&status=" + status + "&type=" + printType + "", state: { "sn": sn, "fileType": fileType, "fileList": fileList, "printTaskInfo": printTaskInfo, "status": status}  }
+=======
                 { pathname: "/choosetask", search: "?sn=" + sn + "&status=" + status + "&type=" + printType + "&name=" + name +"", state: { "sn": sn, "fileType": fileType, "fileList": fileList, "printTaskInfo": printTaskInfo, "status": status}  }
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
             } />;
         }
 
         if (this.state.redirect.previewIndex) {
             const sn = this.state.printer.printerSn
+<<<<<<< HEAD
+            const fileList = this.state.fileList
+            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == 1 ? 1 : 2))
+            this.stopGetNewListPage(this.state.timer)
+            const name = this.state.printer.printerName
+            const printTaskInfo = this.state.printTaskInfo
+            const printType = this.state.printType
+            const fileType = this.state.fileType
+            alert(JSON.stringify(this.state.printer))
+            return <Redirect push to={
+                { pathname: "/previewindex", search: "?sn=" + sn + "&status=" + status + "&type=" + printType + "&name="+ name +"", state: { "sn": sn, "fileType": fileType, "fileList": fileList, "printTaskInfo": printTaskInfo, "status": status}  }
+=======
             const name = this.state.printer.printerName
             const fileList = this.state.fileList
             const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == 1 ? 1 : 2))
@@ -854,6 +994,7 @@ class PrintIndex extends Component{
             const fileType = this.state.fileType
             return <Redirect push to={
                 { pathname: "/previewindex", search: "?sn=" + sn + "&status=" + status + "&type=upload&name=" + name +"", state: { "sn": sn, "fileList": fileList, "fileType": fileType, 'printType': 'upload', "status": status } }
+>>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
             } />;
         }
 

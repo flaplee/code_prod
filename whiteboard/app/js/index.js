@@ -527,14 +527,12 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                 };
                                 //白板内容绘画
                                 if (data.img_url) {
+                                    clear();
                                     console.log("draw image", data.img_url);
                                     var img = createImg(data.img_url);
+                                    img.width = width;
+                                    img.height = height;
                                     image(img, 0, 0, width, height);
-                                    /*loadImage('./images/list.png', function(img) {
-                                        console.log("img", img)
-                                        image(img, 0, 0, parseInt(displayWidth), parseInt((new Number(212 / 667 * displayHeight)).toFixed(2)));
-                                        
-                                    });*/
                                 }
                                 drawBoard();
                             },
@@ -736,11 +734,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                     indexLeaveMeet(param);
                 });
 
-<<<<<<< HEAD
                 /*setTimeout(function() {
-=======
-                setTimeout(function() {
->>>>>>> 48ba5390f66af89b0bfe1056ef6f5433f29af840
                     $('#page').removeClass('loading');
                     $('#home-page-skeleton').removeClass('loading');
                     //白板直播开始
@@ -1163,7 +1157,6 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                 var self = this,
                                     callbacks = self.callbacks;
                                 if (typeof callbacks.meetingEnd == "function") {
-
                                     callbacks.meetingEnd.call(this, data);
                                 }
                             }
@@ -1225,7 +1218,8 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                         });
                     }
                 },
-                drawPicture: function(data) {
+                drawPicture: function(data) {       
+                    //白板内容绘画
                     var drawBoard = function() {
                         if (data.white_board_lives) {
                             var p1, p2, pid;
@@ -1455,16 +1449,10 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                             }
                         }
                     };
-                    //白板内容绘画
                     if (data.img_url) {
                         console.log("draw image", data.img_url);
                         var img = createImg(data.img_url);
                         image(img, 0, 0, width, height);
-                        /*loadImage('./images/list.png', function(img) {
-                            console.log("img", img)
-                            image(img, 0, 0, parseInt(displayWidth), parseInt((new Number(212 / 667 * displayHeight)).toFixed(2)));
-                            
-                        });*/
                     }
                     drawBoard();
                 }

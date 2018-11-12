@@ -223,6 +223,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                 }
                             },
                             drawPicture: function(data) {
+                                //白板内容绘画
                                 var drawBoard = function() {
                                     if (data.white_board_lives) {
                                         var p1, p2, pid;
@@ -452,44 +453,17 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                         }
                                     }
                                 };
-                                //白板内容绘画
                                 if (data.img_url) {
-                                    console.log("draw image", data.img_url);
                                     var img = createImg(data.img_url);
+                                    img.width = width;
+                                    img.height = height;
                                     image(img, 0, 0, width, height);
-                                    /*loadImage('./images/list.png', function(img) {
-                                        console.log("img", img)
-                                        image(img, 0, 0, parseInt(displayWidth), parseInt((new Number(212 / 667 * displayHeight)).toFixed(2)));
-                                        
-                                    });*/
                                 }
                                 drawBoard();
                             }
                         }
                     });
                 }();
-
-                // todo
-                setTimeout(function() {
-                    $('#page').removeClass('loading');
-                    $('#home-page-skeleton').removeClass('loading');
-                    //白板直播开始
-                    deli.common.screen.keepAwake();
-                    //ppt直播开始
-                    Page.data.isMeeting = true;
-                    $contentLive.show();
-                    $liveImg.show();
-                    $liveEmpty.hide();
-                    $liveEmpty.find('.empty-text').css({
-                        'display': 'none'
-                    }).filter('.meeting-ongoing').css({
-                        'display': 'table-cell'
-                    });
-                    //手动画图测试
-                    $.getJSON("../json/whiteBoard.json?v=1", function(data) {
-                        Page.methods.drawPicture(data);
-                    });
-                }, 2000);
             },
             methods: {
                 initSocket: function(callback) {
@@ -623,7 +597,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                             if (resp.type == "meeting") {
                                                 self.dataHandler.meetInfo.call(self, resp.data);
                                             } else if (resp.type == "screenshot") {
-                                                self.callbacks.showScreenshot.call(self, resp.data);
+                                                //self.callbacks.showScreenshot.call(self, resp.data);
                                             } else if (resp.type == "whitemeeting") {
                                                 self.dataHandler.boardInfo.call(self, resp.data);
                                             }
@@ -719,6 +693,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                     };
                 },
                 drawPicture: function(data) {
+                    //白板内容绘画
                     var drawBoard = function() {
                         if (data.white_board_lives) {
                             var p1, p2, pid;
@@ -948,16 +923,11 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                             }
                         }
                     };
-                    //白板内容绘画
                     if (data.img_url) {
-                        console.log("draw image", data.img_url);
                         var img = createImg(data.img_url);
+                        img.width = width;
+                        img.height = height;
                         image(img, 0, 0, width, height);
-                        /*loadImage('./images/list.png', function(img) {
-                            console.log("img", img)
-                            image(img, 0, 0, parseInt(displayWidth), parseInt((new Number(212 / 667 * displayHeight)).toFixed(2)));
-                            
-                        });*/
                     }
                     drawBoard();
                 }

@@ -149,6 +149,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
 
                 // 实例化会议socket
                 var initSocketLive = function() {
+                    var p1, p2, pid, scale_wh = 16 / 9;
                     boardatClient.init(Page.data.userId, {
                         callbacks: {
                             meetingEnd: function(data) {
@@ -224,9 +225,9 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                             },
                             drawPicture: function(data) {
                                 //白板内容绘画
-                                var drawBoard = function() {
+                                var drawBoard = function(data) {
                                     if (data.white_board_lives) {
-                                        var p1, p2, pid;
+                                        p1, p2, pid;
                                         // 绘画
                                         for (var i = 0; i < data.white_board_lives.length; i++) {
                                             //4种画布显示情况
@@ -454,12 +455,35 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                     }
                                 };
                                 if (data.img_url) {
-                                    var img = createImg(data.img_url);
-                                    img.width = width;
-                                    img.height = height;
-                                    image(img, 0, 0, width, height);
+                                    //清屏
+                                    stroke(255);
+                                    fill(color(255, 255, 255, 0));
+                                    rect(0, 0, displayWidth, Math.floor(212 / 667 * displayHeight));
+                                    clear();
+                                    loadImage(data.img_url, function(img) {
+                                        scale_wh = img.width / img.height;
+                                        if(scale_wh > 1){
+                                            img.width = width;
+                                            img.height = height;
+                                            image(img, 0, 0, img.width, img.height);
+                                        }else if(scale_wh == 1){
+                                            if(width > height){
+                                                img.width = height;
+                                                img.height = height;
+                                                image(img, ((width - height) / 2), 0, img.width, img.height);
+                                            }else{
+                                                img.width = width;
+                                                img.height = width;
+                                                image(img, 0, ((height - width) / 2), img.width, img.height);
+                                            }
+                                        }else{
+                                            img.width = width;
+                                            img.height = height;
+                                            image(img, 0, 0, img.width, img.height);
+                                        }
+                                    });
                                 }
-                                drawBoard();
+                                drawBoard(data);
                             }
                         }
                     });

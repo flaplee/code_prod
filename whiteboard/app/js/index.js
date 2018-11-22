@@ -177,7 +177,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
 
                 // 实例化会议socket
                 var initSocketIndex = function() {
-                    var p1, p2, pid, img, scale_wh = 16 : 9;
+                    var p1, p2, pid, img, scale_wh = 16 / 9;
                     Page.data.socketIndex = 0;
                     boardatClient.init(Page.data.userId, {
                         callbacks: {
@@ -310,19 +310,27 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                                 point_x = 0,
                                                 point_y = 0,
                                                 scale = 1,
+                                                zoom = 1,
                                                 point_dev_scale = 1,
-                                                point_draw_scale = 1;
+                                                point_draw_scale = 1,
+                                                point_w_scale = 1,
+                                                point_h_scale = 1;
                                             if (data.white_board_lives[i].len_unit == 0) {
                                                 dev_w = data.white_board_lives[i].dev_width,
                                                     dev_h = data.white_board_lives[i].dev_height,
-                                                    draw_w = parseInt(displayWidth),
-                                                    draw_h = parseInt(212 / 667 * displayHeight);
+                                                    draw_w = parseInt(document.body.clientWidth),
+                                                    draw_h = parseInt(212 / 667 * document.body.clientHeight);
                                             } else {
-                                                scale = util.getDPI()[0] / 25.4 / 2,
-                                                    dev_w = data.white_board_lives[i].dev_width * scale,
-                                                    dev_h = data.white_board_lives[i].dev_height * scale,
-                                                    draw_w = parseInt(displayWidth),
-                                                    draw_h = parseInt(Math.floor(212 / 667 * displayHeight));
+                                                scale = parseFloat(util.getDPI()[0] / 25.4),
+                                                dev_w = data.white_board_lives[i].dev_width * scale,
+                                                dev_h = data.white_board_lives[i].dev_height * scale,
+                                                draw_w = parseInt(document.body.clientWidth),
+                                                draw_h = parseInt(Math.floor(212 / 667 * document.body.clientHeight));
+                                                point_w_scale = dev_w / draw_w,
+                                                point_h_scale = dev_h / draw_h,
+                                                zoom = ((point_w_scale > point_h_scale) ? point_w_scale : point_h_scale),
+                                                dev_w = dev_w / zoom,
+                                                dev_h = dev_h / zoom;
                                                 console.log("scale", scale);
                                                 console.log("dev_w", dev_w);
                                                 console.log("dev_h", dev_h);
@@ -330,50 +338,19 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                                 console.log("draw_h", draw_h);
                                             }
                                             point_dev_scale = dev_w / dev_h, point_draw_scale = draw_w / draw_h;
-                                            if (draw_w > dev_w && draw_h > dev_h) {
+                                            if (draw_w >= dev_w && draw_h >= dev_h) {
                                                 //坐标原点
-                                                point_x = parseFloat((draw_w - dev_w) / 2 / scale);
-                                                point_y = parseFloat((draw_h - dev_h) / 2 / scale);
-                                                console.log("test1");
-                                            } else if (draw_w > dev_w && draw_h < dev_h) {
+                                                point_x = parseFloat((draw_w - dev_w) / 2);
+                                                point_y = parseFloat((draw_h - dev_h) / 2);
+                                            }else{
                                                 //坐标原点
                                                 point_x = 0;
-                                                point_y = parseFloat((dev_h - draw_h) / 2 / scale);
-                                                console.log("test2");
-                                            } else if (draw_w < dev_w && draw_h > dev_h) {
-                                                //坐标原点
-                                                point_x = parseFloat((dev_w - draw_w) / 2 / scale);
                                                 point_y = 0;
-                                                console.log("test3");
-                                            } else if (draw_w < dev_w && draw_h < dev_h) {
-                                                console.log("test4");
-                                                if (draw_w > draw_h) {
-                                                    if (point_dev_scale > 1) {
-                                                        //坐标原点
-                                                        point_x = 0;
-                                                        point_y = 0;
-                                                    } else {
-                                                        //坐标原点
-                                                        point_x = parseFloat(((draw_w - point_dev_scale * draw_h) / 2));
-                                                        point_y = 0;
-                                                    }
-                                                } else if (draw_w < draw_h) {
-                                                    if (point_dev_scale > 1) {
-                                                        //坐标原点
-                                                        point_x = 0;
-                                                        point_y = 0;
-                                                    } else {
-                                                        //坐标原点
-                                                        point_x = 0;
-                                                        point_y = parseFloat(((draw_h - draw_w / point_dev_scale) / 2));
-                                                    }
-                                                }
                                             }
-
                                             if (data.white_board_lives[i].frames[0].length >= 1) {
                                                 for (var j = 0; j < data.white_board_lives[i].frames[0].length; j++) {
                                                     fill(0, 0, 255);
-                                                    strokeWeight(data.white_board_lives[i].frames[0][j].pt.w / scale);
+                                                    strokeWeight(data.white_board_lives[i].frames[0][j].pt.w * scale / zoom);
                                                     // 触摸点类型
                                                     switch (data.white_board_lives[i].frames[0][j].t) {
                                                         case 0: //指针(触摸点)
@@ -403,10 +380,10 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                                                     case 0: //第一个点不处理抬起
                                                                         break;
                                                                     case 1: //跨id时需要重置画笔开始位置
-                                                                        p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                                        p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
-                                                                        draw_x = p1 ? (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2) : point_x;
-                                                                        draw_y = p2 ? (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2) : point_y;
+                                                                        p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x * scale / zoom + point_x)).toFixed(2);
+                                                                        p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y * scale / zoom + point_y)).toFixed(2);
+                                                                        draw_x = p1 ? (new Number(data.white_board_lives[i].frames[0][j].pt.x * scale / zoom + point_x)).toFixed(2) : point_x;
+                                                                        draw_y = p2 ? (new Number(data.white_board_lives[i].frames[0][j].pt.y * scale / zoom + point_y)).toFixed(2) : point_y;
                                                                         //线段的第一个点
                                                                         strokeCap(ROUND);
                                                                         strokeJoin(ROUND);
@@ -417,15 +394,15 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                                                         console.log("draw_x, draw_y", draw_x + ' , ' + draw_y);
                                                                         break;
                                                                     case 2:
-                                                                        draw_x = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                                        draw_y = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
+                                                                        draw_x = (new Number(data.white_board_lives[i].frames[0][j].pt.x * scale / zoom + point_x)).toFixed(2);
+                                                                        draw_y = (new Number(data.white_board_lives[i].frames[0][j].pt.y * scale / zoom + point_y)).toFixed(2);
                                                                         //线段的第一个点
                                                                         strokeCap(ROUND);
                                                                         strokeJoin(ROUND);
                                                                         line(p1, p2, draw_x, draw_y);
                                                                         //更新p1, p2信息
-                                                                        p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                                        p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
+                                                                        p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x * scale / zoom + point_x)).toFixed(2);
+                                                                        p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y * scale / zoom + point_y)).toFixed(2);
                                                                         pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点保存临时pid
                                                                         console.log("draw_x, draw_y", draw_x + ' , ' + draw_y);
                                                                         break;
@@ -438,15 +415,15 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                                                     case 1:
                                                                         break;
                                                                     case 2:
-                                                                        draw_x = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                                        draw_y = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
+                                                                        draw_x = (new Number(data.white_board_lives[i].frames[0][j].pt.x * scale / zoom + point_x)).toFixed(2);
+                                                                        draw_y = (new Number(data.white_board_lives[i].frames[0][j].pt.y * scale / zoom + point_y)).toFixed(2);
                                                                         //线段的第一个点
                                                                         strokeCap(ROUND);
                                                                         strokeJoin(ROUND);
                                                                         line(p1, p2, draw_x, draw_y);
                                                                         //更新p1, p2信息
-                                                                        p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                                        p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
+                                                                        p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x * scale / zoom + point_x)).toFixed(2);
+                                                                        p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y * scale / zoom + point_y)).toFixed(2);
                                                                         pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点保存临时pid
                                                                         console.log("draw_x, draw_y", draw_x + ' , ' + draw_y);
                                                                         break;
@@ -464,10 +441,10 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                                                     case 0: //第一个点不处理抬起
                                                                         break;
                                                                     case 1: //跨id时需要重置画笔开始位置
-                                                                        p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                                        p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
-                                                                        draw_x = p1 ? (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2) : point_x;
-                                                                        draw_y = p2 ? (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2) : point_y;
+                                                                        p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x * scale / zoom + point_x)).toFixed(2);
+                                                                        p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y * scale / zoom + point_y)).toFixed(2);
+                                                                        draw_x = p1 ? (new Number(data.white_board_lives[i].frames[0][j].pt.x * scale / zoom + point_x)).toFixed(2) : point_x;
+                                                                        draw_y = p2 ? (new Number(data.white_board_lives[i].frames[0][j].pt.y * scale / zoom + point_y)).toFixed(2) : point_y;
                                                                         pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点的id
                                                                         //线段的第一个点
                                                                         strokeCap(ROUND);
@@ -475,14 +452,14 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                                                         line(p1, p2, draw_x, draw_y);
                                                                         break;
                                                                     case 2:
-                                                                        draw_x = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                                        draw_y = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
+                                                                        draw_x = (new Number(data.white_board_lives[i].frames[0][j].pt.x * scale / zoom + point_x)).toFixed(2);
+                                                                        draw_y = (new Number(data.white_board_lives[i].frames[0][j].pt.y * scale / zoom + point_y)).toFixed(2);
                                                                         //线段的第一个点
                                                                         strokeCap(ROUND);
                                                                         strokeJoin(ROUND);
                                                                         line(p1, p2, draw_x, draw_y);
-                                                                        p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                                        p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
+                                                                        p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x * scale / zoom + point_x)).toFixed(2);
+                                                                        p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y * scale / zoom + point_y)).toFixed(2);
                                                                         pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点保存临时pid
                                                                         break;
                                                                 }
@@ -494,15 +471,15 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                                                     case 1:
                                                                         break;
                                                                     case 2:
-                                                                        draw_x = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                                        draw_y = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
+                                                                        draw_x = (new Number(data.white_board_lives[i].frames[0][j].pt.x * scale / zoom + point_x)).toFixed(2);
+                                                                        draw_y = (new Number(data.white_board_lives[i].frames[0][j].pt.y * scale / zoom + point_y)).toFixed(2);
                                                                         //线段的第一个点
                                                                         strokeCap(ROUND);
                                                                         strokeJoin(ROUND);
                                                                         line(p1, p2, draw_x, draw_y);
                                                                         //更新p1, p2信息
-                                                                        p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                                        p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
+                                                                        p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x * scale / zoom + point_x)).toFixed(2);
+                                                                        p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y * scale / zoom + point_y)).toFixed(2);
                                                                         pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点保存临时pid
                                                                         break;
                                                                 }
@@ -515,7 +492,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                                         case 4: // 清屏
                                                             stroke(255);
                                                             fill(color(255, 255, 255, 0));
-                                                            rect(0, 0, displayWidth, Math.floor(212 / 667 * displayHeight));
+                                                            rect(0, 0, document.body.clientWidth, Math.floor(212 / 667 * document.body.clientHeight));
                                                             clear();
                                                             break;
                                                         case 5:
@@ -533,7 +510,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                                     //清屏
                                     stroke(255);
                                     fill(color(255, 255, 255, 0));
-                                    rect(0, 0, displayWidth, Math.floor(212 / 667 * displayHeight));
+                                    rect(0, 0, document.body.clientWidth, Math.floor(212 / 667 * document.body.clientHeight));
                                     clear();
                                     loadImage(data.img_url, function(img) {
                                         scale_wh = img.width / img.height;
@@ -657,7 +634,9 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                 });
 
                 if (Page.data.meet_live && Page.data.meet_live == 'hide') {
-                    deli.common.navigation.show({}, function(data) {}, function(resp) {});
+                    deli.common.navigation.show({}, function(data) {
+                        resizeCanvas(document.body.clientWidth, document.body.clientHeight);
+                    }, function(resp) {});
                     util.setCookie('meet_live', 'show', 7);
                 }
 
@@ -666,7 +645,9 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                 }
 
                 deli.common.navigation.goBack({}, function(data) {
-                    deli.common.navigation.show({}, function(data) {}, function(resp) {});
+                    deli.common.navigation.show({}, function(data) {
+                        resizeCanvas(document.body.clientWidth, document.body.clientHeight);
+                    }, function(resp) {});
                     if (util.localStorage.get('meetFrom') == 'index') {
                         util.localStorage.set('meetFrom', 'indexLive');
                     }
@@ -757,29 +738,6 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                     Page.methods.menuAddOrAt(0, $navAdd);
                     indexLeaveMeet(param);
                 });
-
-                /*setTimeout(function() {
-                    $('#page').removeClass('loading');
-                    $('#home-page-skeleton').removeClass('loading');
-                    //白板直播开始
-                    $boardatWrap.show();
-                    Page.data.isMeeting = true;
-                    $boardatWrap.removeClass('meet-live');
-                    $wrapTop.find('a#play').hide();
-                    $wrapTop.find('a#stop').show();
-                    $wrapLive.show();
-                    $wrapLiveArticle.show();
-                    $wrapLiveEmpty.hide();
-                    $wrapLiveEmpty.find('.empty-text').css({
-                        'display': 'none'
-                    }).filter('.meeting-ongoing').css({
-                        'display': 'table-cell'
-                    });
-                    //手动画图测试
-                    $.getJSON("../json/whiteBoard.json?v=1", function(data) {
-                        Page.methods.drawPicture(data);
-                    });
-                }, 2000);*/
             },
             methods: {
                 getIndexList: function(data1, data2, func) {
@@ -1241,253 +1199,7 @@ seajs.use(['util', 'svgicons', 'sockjs', 'stomp'], function(util, svgicons, sock
                             });
                         });
                     }
-                },
-/*                drawPicture: function(data) {
-                    //白板内容绘画
-                    var drawBoard = function(data) {
-                        if (data.white_board_lives) {
-                            var p1, p2, pid;
-                            // 绘画
-                            for (var i = 0; i < data.white_board_lives.length; i++) {
-                                //4种画布显示情况
-                                var id, colors, dev_w, dev_h, draw_w, draw_h,
-                                    touch = 0,
-                                    draw_x = 0,
-                                    draw_y = 0,
-                                    point_x = 0,
-                                    point_y = 0,
-                                    scale = 1,
-                                    point_dev_scale = 1,
-                                    point_draw_scale = 1;
-                                if (data.white_board_lives[i].len_unit == 0) {
-                                    dev_w = data.white_board_lives[i].dev_width,
-                                        dev_h = data.white_board_lives[i].dev_height,
-                                        draw_w = parseInt(displayWidth),
-                                        draw_h = parseInt(212 / 667 * displayHeight);
-                                } else {
-                                    scale = util.getDPI()[0] / 25.4 / 2,
-                                        dev_w = data.white_board_lives[i].dev_width * scale,
-                                        dev_h = data.white_board_lives[i].dev_height * scale,
-                                        draw_w = parseInt(displayWidth),
-                                        draw_h = parseInt(Math.floor(212 / 667 * displayHeight));
-                                    console.log("scale", scale);
-                                    console.log("dev_w", dev_w);
-                                    console.log("dev_h", dev_h);
-                                    console.log("draw_w", draw_w);
-                                    console.log("draw_h", draw_h);
-                                }
-                                point_dev_scale = dev_w / dev_h, point_draw_scale = draw_w / draw_h;
-                                if (draw_w > dev_w && draw_h > dev_h) {
-                                    //坐标原点
-                                    point_x = parseFloat((draw_w - dev_w) / 2 / scale);
-                                    point_y = parseFloat((draw_h - dev_h) / 2 / scale);
-                                    console.log("test1");
-                                } else if (draw_w > dev_w && draw_h < dev_h) {
-                                    //坐标原点
-                                    point_x = 0;
-                                    point_y = parseFloat((dev_h - draw_h) / 2 / scale);
-                                    console.log("test2");
-                                } else if (draw_w < dev_w && draw_h > dev_h) {
-                                    //坐标原点
-                                    point_x = parseFloat((dev_w - draw_w) / 2 / scale);
-                                    point_y = 0;
-                                    console.log("test3");
-                                } else if (draw_w < dev_w && draw_h < dev_h) {
-                                    console.log("test4");
-                                    if (draw_w > draw_h) {
-                                        if (point_dev_scale > 1) {
-                                            //坐标原点
-                                            point_x = 0;
-                                            point_y = 0;
-                                        } else {
-                                            //坐标原点
-                                            point_x = parseFloat(((draw_w - point_dev_scale * draw_h) / 2));
-                                            point_y = 0;
-                                        }
-                                    } else if (draw_w < draw_h) {
-                                        if (point_dev_scale > 1) {
-                                            //坐标原点
-                                            point_x = 0;
-                                            point_y = 0;
-                                        } else {
-                                            //坐标原点
-                                            point_x = 0;
-                                            point_y = parseFloat(((draw_h - draw_w / point_dev_scale) / 2));
-                                        }
-                                    }
-                                }
-
-                                if (data.white_board_lives[i].frames[0].length >= 1) {
-                                    for (var j = 0; j < data.white_board_lives[i].frames[0].length; j++) {
-                                        fill(0, 0, 255);
-                                        strokeWeight(data.white_board_lives[i].frames[0][j].pt.w / scale);
-                                        // 触摸点类型
-                                        switch (data.white_board_lives[i].frames[0][j].t) {
-                                            case 0: //指针(触摸点)
-                                                stroke(51);
-                                                colors = data.white_board_lives[i].frames[0][j].pt.c; //stroke(51); 设置画笔颜色
-                                                switch (colors) {
-                                                    case 0:
-                                                        stroke(51);
-                                                        break;
-                                                    case 1:
-                                                        stroke(255, 0, 0);
-                                                        break;
-                                                    case 2:
-                                                        stroke(0, 255, 0);
-                                                        break;
-                                                    case 3:
-                                                        stroke(0, 0, 255);
-                                                        break;
-                                                    default:
-                                                        stroke(0, 0, 0);
-                                                }
-                                                // 区分画线和画点
-                                                id = data.white_board_lives[i].frames[0][j].pt.id;
-                                                touch = data.white_board_lives[i].frames[0][j].pt.s; // 0抬起 1 按下 2移动
-                                                if (id != pid) {
-                                                    switch (touch) {
-                                                        case 0: //第一个点不处理抬起
-                                                            break;
-                                                        case 1: //跨id时需要重置画笔开始位置
-                                                            p1 = p1 ? (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2) : point_x;
-                                                            p2 = p2 ? (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2) : point_y;
-                                                            draw_x = p1 ? (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2) : point_x;
-                                                            draw_y = p2 ? (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2) : point_y;
-                                                            pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点的id
-                                                            //线段的第一个点
-                                                            strokeCap(ROUND);
-                                                            strokeJoin(ROUND);
-                                                            //point(p1, p2);
-                                                            line(p1, p2, draw_x, draw_y);
-                                                            console.log("draw_x, draw_y", draw_x + ' , ' + draw_y);
-                                                            break;
-                                                        case 2:
-                                                            draw_x = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                            draw_y = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
-                                                            //线段的第一个点
-                                                            strokeCap(ROUND);
-                                                            strokeJoin(ROUND);
-                                                            line(p1, p2, draw_x, draw_y);
-                                                            //更新p1, p2信息
-                                                            p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                            p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
-                                                            pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点保存临时pid
-                                                            console.log("draw_x, draw_y", draw_x + ' , ' + draw_y);
-                                                            break;
-                                                    }
-                                                } else {
-                                                    switch (touch) {
-                                                        case 0:
-                                                            pid = 0; //新的数据移除pid
-                                                            break;
-                                                        case 1:
-                                                            break;
-                                                        case 2:
-                                                            draw_x = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                            draw_y = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
-                                                            //线段的第一个点
-                                                            strokeCap(ROUND);
-                                                            strokeJoin(ROUND);
-                                                            line(p1, p2, draw_x, draw_y);
-                                                            //更新p1, p2信息
-                                                            p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                            p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
-                                                            pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点保存临时pid
-                                                            console.log("draw_x, draw_y", draw_x + ' , ' + draw_y);
-                                                            break;
-                                                    }
-                                                }
-                                                break;
-                                            case 1: //橡皮擦
-                                                stroke(255);
-                                                alpha(color(255, 255, 255, 0));
-                                                // 区分画线和画点
-                                                id = data.white_board_lives[i].frames[0][j].pt.id;
-                                                touch = data.white_board_lives[i].frames[0][j].pt.s; // 0抬起 1 按下 2移动
-                                                if (id != pid) {
-                                                    switch (touch) {
-                                                        case 0: //第一个点不处理抬起
-                                                            break;
-                                                        case 1: //跨id时需要重置画笔开始位置
-                                                            p1 = p1 ? (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2) : point_x;
-                                                            p2 = p2 ? (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2) : point_y;
-                                                            draw_x = p1 ? (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2) : point_x;
-                                                            draw_y = p2 ? (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2) : point_y;
-                                                            pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点的id
-                                                            //线段的第一个点
-                                                            strokeCap(ROUND);
-                                                            strokeJoin(ROUND);
-                                                            line(p1, p2, draw_x, draw_y);
-                                                            break;
-                                                        case 2:
-                                                            draw_x = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                            draw_y = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
-                                                            //线段的第一个点
-                                                            strokeCap(ROUND);
-                                                            strokeJoin(ROUND);
-                                                            line(p1, p2, draw_x, draw_y);
-                                                            p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                            p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
-                                                            pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点保存临时pid
-                                                            break;
-                                                    }
-                                                } else {
-                                                    switch (touch) {
-                                                        case 0:
-                                                            pid = 0; //新的数据移除pid
-                                                            break;
-                                                        case 1:
-                                                            break;
-                                                        case 2:
-                                                            draw_x = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                            draw_y = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
-                                                            //线段的第一个点
-                                                            strokeCap(ROUND);
-                                                            strokeJoin(ROUND);
-                                                            line(p1, p2, draw_x, draw_y);
-                                                            //更新p1, p2信息
-                                                            p1 = (new Number(data.white_board_lives[i].frames[0][j].pt.x / scale + point_x)).toFixed(2);
-                                                            p2 = (new Number(data.white_board_lives[i].frames[0][j].pt.y / scale + point_y)).toFixed(2);
-                                                            pid = data.white_board_lives[i].frames[0][j].pt.id; //第一个点保存临时pid
-                                                            break;
-                                                    }
-                                                }
-                                                break;
-                                            case 2: //手势
-                                                break;
-                                            case 3: // 快照
-                                                break;
-                                            case 4: // 清屏
-                                                stroke(255);
-                                                fill(color(255, 255, 255, 0));
-                                                rect(0, 0, displayWidth, Math.floor(212 / 667 * displayHeight));
-                                                clear();
-                                                break;
-                                            case 5:
-                                                break;
-                                            default:
-                                                stroke(255);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    };
-                    if (data.img_url) {
-                        //清屏
-                        stroke(255);
-                        fill(color(255, 255, 255, 0));
-                        rect(0, 0, displayWidth, Math.floor(212 / 667 * displayHeight));
-                        clear();
-                        console.log("draw image", data.img_url);
-                        img = loadImage(data.img_url);
-                        img.width = width;
-                        img.height = height;
-                        image(img, 0, 0, width, height);
-                    }
-                    drawBoard(data);
-                }*/
+                }
             }
         };
 

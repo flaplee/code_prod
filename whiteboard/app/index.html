@@ -145,7 +145,7 @@
 <script type="text/javascript">
   // 程序开始时，setup() 函数中的语句执行一次。
   function setup() {
-    var domCanvas = createCanvas(displayWidth, Math.floor(212 / 667 * displayHeight), [P2D]);
+    var domCanvas = createCanvas(document.body.clientWidth, Math.floor(212 / 667 * document.body.clientHeight), [P2D]);
     domCanvas.parent('live-draw');
     domCanvas.id('live-draw-board').addClass('live-draw-board');
   }
@@ -153,7 +153,7 @@
   function draw() {}
   deli.common.navigation.goBack({},function(data){
     function setup() {
-      var domCanvas = createCanvas(displayWidth, Math.floor(212 / 667 * displayHeight), [P2D]);
+      var domCanvas = createCanvas(document.body.clientWidth, Math.floor(212 / 667 * document.body.clientHeight), [P2D]);
       domCanvas.parent('live-draw');
       domCanvas.id('live-draw-board').addClass('live-draw-board');
     }

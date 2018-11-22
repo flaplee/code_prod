@@ -41,8 +41,8 @@ define(['svgicons'], function(svgicons) {
     };
     var util = {
         config: {
-            version: '20181015',
-            domain: './',//http://eapp.delicloud.xin/whiteboard/app
+            version: '20181114',
+            domain: 'http://eapp.delicloud.xin/whiteboard/app',//
             apiurl: 'http://101.132.90.164:19204'//http://eapp-api.delicloud.xin/whiteboard
         },
         getQuery: function(param) {

@@ -1,4 +1,4 @@
-import key from './../key';
+import key from '../key';
 
 export const SET_MODAL = `${key}/SET_MODAL`;
 export const CLOSE_MODAL = `${key}/CLOSE_MODAL`;

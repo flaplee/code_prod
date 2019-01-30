@@ -9,11 +9,12 @@ import {
   loadPrintersError,
 } from 'containers/App/actions/PrintersActions';
 
-import { REQUEST_PRINTERS } from 'containers/App/constants/PrintersTypes';
+import {
+  REQUEST_PRINTERS,
+  REQUEST_PRINTERS_ITEM,
+} from 'containers/App/constants/PrintersTypes';
 
-import { REQUEST_TASKS } from './../constants/TasksTypes';
-
-import { REQUEST_INKBOX } from './../constants/InkboxTypes';
+import { REQUEST_TASKS } from '../constants/TasksTypes';
 
 function* loadPrinters() {
   try {
@@ -37,7 +38,7 @@ function* loadPrinters() {
     if (rows.length === 0) throw emptyRows;
     yield put(receivePrinters(json));
     yield put(setPrintersCurrent(rows[0]));
-    yield put({ type: REQUEST_INKBOX });
+    yield put({ type: REQUEST_PRINTERS_ITEM });
     yield put({ type: REQUEST_TASKS });
   } catch (e) {
     yield put(loadPrintersError(e));

@@ -1,20 +1,25 @@
 import { select, call, put, takeLatest } from 'redux-saga/effects';
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router/immutable';
 import { authRequest } from 'utils/request';
 import apis from 'containers/PrintPreview/apis';
 
 import { addMessages } from 'containers/App/actions/MessagesActions';
 
+import verifyForm from 'containers/PrintPreview/verifyForm';
+
 /* eslint-disable-next-line */
 import delay from '@redux-saga/delay-p';
 
-import { SUBMIT_TASK, RECEIVE_TASK } from './../constants/TaskTypes';
+import { SUBMIT_TASK, RECEIVE_TASK } from '../constants/TaskTypes';
 
-import { makeSelectForm } from './../selectors/form';
+import { makeSelectForm } from '../selectors/form';
 
 function* submit() {
   try {
     let data = yield select(makeSelectForm());
+
+    verifyForm(data); // verify form
+
     const { fileList } = data;
     data = {
       ...data,

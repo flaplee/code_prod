@@ -7,22 +7,25 @@ import Icon from 'salt-icon';
 import TaskList from './TaskList';
 import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL } from '../../configs/config'
 import './Print.scss';
-
+// 引入路由
+import { History, createHashHistory } from "history";
+import Utils from '../../util/js/util.js';
 const { HBox, Box } = Boxs;
 
 class ManageTask extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
             printer:{
-                sn: (new URLSearchParams(props.location.search)).get('sn') || '',
-                name: (new URLSearchParams(props.location.search)).get('name') || '',
-                status: (new URLSearchParams(props.location.search)).get('status') || 0
+                sn: (localStorage.getItem('printer') && localStorage.getItem('printer') != "undefined") ? JSON.parse(localStorage.getItem('printer')).printerSn : '',
+                name: (localStorage.getItem('printer') && localStorage.getItem('printer') != "undefined") ? JSON.parse(localStorage.getItem('printer')).printerName : '',
+                status: (localStorage.getItem('printer') && localStorage.getItem('printer') != "undefined") ? ((JSON.parse(localStorage.getItem('printer')).workStatus == 'error') ? 0 : (JSON.parse(localStorage.getItem('printer')).onlineStatus == '1' ? 1 : 2)) : ''
             },
-            page: 0,
+            urlFrom: (new URLSearchParams(props.location.search)).get('from') || '',
+            page: 1,
             loading: false,
             refreshing: false,
+            isEmpty: false,
             statusInfo: {},
             menuList: [{
                 value: 1,
@@ -32,23 +35,19 @@ class ManageTask extends Component {
                 text: '取消'
             }],
             taskList: [],
+            taskLast: false,
             taskItemData: {},
             layerView: false,
             layerViewData: [],
             redirect: {
-                previewNav: false
+                previewNav: false,
+                previewBack: false
             },
             timer: 0
         };
     }
     
-    onLoad() {
-        /* this.setState({ loading: true });
-
-        setTimeout(() => {
-            this.setState({ page: this.state.page + 1, loading: false });
-        }, 2000); */
-    }
+    onLoad() {}
 
     componentWillMount() {};
     
@@ -63,18 +62,24 @@ class ManageTask extends Component {
 
         // 返回
         deli.common.navigation.goBack({}, function (data) {
-            this.stopPrinterPoll(this.state.timer);
+            localStorage.removeItem('printDataChg')
+            localStorage.setItem('printDataChg', true)
+            if (Utils.timer.printListTimer) { Utils.stopGetPrinterInfo(Utils.timer.printListTimer) }
         }, function (resp) {});
 
         // 关闭
         deli.common.navigation.close({}, function (data) {
-           this.stopPrinterPoll(this.state.timer)
+            //this.stopPrinterPoll(this.state.timer)
+            if (Utils.timer.printListTimer) { Utils.stopGetPrinterInfo(Utils.timer.printListTimer) }
             Cookies.remove('appId');
             Cookies.remove('sign');
             Cookies.remove('userId');
             Cookies.remove('orgId');
             Cookies.remove('token');
             Cookies.remove('admin');
+            localStorage.removeItem('printer')
+            localStorage.removeItem('printPreviewData')
+            localStorage.removeItem('chooseTaskInfo')
         }, function (resp) {});
         
         //this.startPrinterPoll(this.state.printer.sn)
@@ -99,6 +104,7 @@ class ManageTask extends Component {
         //查询打印机信息
         fetch(mpURL + '/app/printer/queryStatus/' + sn, {
             method: 'GET',
+            timeout: 60000,
             headers: {
                 "MP_TOKEN": Cookies.load('token')
             }
@@ -108,7 +114,6 @@ class ManageTask extends Component {
                     return;
                 }
                 response.json().then(function (data) {
-                    console.log("data", data)
                     if (data.code == 0) {
                         if (self.state.printer.sn != data.data.printerSn || self.state.printer.name != data.data.printerName || self.state.printer.status == data.data.onlineStatus){
                             self.setState({printer: {sn: data.data.printerSn, name: data.data.printerName, status: data.data.onlineStatus}}, function () {})
@@ -131,10 +136,10 @@ class ManageTask extends Component {
 
     //取消打印
     handleCancelTask(item) {
-        console.log("取消打印~~~~~~~~~~~~")
         const self = this
         fetch(mpURL + '/app/printerTask/cancel/' + item.taskCode, {
             method: 'GET',
+            timeout: 60000,
             headers: {
                 "MP_TOKEN": Cookies.load('token')
             }
@@ -144,16 +149,36 @@ class ManageTask extends Component {
                     return;
                 }
                 response.json().then(function (data) {
-                    console.log("data", data)
                     if (data.code == 0) {
+                        let taskList
+                        let taskLast
+                        taskList = self.state.taskList
+                        taskLast = self.state.taskList
+                        let index = taskList.findIndex(element => element.taskCode === item.taskCode)
+                        taskList.splice(index, 1)
                         self.setState({
-                            layerView: false
+                            taskList: taskList,
+                            layerView: false,
+                            redirect: {
+                                previewBack: (taskList.length == 0 && self.state.urlFrom == 'preview') ? true : false
+                            },
+                            isEmpty: (taskList.length == 0) ? true : false
+                        }, function () {
+                            deli.common.notification.prompt({
+                                "type": 'success',
+                                "text": "取消成功",
+                                "duration": 1.5
+                            }, function (data) {}, function (resp) {});
+                            if (taskLast.length == 0 && self.state.urlFrom == 'preview') {
+                                setTimeout(() => {
+                                    self.setState({
+                                        redirect: {
+                                            previewBack: true
+                                        }
+                                    });
+                                }, 2000);
+                            }
                         })
-                        deli.common.notification.prompt({
-                            "type": 'success',
-                            "text": '取消成功',
-                            "duration": 1.5
-                        }, function (data) { }, function (resp) { });
                     } else {
                         self.setState({ layerView: false });
                         deli.common.notification.prompt({
@@ -175,15 +200,12 @@ class ManageTask extends Component {
 
     //监听Tasker变化状态
     transTasker(tasker) {
-        console.log("tasker~~~", tasker);
         this.setState(tasker);
     }
 
     //打印菜单
     handleLayerClick(value, task) {
         const self = this
-        console.log("value", value);
-        console.log("task", task);
         switch (value) {
             case 1:
                 deli.common.modal.show({
@@ -209,53 +231,66 @@ class ManageTask extends Component {
     renderlayerItems(viewData, taskData) {
         const pages = this.state.menuList;
         const result = [];
-        console.log("viewData", viewData);
-        console.log("taskData", taskData);
-        console.log("pages", pages);
         for (let i = 0; i < pages.length; i++) {
             let valueItem = pages[i].value;
             let textItem = pages[i].text;
-            console.log("valueItem", valueItem)
-            console.log("textItem", textItem)
-            result.push(<div key={`page-${i}`} className="setting-item" onClick={this.handleLayerClick.bind(this, valueItem, taskData)}>{textItem}</div>);
+            result.push(<div key={`page-${i}`} className="setting-item setting-item-double" onClick={this.handleLayerClick.bind(this, valueItem, taskData)}>{textItem}</div>);
         }
         return result;
     }
 
     render() {
         if (this.state.redirect.previewNav) {
-            this.stopPrinterPoll(this.state.timer)
+            //this.stopPrinterPoll(this.state.timer)
             return <Redirect push to="/previewindex" />;
         }
+
+        const hashHistory = createHashHistory()
+        if (this.state.redirect.previewBack){
+            //this.stopPrinterPoll(this.state.timer)
+            hashHistory.goBack();
+        }
+
+        //最后一个我的任务打印完成返回预览页面
+        if (this.state.taskLast){
+            //this.stopPrinterPoll(this.state.timer)
+            hashHistory.goBack();
+        }
+        
+        let taskListDom;
+        if(this.state.isEmpty == true){
+            taskListDom = <div className="task-list-empty"><div className="task-list-empty-img"></div><p className="task-list-empty-text">暂无更多打印记录</p></div>;
+        }else{
+            taskListDom = <TaskList pages={this.state.page} tasks={this.state.taskList} forms={this.state.urlFrom} printer={this.state.printer} transTasker={tasker => this.transTasker(tasker)}></TaskList>;
+        }
         return (
-        <div className="print-task">
+            <div className="print-task">
                 <Group className="print-task-list task-print">
-                <Group.List lineIndent={15}>
-                    <div>
-                        <div className="print-list-wrap-single">
-                            <HBox vAlign="center">
-                                <HBox flex={1}>
-                                    <Box className="print-list-text-content-single" flex={1}>
-                                        <p className="print-list-title-single">打印机</p>
-                                    </Box>
-                                    <Box className="print-list-text-content-info">
-                                        <div className={(this.state.printer.status == 0 ? 'print-img-status print-status-error' : (this.state.printer.status == 1 ? 'print-img-status print-status-success' : 'print-img-status print-status-offline'))}></div>
-                                        <p className="print-list-title-single print-list-title-single-name">{this.state.printer.name}</p>
-                                    </Box>
+                    <Group.List lineIndent={15}>
+                        <div>
+                            <div className="print-list-wrap-single">
+                                <HBox vAlign="center">
+                                    <HBox flex={1}>
+                                        <Box className="print-list-text-content-single" flex={1}>
+                                            <p className="print-list-title-single">打印机</p>
+                                        </Box>
+                                        <Box className="print-list-text-content-info">
+                                            <div className="print-list-title-single print-list-title-single-name"><span className={(this.state.printer.status == 0 ? 'print-status-error print-list-title-single-text' : (this.state.printer.status == 1 ? 'print-status-success print-list-title-single-text' : 'print-status-offline print-list-title-single-text'))}>{this.state.printer.name}</span></div>
+                                        </Box>
+                                    </HBox>
                                 </HBox>
-                            </HBox>
+                            </div>
                         </div>
-                    </div>
-                </Group.List>
-                <Group.Head className="task-title">打印列表</Group.Head>
-                <Group.List className="task-list" lineIndent={15}>
-                    <TaskList pages={this.state.page} tasks={this.state.taskList} printer={this.state.printer} transTasker={tasker => this.transTasker(tasker)}></TaskList>
-                </Group.List>
-            </Group>
-            <Layer bottom="0" visible={this.state.layerView} maskCloseable>
-                {this.renderlayerItems(this.state.layerViewData, this.state.taskItemData)}
-            </Layer>
-        </div>);
+                    </Group.List>
+                    <Group.Head className="task-title">打印列表</Group.Head>
+                    <Group.List className="task-list" lineIndent={15}>
+                        { taskListDom }
+                    </Group.List>
+                </Group>
+                <Layer className="layer-blank" bottom="0" visible={this.state.layerView} maskCloseable>
+                    {this.renderlayerItems(this.state.layerViewData, this.state.taskItemData)}
+                </Layer>
+            </div>);
     }
 }
 

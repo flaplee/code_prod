@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+.c0 {
+  display: none;
+}
+
+<input
+  accept=".jpg,.jpeg,.png,.bmp,.gif,.xls,.xlsx,.doc,.docx,.ppt,.pptx,.txt,.pdf"
+  className="c0"
+  type="file"
+/>
+`;

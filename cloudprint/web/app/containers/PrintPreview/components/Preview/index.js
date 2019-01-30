@@ -11,16 +11,15 @@ import rollingSrc from 'images/rolling.gif';
 
 import Picture from './Picture';
 
-const BOX_WIDTH = 700;
-const BOX_HEIGHT = 970;
+import lazyTotal from './lazyTotal';
 
 const SCAN_HEIGHT = 80;
 
 const Wrap = styled.div`
   position: relative;
   display: inline-block;
-  width: ${BOX_WIDTH}px;
-  height: ${BOX_HEIGHT}px;
+  width: ${props => props.width}px;
+  height: ${props => props.height}px;
   vertical-align: middle;
   background-color: #dde1e5;
 `;
@@ -62,10 +61,10 @@ const DirectionBtn = styled.div`
   border-radius: 50%;
   vertical-align: middle;
   text-align: center;
-  background-color: #000;
+  background-color: ${props => (props.disable ? '#ccc' : '#000')};
   font-size: 0;
   opacity: 0.5;
-  cursor: pointer;
+  cursor: ${props => (props.disable ? 'default' : 'pointer')};
 `;
 
 const DirectionImg = styled.img`
@@ -83,44 +82,6 @@ const Page = styled.div`
   overflow: hidden;
   background-color: #fff;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
-`;
-
-const edge = css`
-  position: absolute;
-  background-color: #fff;
-  z-index: 99;
-`;
-
-const EdgeTop = styled.div`
-  ${edge};
-  top: 0;
-  left: 0;
-  right: 0;
-  height: ${props => props.height}px;
-`;
-
-const EdgeBottom = styled.div`
-  ${edge};
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: ${props => props.height}px;
-`;
-
-const EdgeLeft = styled.div`
-  ${edge};
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: ${props => props.width}px;
-`;
-
-const EdgeRight = styled.div`
-  ${edge};
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: ${props => props.width}px;
 `;
 
 const ImgsList = styled.div`
@@ -207,34 +168,30 @@ const Rolling = styled.img`
   vertical-align: middle;
 `;
 
-const MAX_WIDTH = 516;
-const MAX_HEIGHT = 730;
-
-class Preview extends React.Component {
+class Preview extends React.PureComponent {
   state = {
     pos: 0,
   };
 
-  makePrev = () => {
-    const { total } = this.props;
+  makePrev = total => {
     this.setState(prevState => ({
       pos: prevState.pos > 0 ? prevState.pos - 1 : total - 1,
     }));
   };
 
-  makeNext = () => {
-    const { total } = this.props;
+  makeNext = total => {
     this.setState(prevState => ({
-      pos: prevState.pos < total - 1 ? prevState.pos + 1 : 0,
+      pos: prevState.pos < total ? prevState.pos + 1 : 0,
     }));
   };
 
   render() {
     const {
+      size,
       search,
       paperSize,
       printDirection,
-      total,
+      totalPage,
       fileId,
       submit,
       scanSubmit,
@@ -248,6 +205,22 @@ class Preview extends React.Component {
 
     const { pos } = this.state;
 
+    const total = lazyTotal({
+      pos,
+      totalPage,
+      limit: 5,
+    });
+
+    const { width: BOX_WIDTH, height: BOX_HEIGHT, side: SIDE } = size;
+    const MAX_WIDTH = BOX_WIDTH - SIDE * 2;
+
+    // paper width
+    const pW = PAGE_SIZE[paperSize].paper.width;
+    const pH = PAGE_SIZE[paperSize].paper.height;
+    const r = pW / pH;
+
+    const MAX_HEIGHT = MAX_WIDTH / r;
+
     const restart = (search && search.restart) || 'no';
 
     const disableBtn =
@@ -255,11 +228,6 @@ class Preview extends React.Component {
       detailIsFetching === true ||
       printerItemFetching === true ||
       currentPrinter.onlineStatus !== '1';
-
-    // paper width
-    const pW = PAGE_SIZE[paperSize].paper.width;
-    const pH = PAGE_SIZE[paperSize].paper.height;
-    const r = pW / pH;
 
     let w;
     let h;
@@ -275,12 +243,8 @@ class Preview extends React.Component {
     w = parseInt(w, 10);
     h = parseInt(h, 10);
 
-    // print width
-    const tW = PAGE_SIZE[paperSize].print.width;
-    const tH = PAGE_SIZE[paperSize].print.height;
-
     return (
-      <Wrap>
+      <Wrap width={BOX_WIDTH} height={BOX_HEIGHT}>
         <ScanWrap>
           <Scan
             disable={disableBtn || taskIsFetching}
@@ -293,21 +257,28 @@ class Preview extends React.Component {
           </Scan>
         </ScanWrap>
         <PageWrap>
-          <PageSide width={(BOX_WIDTH - w) / 2}>
-            {total > 1 && (
-              <DirectionBtn onClick={this.makePrev}>
+          <PageSide width={SIDE}>
+            {totalPage > 1 && (
+              <DirectionBtn
+                disable={pos === 0}
+                onClick={() => {
+                  if (pos !== 0) {
+                    this.makePrev(total);
+                  }
+                }}
+              >
                 <DirectionImg src={leftSrc} />
               </DirectionBtn>
             )}
           </PageSide>
           <Page width={w} height={h}>
-            <EdgeTop height={((pH - tH) / pH) * h} />
-            <EdgeBottom height={((pH - tH) / pH) * h} />
-            <EdgeLeft width={((pW - tW) / pW) * w} />
-            <EdgeRight width={((pW - tW) / pW) * w} />
             <ImgsList width={w} pos={pos} total={total}>
               {times(total).map((item, i) => (
-                <ImgItem num={total + 10 - i} total={total} key={i.toString()}>
+                <ImgItem
+                  num={pos === i ? '11' : '2'}
+                  total={total}
+                  key={i.toString()}
+                >
                   <Picture
                     printDirection={printDirection}
                     w={w}
@@ -319,15 +290,26 @@ class Preview extends React.Component {
               ))}
             </ImgsList>
           </Page>
-          <PageSide width={(BOX_WIDTH - w) / 2}>
-            {total > 1 && (
-              <DirectionBtn onClick={this.makeNext}>
+          <PageSide width={SIDE}>
+            {totalPage > 1 && (
+              <DirectionBtn
+                disable={pos === totalPage - 1}
+                onClick={() => {
+                  if (pos !== totalPage - 1) {
+                    this.makeNext(total);
+                  }
+                }}
+              >
                 <DirectionImg src={rightSrc} />
               </DirectionBtn>
             )}
           </PageSide>
         </PageWrap>
-        {total && <NumText>{`${pos + 1} / ${total}`}</NumText>}
+        {fileId ? (
+          <NumText>{`${pos + 1} / ${totalPage}`}</NumText>
+        ) : (
+          <NumText>-- / --</NumText>
+        )}
         <BtnWrap>
           <BtnItem>
             <SubmitBtn
@@ -355,10 +337,11 @@ class Preview extends React.Component {
 }
 
 Preview.propTypes = {
+  size: PropTypes.object.isRequired,
   search: PropTypes.any.isRequired,
   paperSize: PropTypes.string.isRequired,
   printDirection: PropTypes.number.isRequired,
-  total: PropTypes.any.isRequired,
+  totalPage: PropTypes.any.isRequired,
   fileId: PropTypes.any.isRequired,
   submit: PropTypes.func.isRequired,
   scanSubmit: PropTypes.func.isRequired,

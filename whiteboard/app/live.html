@@ -54,9 +54,14 @@
 <script src='./js/src/drawboard.min.js'></script>
 <script src='./js/src/sea.js?v=2018061309'></script>
 <script type="text/javascript">
+  var c_width, c_height, clientWidth, clientHeight;
+  var clientWidth = windowWidth;
+  var clientHeight = windowHeight;
+  c_width = (clientWidth > clientHeight) > clientWidth : clientHeight;
+  c_height = (clientWidth > clientHeight) > clientHeight : clientWidth;
   // 程序开始时，setup() 函数中的语句执行一次。
   function setup() {
-    var domCanvas = createCanvas(windowWidth, windowHeight, [P2D]);
+    var domCanvas = createCanvas(c_width, c_height, [P2D]);
     domCanvas.parent('live-draw');
     domCanvas.id('live-draw-board').addClass('live-draw-board');
   }

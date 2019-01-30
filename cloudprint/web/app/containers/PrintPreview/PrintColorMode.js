@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
@@ -9,46 +7,12 @@ import {
   makeSelectAppPrintersItem,
 } from 'containers/App/selectors/printers';
 
-import BlockOption from './components/PrintOption/BlockOption';
+import PrintColorMode from './components/PrintOption/PrintColorMode';
 
 import { makeSelectFormItem } from './selectors/form';
 import { setForm } from './actions/FormActions';
 
 const key = ['printColorMode'];
-
-const getList = arr =>
-  arr.map(value => {
-    switch (value) {
-      case 'black':
-        return {
-          name: '黑白',
-          value,
-        };
-
-      default:
-        return false;
-    }
-  });
-
-const PrintDirection = props => {
-  const { item, printersFetching, itemFetching } = props;
-  const list =
-    (item && getList(props.item.printerSettings.colorTypes)) || false;
-  return (
-    <BlockOption
-      list={list}
-      label="打印颜色"
-      isFetching={printersFetching === true || itemFetching === true}
-      {...props}
-    />
-  );
-};
-
-PrintDirection.propTypes = {
-  item: PropTypes.any.isRequired,
-  printersFetching: PropTypes.bool.isRequired,
-  itemFetching: PropTypes.bool.isRequired,
-};
 
 const mapStateToProps = createStructuredSelector({
   printersFetching: makeSelectAppPrintersIsFetching(),
@@ -58,7 +22,8 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = dispatch => ({
-  makeSelect: value => {
+  makeSelect: item => {
+    const { value } = item;
     dispatch(setForm({ key, value }));
   },
 });
@@ -66,4 +31,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(PrintDirection);
+)(PrintColorMode);

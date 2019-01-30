@@ -8,10 +8,10 @@ class Denied extends React.Component {
         super(props);
         this.state = {
             printer:{
-                sn: (new URLSearchParams(props.location.search)).get('sn') || '',
-                name: (new URLSearchParams(props.location.search)).get('name') || '',
-                status: (new URLSearchParams(props.location.search)).get('status') || '',
-            },    
+                sn: (localStorage.getItem('printer') && localStorage.getItem('printer') != "undefined") ? JSON.parse(localStorage.getItem('printer')).printerSn : '',
+                name: (localStorage.getItem('printer') && localStorage.getItem('printer') != "undefined") ? JSON.parse(localStorage.getItem('printer')).printerName : '',
+                status: (localStorage.getItem('printer') && localStorage.getItem('printer') != "undefined") ? ((JSON.parse(localStorage.getItem('printer')).workStatus == 'error') ? 0 : (JSON.parse(localStorage.getItem('printer')).onlineStatus == '1' ? 1 : 2)) : ''
+            },
             redirectIndexNav: false
         };
     }
@@ -42,6 +42,9 @@ class Denied extends React.Component {
             Cookies.remove('orgId');
             Cookies.remove('token');
             Cookies.remove('admin');
+            localStorage.removeItem('printer')
+            localStorage.removeItem('printPreviewData')
+            localStorage.removeItem('chooseTaskInfo')
         }, function (resp) {});
     }
 
@@ -60,7 +63,6 @@ class Denied extends React.Component {
             const sn = this.state.printer.sn
             const name = this.state.printer.name
             const status = this.state.printer.status
-            console.log("hashHistory", hashHistory)
             hashHistory.replace({
                 pathname: '/',
                 search: "?sn=" + sn + "&name=" + name + "&status=" + status + "",

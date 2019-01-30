@@ -1,33 +1,18 @@
-import React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import BlockOption from './components/PrintOption/BlockOption';
+import PrintDirection from './components/PrintOption/PrintDirection';
 import { makeSelectFormItem } from './selectors/form';
 import { setForm } from './actions/FormActions';
 
-const list = [
-  {
-    name: '横向',
-    value: 1,
-  },
-  {
-    name: '纵向',
-    value: 2,
-  },
-];
-
 const key = ['printDirection'];
-
-const PrintDirection = props => (
-  <BlockOption label="打印方向" list={list} isFetching={false} {...props} />
-);
 
 const mapStateToProps = createStructuredSelector({
   value: makeSelectFormItem(key),
 });
 
 const mapDispatchToProps = dispatch => ({
-  makeSelect: value => {
+  makeSelect: item => {
+    const { value } = item;
     dispatch(setForm({ key, value }));
   },
 });

@@ -16,7 +16,9 @@ const Text = styled.div`
 const PrinterInfo = ({ current }) => (
   <Wrap>
     <Text>SN：{current.printerSn}</Text>
-    <Text style={{ marginTop: '10px' }}>IP：{current.printerIp}</Text>
+    {current.onlineStatus === '1' && (
+      <Text style={{ marginTop: '10px' }}>IP：{current.printerIp}</Text>
+    )}
   </Wrap>
 );
 

@@ -7,12 +7,14 @@ import {
   makeSelectAppPrintersCurrent,
 } from 'containers/App/selectors/printers';
 
-import { setPrintersCurrent } from 'containers/App/actions/PrintersActions';
+import {
+  setPrintersCurrent,
+  requestPrinterItem,
+} from 'containers/App/actions/PrintersActions';
 
 import Printer from './components/Printer';
 
 import { REQUEST_TASKS } from './constants/TasksTypes';
-import { REQUEST_INKBOX } from './constants/InkboxTypes';
 
 const mapStateToProps = createStructuredSelector({
   loading: makeSelectAppPrintersIsFetching(),
@@ -23,7 +25,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = dispatch => ({
   makeSelect: value => {
     dispatch(setPrintersCurrent(value));
-    dispatch({ type: REQUEST_INKBOX });
+    dispatch(requestPrinterItem());
     dispatch({ type: REQUEST_TASKS });
   },
 });

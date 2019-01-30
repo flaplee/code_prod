@@ -107,9 +107,8 @@ const Item = props => {
   const {
     taskCode,
     num,
-    printerName,
-    printStartPage,
-    printEndPage,
+    taskName,
+    printPageCount,
     taskStatus,
     handleCancel,
   } = props;
@@ -118,10 +117,8 @@ const Item = props => {
   return (
     <Wrap as="li">
       <IndexCol size={SIZE[0]}>{num}</IndexCol>
-      <Col size={SIZE[1]}>{printerName}</Col>
-      <Col size={SIZE[2]}>
-        {printStartPage}/{printEndPage}页
-      </Col>
+      <Col size={SIZE[1]}>{taskName}</Col>
+      <Col size={SIZE[2]}>{printPageCount}页</Col>
       <Col size={SIZE[3]}>
         <Status />
       </Col>
@@ -137,9 +134,8 @@ Item.propTypes = {
   handleCancel: PropTypes.func,
   taskStatus: PropTypes.string.isRequired,
   taskCode: PropTypes.string.isRequired,
-  printerName: PropTypes.string.isRequired,
-  printStartPage: PropTypes.any.isRequired,
-  printEndPage: PropTypes.any.isRequired,
+  taskName: PropTypes.string.isRequired,
+  printPageCount: PropTypes.any.isRequired,
 };
 
 export default Item;

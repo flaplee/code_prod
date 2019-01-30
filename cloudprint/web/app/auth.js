@@ -1,5 +1,5 @@
 import qs from 'qs';
-import { TOKEN } from 'constants/cookies';
+import { TOKEN, USER_ID, ORG_ID } from 'constants/cookies';
 
 import docCookies from 'utils/docCookies';
 
@@ -48,6 +48,8 @@ export default (history, store) => {
         const cookieToken = data.token || false;
         if (cookieToken === false) throw msg;
         docCookies.setItem(TOKEN, cookieToken, Infinity, '/cloudprint/web');
+        docCookies.setItem(USER_ID, user_id, Infinity, '/cloudprint/web');
+        docCookies.setItem(ORG_ID, org_id, Infinity, '/cloudprint/web');
         store.dispatch({ type: RECEIVE_AUTH });
         sdk();
       })

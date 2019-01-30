@@ -13,6 +13,7 @@ class Tag extends React.Component {
   state = {
     select: false,
   };
+
   static getDerivedStateFromProps(props) {
     const { location, hold } = props;
     if (!hold) return null;

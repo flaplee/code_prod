@@ -12,10 +12,8 @@ class TaskItem extends Component{
     
     //打印任务状态
     handleItemClick(data) {
-        console.log("data~~~", data);
-        console.log("this.props.transTaskerList~~~", this.props.transTaskerList);
         const isAdmin = Cookies.load('admin') || false;
-        if (isAdmin == true){
+        if (isAdmin == true || isAdmin == 'true'){
             this.props.transTaskerList({ layerView: true, taskItemData: data })
         }else{
             if (data.whetherMe == true) {
@@ -48,6 +46,9 @@ class TaskItem extends Component{
             case 'create':
                 status = 'print-status-waiting' + statusMine +''
                 break;
+            case 'confirm':
+                status = 'print-status-waiting' + statusMine + ''
+                break;
             case 'wating':
                 status = 'print-status-waiting' + statusMine +''
                 break;
@@ -67,33 +68,29 @@ class TaskItem extends Component{
                 status = 'print-status-waiting' + statusMine +''
                 break;
         }
-        return <div key={`page-task-${dataIndex}`} className="task-list-item" onClick={this.handleItemClick.bind(this, dataItem)}>
+        return <div key={`page-task-${dataIndex}`} className="task-list-item task-list-item-print" onClick={this.handleItemClick.bind(this, dataItem)}>
             <div className={dataItem.whetherMe == true ? 'print-list-wrap-single print-list-wrap-single-tap print-list-wrap-single-success' : 'print-list-wrap-single print-list-wrap-single-tap'}>
-                <HBox vAlign="center">
-                    <HBox className="task-list-item-before" flex={1}>
-                        <p className="print-list-text-info task-list-item-order">{dataIndex}</p>
+                <HBox className="task-list-item-wrap" vAlign="center">
+                    <HBox className="task-list-item-before" flex={2}>
+                        <p className="print-list-text-info task-list-item-order">{((dataIndex < 10) ? '0' + dataIndex : dataIndex) }</p>
                         <div name="angle-right" width={20} fill="#ccc" className="print-list-arrow task-list-item-name">
-                            <p className="print-list-text-info">{dataItem.whetherMe == true ? '我的打印任务' : dataItem.userName + '的打印任务'}</p>
+                            <p className="print-list-text-info">{dataItem.taskName}</p>
                         </div>
                     </HBox>
-                    <HBox flex={1}>
+                    <HBox className="task-list-item-now" flex={1}>
                         <Box className="print-list-text-content-single" flex={1}>
                             <div className={"print-list-status "+ status +""}></div>
                         </Box>
                     </HBox>
-                    <HBox flex={1}>
-                        <Box className="print-list-text-content-single" flex={1}>
-                            <p className="print-list-text-info">{dataItem.printPageCount}/{dataItem.printPageCount} 页</p>
+                    <HBox className="task-list-item-after" flex={1}>
+                        <Box className="print-list-text-content-single task-list-item-page" flex={1}>
+                            <p className="print-list-text-info">共{dataItem.printPageCount}页</p>
+                            <i className="print-list-text-super" style={{ display: (dataItem.whetherMe == true) ? '' : 'none' }}></i>
                         </Box>
                     </HBox>
-                    <Box>
-                        <Icon className="icon-back" name='angle-down' fill="#5D85E0" width="4rem" height="3rem" />
-                    </Box>
                 </HBox>
             </div>
         </div>
     }
 }
-
-
 export default TaskItem;

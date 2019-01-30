@@ -1,0 +1,288 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lazyTotal 1`] = `
+Array [
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 0,
+      "totalPage": 15,
+    },
+    "lazy": 5,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 1,
+      "totalPage": 15,
+    },
+    "lazy": 5,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 2,
+      "totalPage": 15,
+    },
+    "lazy": 5,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 3,
+      "totalPage": 15,
+    },
+    "lazy": 5,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 4,
+      "totalPage": 15,
+    },
+    "lazy": 5,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 5,
+      "totalPage": 15,
+    },
+    "lazy": 10,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 6,
+      "totalPage": 15,
+    },
+    "lazy": 10,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 7,
+      "totalPage": 15,
+    },
+    "lazy": 10,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 8,
+      "totalPage": 15,
+    },
+    "lazy": 10,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 9,
+      "totalPage": 15,
+    },
+    "lazy": 10,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 10,
+      "totalPage": 15,
+    },
+    "lazy": 15,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 11,
+      "totalPage": 15,
+    },
+    "lazy": 15,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 12,
+      "totalPage": 15,
+    },
+    "lazy": 15,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 13,
+      "totalPage": 15,
+    },
+    "lazy": 15,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 14,
+      "totalPage": 15,
+    },
+    "lazy": 15,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 15,
+      "totalPage": 15,
+    },
+    "lazy": 15,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 16,
+      "totalPage": 15,
+    },
+    "lazy": 15,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 17,
+      "totalPage": 15,
+    },
+    "lazy": 15,
+  },
+]
+`;
+
+exports[`lazyTotal 2`] = `
+Array [
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 0,
+      "totalPage": 3,
+    },
+    "lazy": 3,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 1,
+      "totalPage": 3,
+    },
+    "lazy": 3,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 2,
+      "totalPage": 3,
+    },
+    "lazy": 3,
+  },
+  Object {
+    "config": Object {
+      "limit": 5,
+      "pos": 3,
+      "totalPage": 3,
+    },
+    "lazy": 3,
+  },
+]
+`;
+
+exports[`lazyTotal 3`] = `
+Array [
+  Object {
+    "config": Object {
+      "limit": 1,
+      "pos": 0,
+      "totalPage": 10,
+    },
+    "lazy": 1,
+  },
+  Object {
+    "config": Object {
+      "limit": 1,
+      "pos": 1,
+      "totalPage": 10,
+    },
+    "lazy": 2,
+  },
+  Object {
+    "config": Object {
+      "limit": 1,
+      "pos": 2,
+      "totalPage": 10,
+    },
+    "lazy": 3,
+  },
+  Object {
+    "config": Object {
+      "limit": 1,
+      "pos": 3,
+      "totalPage": 10,
+    },
+    "lazy": 4,
+  },
+  Object {
+    "config": Object {
+      "limit": 1,
+      "pos": 4,
+      "totalPage": 10,
+    },
+    "lazy": 5,
+  },
+  Object {
+    "config": Object {
+      "limit": 1,
+      "pos": 5,
+      "totalPage": 10,
+    },
+    "lazy": 6,
+  },
+  Object {
+    "config": Object {
+      "limit": 1,
+      "pos": 6,
+      "totalPage": 10,
+    },
+    "lazy": 7,
+  },
+  Object {
+    "config": Object {
+      "limit": 1,
+      "pos": 7,
+      "totalPage": 10,
+    },
+    "lazy": 8,
+  },
+  Object {
+    "config": Object {
+      "limit": 1,
+      "pos": 8,
+      "totalPage": 10,
+    },
+    "lazy": 9,
+  },
+  Object {
+    "config": Object {
+      "limit": 1,
+      "pos": 9,
+      "totalPage": 10,
+    },
+    "lazy": 10,
+  },
+  Object {
+    "config": Object {
+      "limit": 1,
+      "pos": 10,
+      "totalPage": 10,
+    },
+    "lazy": 10,
+  },
+  Object {
+    "config": Object {
+      "limit": 1,
+      "pos": 11,
+      "totalPage": 10,
+    },
+    "lazy": 10,
+  },
+]
+`;

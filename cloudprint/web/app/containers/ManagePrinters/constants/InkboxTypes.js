@@ -1,4 +1,4 @@
-import key from './../key';
+import key from '../key';
 
 export const REQUEST_INKBOX = `${key}/REQUEST_INKBOX`;
 export const RECEIVE_INKBOX = `${key}/RECEIVE_INKBOX`;

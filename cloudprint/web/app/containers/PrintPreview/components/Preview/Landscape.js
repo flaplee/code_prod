@@ -3,46 +3,44 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import apis from 'containers/PrintPreview/apis';
 import Tip from './Tip';
+import LandscapeImg from './LandscapeImg';
 
 const Wrap = styled.div`
-  display: ${props => (props.show ? 'block' : 'none')};
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  transform: rotate(-90deg);
+  transform: rotate(${props => (props.show ? '-90deg' : '0')});
+  transform-origin: center;
+  transition: 0.3s;
   background-color: #fff;
-  z-index: 2;
+  visibility: ${props => (props.show ? 'visible' : 'hidden')};
+  z-index: ${props => (props.show ? '9' : '-10')};
 `;
 
-const Img = styled.img`
-  position: absolute;
-  left: 50%;
-  top: 50%;
-`;
-
-class Landscape extends React.Component {
-  imgRef = React.createRef();
-
+class Landscape extends React.PureComponent {
   state = {
-    complete: false,
+    isFetching: false,
     error: false,
   };
 
-  loadSuccess = () => {
-    const imgEle = this.imgRef.current;
-    imgEle.style.marginLeft = `-${imgEle.width / 2}px`;
-    imgEle.style.marginTop = `-${imgEle.height / 2}px`;
-
+  request = () => {
     this.setState({
-      complete: true,
+      isFetching: true,
+      error: false,
     });
   };
 
-  loadError = () => {
+  receive = () => {
     this.setState({
-      complete: true,
+      isFetching: false,
+    });
+  };
+
+  error = () => {
+    this.setState({
+      isFetching: false,
       error: true,
     });
   };
@@ -50,13 +48,13 @@ class Landscape extends React.Component {
   render() {
     const { imgIndex, fileId, w, h, printDirection } = this.props;
     return (
-      <Wrap show={printDirection !== 1}>
+      <Wrap show={printDirection === 1}>
         <Tip {...this.state} landscape />
-        <Img
-          ref={this.imgRef}
+        <LandscapeImg
+          request={this.request}
+          receive={this.receive}
+          error={this.error}
           src={`${apis.preview}/${fileId}_${imgIndex}_${h}_${w}`}
-          onLoad={this.loadSuccess}
-          onError={this.loadError}
         />
       </Wrap>
     );

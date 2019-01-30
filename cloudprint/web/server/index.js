@@ -9,9 +9,9 @@ const setup = require('./middlewares/frontendMiddleware');
 const isDev = process.env.NODE_ENV !== 'production';
 const ngrok =
   (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel
-    ? require('ngrok')
+    ? require('ngrok') // eslint-disable-line import/order
     : false;
-const { resolve } = require('path');
+const { resolve } = require('path'); // eslint-disable-line import/order
 const app = express();
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here

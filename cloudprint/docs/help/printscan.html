@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="x-ua-compatible" content="IE=edge" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-category-bar-style" content="black" />
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="msapplication-tap-highlight" content="no" />
+		<meta name="fragment" content="!" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=0" />
+		<title>扫码打印</title>
+		<style type="text/css">
+			*{-webkit-box-sizing:border-box;box-sizing:border-box;margin:0;padding:0;font-family:PingFang SC,Heiti SC,Droid Sans,Microsoft YaHei UI;-webkit-appearance:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}
+			html{overflow-y:auto;width:100%;background-color:#F5FCFF;font-family:PingFang SC,Heiti SC,Droid Sans,Microsoft YaHei UI;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+			img{image-orientation:from-image;}
+			body{margin:0;padding:0;font:.16rem PingFang SC,Heiti SC,Droid Sans,Microsoft YaHei UI,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-tap-highlight-color:none;}
+			.center{text-align: center!important;}
+			.clearfix:after,.clearfix:before{display:table;content:" ";}
+			.clearfix:after{clear:both;}
+			@media (min-width:1200px){.print-help{margin:0 auto;width:1000px;}}
+			.print-help{padding:.6rem .3rem;height:100%;background-color:#F5FCFF;}
+			.print-help .mb15{margin-bottom:.3rem;}
+			.print-help h3{margin-bottom:.6rem;color:#333;font-weight:500;font-size:.32rem;}
+			.print-help-item{margin-top:.6rem;color:#333;text-align:center;font-weight:500;font-size:.3rem;}
+			.print-help-item p.print-help-text{margin-bottom:.3rem;text-align:left;}
+			.print-help-item p.print-help-text span.print-help-tips{color:#666666;margin-bottom:.3rem;font-size: .2rem;}
+			.print-help-item img{width:100%;}
+		</style>
+		<script>
+			(function (doc, win) { var docEl = doc.documentElement, resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize', recalc = function () { var clientWidth = docEl.clientWidth; if (!clientWidth) return; docEl.style.fontSize = 100 * (Math.min(1000, clientWidth) / 750) + 'px' }; if (!doc.addEventListener) return; win.addEventListener(resizeEvt, recalc, false); doc.addEventListener('DOMContentLoaded', recalc, false) })(document, window);
+		</script>
+	</head>
+
+	<body>
+		<div class="print-help">
+			<h3>如何使用扫码打印？</h3>
+			<div class="print-help-item">
+				<p class="print-help-text">
+					1、在得力e+web端提交打印任务，在打印预览中选择【扫码打印】，弹窗提示使用手机云打印应用。 。
+				</p>
+			</div>
+			<div class="print-help-item">
+				<p class="print-help-text">
+					2、在得力e+APP或云打印应用中点击【扫一扫】，扫描指定打印机上的二维码，进行打印。 。
+				</p>
+				<img src="http://mp.delicloud.xin/cloudprint/docs/help/images/print_help_scan01.png">
+				<p class="print-help-text center">
+					<span class="print-help-tips">若同时有多个任务，请先选择打印任务后再进行选择打印机</span>
+				</p>
+			</div>
+			<div class="print-help-item">
+				<p class="print-help-text">
+					3、扫码选择后进入打印预览，点击【打印】完成打印任务。 。
+				</p>
+				<img src="http://mp.delicloud.xin/cloudprint/docs/help/images/print_help_scan02.png">
+			</div>
+		</div>
+	</body>
+
+</html>

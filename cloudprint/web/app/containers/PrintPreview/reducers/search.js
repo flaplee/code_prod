@@ -1,4 +1,4 @@
-import { SET_SEARCH } from './../constants/SearchTypes';
+import { SET_SEARCH } from '../constants/SearchTypes';
 
 const initialState = false;
 

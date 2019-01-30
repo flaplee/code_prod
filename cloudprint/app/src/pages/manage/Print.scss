@@ -105,6 +105,7 @@
         -ms-flex-direction: column;
         -webkit-flex-direction: column;
         flex-direction: column;
+        overflow-y: auto;
         .task-print{
             -webkit-box-flex: 0;
             -moz-box-flex: 0 0 auto;
@@ -132,29 +133,125 @@
             flex: 1 1 auto;
             position: relative;
             height: 100%;
+            border-bottom: 0;
             .task-list-item{
-                .task-list-item-before{
-                    .task-list-item-order{width: 4rem;padding-left: .5rem;}
-                    .task-list-item-name{
-                        width: 24rem;
-                        p{
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            white-space: nowrap;
+                &.task-list-item-print{
+                    position: relative;
+                    height: 8rem;
+                    line-height: 8rem;
+                    .print-list-wrap-single{
+                        padding: 0;
+                    }
+                    p{
+                        font-size: 2.5rem;
+                    }
+                    .task-list-item-wrap{
+                        .task-list-item-before{
+                            width: 31rem;
+                            .task-list-item-order{
+                                margin-left: 2rem;
+                                margin-right: 2rem;
+                                text-align: left;
+                                color: #999999;
+                            }
+                            .task-list-item-name{
+                                width: 20rem;
+                                p{
+                                    width: 25rem;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                    white-space: nowrap;
+                                }
+                            }
+                        }
+                        .task-list-item-now{
+                            width:4rem;
+                            height: 8rem;
+                            line-height: 8rem;
+                            .print-list-text-content-single{
+                                .print-list-status{
+                                    margin: 2rem auto;
+                                }
+                            }
+                        }
+                        .task-list-item-after{
+                            height: 8rem;
+                            line-height: 8rem;
+                            text-align: right;
+                            .task-list-item-page{
+                                padding-right: 2rem;
+                                .print-list-text-info{
+                                    padding-right: 3rem;
+                                    height: 3rem;
+                                    line-height: 3rem;
+                                    margin: 2.5rem 0;
+                                }
+                                .print-list-text-super{
+                                    width: 0;
+                                    height: 0;
+                                    border-width: 1rem 0.8rem 0;
+                                    border-style: solid;
+                                    border-color: #5881E0 transparent transparent;
+                                    position: absolute;
+                                    top: 3.5rem;
+                                    right: 2rem;
+                                }
+                            }
+                        }
+                        &:after{
+                            content: '';
+                            position: absolute;
+                            width: 100%;
+                            height: 1px;
+                            border-bottom: 1px solid #EAEAEA;
+                            bottom: 0;
+                            left: 2rem;
                         }
                     }
                 }
             }
         }
         .print-list-text-content-info{
-            max-width: 50rem;
-            div{
-                float: left;
-            }
-            p{
-                float: left;
-                max-width: 40rem;
+            max-width: 40rem;
+            .print-list-title-single-name{
                 font-size: 3rem;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                .print-list-title-single-text{
+                    position: relative;
+                    display: inline-block;
+                    text-indent: 2rem;
+                    padding-left: 1rem;
+                    max-width: 40rem;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    &:before{
+                        content: '';
+                        position: absolute;
+                        left: 0;
+                        top: .25rem;
+                        width: 2rem;
+                        height: 2rem;
+                        line-height: 2rem;
+                        display: block;
+                        background-repeat: no-repeat;
+                        background-size: 100% 100%;
+                    }
+                    &.print-status-success:before{
+                        background-image:url(../../images/check@3x.png)
+                    }
+                    &.print-status-error:before{
+                        background-image:url(../../images/Notice@3x.png)
+                    }
+                    &.print-status-empty:before{
+                        background-image:url(../../images/Notice@3x.png)
+                    }
+                    &.print-status-offline:before{
+                        background-image:url(../../images/off_line@3x.png)
+                    }
+                }
             }
         }
     }
@@ -193,7 +290,9 @@
     .task-list-empty{
         display: block;
         text-align: center;
-        margin: 26rem auto 0;
+        height: 100%;
+        width: 100%;
+        padding-top: 26rem;
         .task-list-empty-img{
             width: 19rem;
             height: 19rem;
@@ -394,6 +493,186 @@
         font-size: 4rem;
         margin-top: 3rem;
         color: #333333;
+    }
+}
+
+.print-inks{
+    background-color: #f2f8ff;
+    .inks-list{
+        .inks-box{
+            .inks-title{
+                font-size: 2rem;
+                color: #999999;
+                height: 5rem;
+                line-height: 5rem;
+                text-indent: 2.5rem;
+            }
+            .inks-inner{
+                background-color: #fff;
+                .inner-item{
+                    width: 100%;
+                    display: inline-block;
+                    .item-title{
+                        font-size: 2.5rem;
+                        height: 3rem;
+                        line-height: 3rem;
+                        color: #333333;
+                        margin: 2.5rem;
+                        float: left;
+                    }
+                    .progress-inboxs{
+                        float: left;
+                        width: 45rem;
+                        height: 48px;
+                        margin: 2rem 0;
+                        border-radius:6px;
+                        border:1px solid rgba(153,153,153,1);
+                    }
+                    &.inner-item-common{
+                        .progress-inboxs{
+                            .progress-inboxs-bar{
+                                height: 38px;
+                                margin: 4px 6px;
+                                .t-progress{
+                                    height: 36px;
+                                    &.with-label{
+                                        position: relative;
+                                        padding-right: 0;
+                                        .bar-label{
+                                            position: absolute;
+                                            color: #333333;
+                                            top: 1px;
+                                            right: -6rem;
+                                            font-size: 2rem;
+                                        }
+                                    }
+                                    .progress-bar{
+                                        background-color: #ffffff;
+                                        .bar-core{
+                                            border-bottom-left-radius: 6px;
+                                            border-top-left-radius: 6px;
+                                            border-bottom-right-radius: 0;
+                                            border-top-right-radius: 0;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    &.inner-item-full{
+                        .progress-inboxs{
+                            .progress-inboxs-bar{
+                                .t-progress{
+                                    .progress-bar{
+                                        .bar-core{
+                                            border-bottom-right-radius: 6px;
+                                            border-top-right-radius: 6px;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    &.inner-item-cyan{
+                        .t-progress{
+                            .progress-bar{
+                                .bar-core{
+                                    background-color: #00FFFF;
+                                }
+                            }
+                        }
+                    }
+                    &.inner-item-magenta{
+                        .t-progress{
+                            .progress-bar{
+                                .bar-core{
+                                    background-color: #E0367C;
+                                }
+                            }
+                        }
+                    }
+                    &.inner-item-green{
+                        .t-progress{
+                            .progress-bar{
+                                .bar-core{
+                                    background-color: #fff;
+                                }
+                            }
+                        }
+                    }
+                    &.inner-item-black{
+                        .t-progress{
+                            .progress-bar{
+                                .bar-core{
+                                    background-color: #000000;
+                                }
+                            }
+                        }
+                    }
+                    &.inner-item-yellow{
+                        .t-progress{
+                            .progress-bar{
+                                .bar-core{
+                                    background-color: #F4DA58;
+                                }
+                            }
+                        }
+                    }
+                    &.inner-item-none{
+                        width: 100%;
+                        .progress-inboxs{
+                            width: 100%;
+                            margin: 2.5rem;
+                            border: none;
+                            .progress-inboxs-bar{
+                                font-size: 2.5rem;
+                                color: #333333;
+                                text-align: left;
+                                line-height: 48px;
+                            }
+                        }
+                    }
+                    &.inner-item-less{
+                        .progress-inboxs{
+                            position: relative;
+                            border: 1px solid rgba(255,83,77,1);
+                            &:after{
+                                content: '墨量即将耗尽';
+                                width: 20rem;
+                                position: absolute;
+                                top: 0;
+                                left: 50%;
+                                font-size: 2rem;
+                                font-weight: bold;
+                                color: #FF534D;
+                                text-align: center;
+                                line-height: 36px;
+                                margin: 4px 0 4px -10rem;
+                            }
+                            .progress-inboxs-bar{
+                                font-size: 2rem;
+                                font-weight: bold;
+                                color: #FF534D;
+                                text-align: center;
+                                line-height: 48px;
+                            }
+                        }
+                    }
+                    &.inner-item-empty{
+                        .progress-inboxs{
+                            border: 1px solid rgba(255,83,77,1);
+                            .progress-inboxs-bar{
+                                font-size: 2rem;
+                                line-height: 46px;
+                                font-weight: bold;
+                                color: #FF534D;
+                                text-align: center;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

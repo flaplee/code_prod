@@ -6,14 +6,14 @@ import apis from 'containers/HomePage/apis';
 
 import PAGE_SIZE from 'containers/HomePage/pageSize';
 
-import { REQUEST_VIEW_TASK_ITEM_DETAIL } from './../constants/ViewTaskItemTypes';
+import { REQUEST_VIEW_TASK_ITEM_DETAIL } from '../constants/ViewTaskItemTypes';
 
 import {
   makeSelectViewTaskItemTarget,
   makeSelectViewTaskItemPage,
-} from './../selectors/viewTaskItem';
+} from '../selectors/viewTaskItem';
 
-import { receiveViewTaskItemDetail } from './../actions/ViewTaskItemActions';
+import { receiveViewTaskItemDetail } from '../actions/ViewTaskItemActions';
 
 function* fetchViewTaskItem() {
   try {

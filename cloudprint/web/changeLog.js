@@ -1,13 +1,11 @@
 const moment = require('moment');
 
-module.exports = ` 
+module.exports = `
   更新时间: ${moment().format('YYYY-MM-DD HH:mm')}
 ===========================
   feature:
-  打印预览页面: 
-  切换纸张,动态展示预览图片, 真实展示预览情况
-  根据打印机配置动态展示表单信息
-  预览处增加 纸张区域 与 打印区域 间 存在的边距 遮挡
-  纵向 横向 切换 可动态切换预览
+  Message V2
+  ProcessModal 增加 转换文件 间歇性 提示 弹窗
+  支持多墨盒 多颜色 展示
 ==============================
   `;

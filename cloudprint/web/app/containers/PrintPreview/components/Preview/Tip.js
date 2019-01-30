@@ -30,8 +30,8 @@ const LoadingImg = styled.img`
   height: 50px;
 `;
 
-const Tip = ({ complete, error, landscape }) => {
-  if (complete === false) {
+const Tip = ({ isFetching, error, landscape }) => {
+  if (isFetching === true) {
     return (
       <Wrap landscape={landscape}>
         <Loading>
@@ -51,7 +51,7 @@ const Tip = ({ complete, error, landscape }) => {
 };
 
 Tip.propTypes = {
-  complete: PropTypes.bool.isRequired,
+  isFetching: PropTypes.bool.isRequired,
   error: PropTypes.bool.isRequired,
   landscape: PropTypes.any,
 };

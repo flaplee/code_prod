@@ -1,6 +1,8 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
+import { addMessages } from 'containers/App/actions/MessagesActions';
+
 import UploadFile from './components/UploadFile';
 
 import {
@@ -28,6 +30,15 @@ const mapDispatchToProps = dispatch => ({
     const { files } = e.target;
     dispatch(setFileData(files[0]));
     dispatch({ type: SUBMIT_FILE });
+  },
+
+  inProcess: () => {
+    dispatch(
+      addMessages({
+        type: 'warning',
+        text: '文件正在上传中, 请稍后',
+      }),
+    );
   },
 
   onDrop: e => {

@@ -1,7 +1,10 @@
 import { createSelector } from 'reselect';
-import key from './../key';
+import key from '../key';
 
 const selectTask = state => state.getIn([key, 'task']);
 
 export const makeSelectTaskIsFetching = () =>
-  createSelector(selectTask, task => task.get('isFetching'));
+  createSelector(
+    selectTask,
+    task => task.get('isFetching'),
+  );

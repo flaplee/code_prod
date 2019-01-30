@@ -1,4 +1,4 @@
-import { defaultMessage, checkJson } from './../requestHelpers';
+import { defaultMessage, checkJson } from '../requestHelpers';
 
 describe('checkJson detecte error', () => {
   test('json code is 0, should not toThrow', () => {

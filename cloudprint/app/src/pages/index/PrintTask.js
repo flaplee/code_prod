@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Redirect } from 'react-router-dom'
 import Cookies from 'react-cookies';
+import objectAssign from 'object-assign'
 import { Group, Boxs, List, Layer, ScrollView } from 'saltui'
 import Icon from 'salt-icon'
 import FileList from './FileList';
 import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL } from '../../configs/config'
 import './Index.scss'
+import Utils from '../../util/js/util.js';
 
 const { HBox, Box } = Boxs;
 
@@ -15,13 +17,18 @@ class ChooseTask extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            page: 0,
+            page: 1,
             loading: false,
             refreshing: false,
+            isEmpty: false,
             statusInfo:{
                 'create': {
                     text: '未开始',
                     value: [5, 4, 6]
+                },
+                'confirm': {
+                    text: '等待中',
+                    value: [3, 4, 6]
                 },
                 'wating': {
                     text: '等待中',
@@ -64,12 +71,12 @@ class ChooseTask extends React.Component {
                 text: '取消'
             }],
             printer:{
-                sn: (new URLSearchParams(props.location.search)).get('sn') || '',
-                name: (new URLSearchParams(props.location.search)).get('name') || '',
-                status: (new URLSearchParams(props.location.search)).get('status') || '',
+                sn: (localStorage.getItem('printer') && localStorage.getItem('printer') != "undefined") ? JSON.parse(localStorage.getItem('printer')).printerSn : '',
+                name: (localStorage.getItem('printer') && localStorage.getItem('printer') != "undefined") ? JSON.parse(localStorage.getItem('printer')).printerName : '',
+                status: (localStorage.getItem('printer') && localStorage.getItem('printer') != "undefined") ? ((JSON.parse(localStorage.getItem('printer')).workStatus == 'error') ? 0 : (JSON.parse(localStorage.getItem('printer')).onlineStatus == '1' ? 1 : 2)) : ''
             },
             printData: {
-                'duplexMode': 1,
+                'duplexMode': 0,
                 'taskSource': (deli.android ? 'ANDROID' : (deli.ios ? 'IOS' : 'WBE')),
                 'printDirection': 2,
                 'printEndPage': 1,
@@ -77,7 +84,7 @@ class ChooseTask extends React.Component {
                 'printDpi': 600,
                 'paperSize': 'A4',
                 'printColorMode': 'black',
-                'printWhole': 0,
+                'printWhole': 1,
                 'printStartPage': 1
             },
             fileList: [],
@@ -86,7 +93,8 @@ class ChooseTask extends React.Component {
             layerViewData:[],
             redirect: {
                 previewNav: false,
-                manageNav: false
+                manageNav: false,
+                printTask: false
             }
         };
     }
@@ -110,6 +118,13 @@ class ChooseTask extends React.Component {
             Cookies.remove('orgId');
             Cookies.remove('token');
             Cookies.remove('admin');
+            localStorage.removeItem('printer')
+            localStorage.removeItem('printPreviewData')
+            localStorage.removeItem('printerCurrent')
+            localStorage.removeItem('printerList')
+            localStorage.removeItem('chooseTaskInfo')
+            localStorage.removeItem('printData')
+            localStorage.removeItem('previewSetupData')
         }, function (resp) { });
     }
 
@@ -119,61 +134,147 @@ class ChooseTask extends React.Component {
 
     //监听Tasker变化状态
     transFiler(filer) {
-        console.log("filer~~~", filer);
         this.setState(filer);
+    }
+
+    //获取打印机信息
+    getPrinterData(sn, callback) {
+        const self = this
+        //查询打印机信息
+        fetch(mpURL + '/app/printer/queryStatus/' + sn, {
+            method: 'GET',
+            timeout: 60000,
+            headers: {
+                "MP_TOKEN": Cookies.load('token')
+            }
+        }).then(
+            function (response) {
+                if (response.status !== 200) {
+                    deli.common.notification.toast({
+                        "text": '网络错误，请重试',
+                        "duration": 2
+                    }, function (data) { }, function (resp) { });
+                    return;
+                }
+                response.json().then(function (resp1) {
+                    if (resp1.code == 0) {
+                        localStorage.removeItem('printer')
+                        localStorage.setItem('printer', (resp1.data.hasPermissions == true ? JSON.stringify(resp1.data) : undefined))
+                        self.setState({ printer: resp1.data }, function () {})
+                        if (typeof callback === 'function') {
+                            callback(resp1.data);
+                        }
+                        if (Utils.timer.printerTimer) { Utils.stopGetPrinterInfo(Utils.timer.printerTimer) }
+                        //开始打印机信息状态轮询
+                        Utils.startGetPrinterInfo({
+                            token: Cookies.load('token'),
+                            sn: sn,
+                            error: function () {
+                                if (Utils.timer.printerTimer) { Utils.stopGetPrinterInfo(Utils.timer.printerTimer) }
+                                deli.common.notification.toast({
+                                    "text": '网络错误，请重试',
+                                    "duration": 2
+                                }, function (data) { }, function (resp) { });
+                            },
+                            success: function (resp1) {
+                                if (resp1.code == 0) {
+                                    localStorage.removeItem('printer')
+                                    localStorage.setItem('printer', JSON.stringify(resp1.data))
+                                    self.setState({ printer: resp1.data }, function () {})
+                                } else {
+                                    if (Utils.timer.printerTimer) { Utils.stopGetPrinterInfo(Utils.timer.printerTimer) }
+                                    deli.common.notification.prompt({
+                                        "type": 'error',
+                                        "text": resp1.msg,
+                                        "duration": 1.5
+                                    }, function (data) { }, function (resp) { });
+                                }
+                            }
+                        }, 'printer');
+                    } else {
+                        Utils.stopGetPrinterInfo(Utils.timer.printerTimer)
+                        deli.common.notification.prompt({
+                            "type": 'error',
+                            "text": resp1.msg,
+                            "duration": 1.5
+                        }, function (data) { }, function (resp) { });
+                    }
+                });
+            }
+        ).catch(function (err) {
+            deli.common.notification.toast({
+                "text": '网络错误，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { });
+        });
     }
 
     //重新打印
     handleprintTask(item) {
-        console.log("重新打印~~~~~~~~~~~~")
-        const self = this
-        self.setState({ layerView: false });
-        let fileList = item.fileList;
-        //let index = fileList.findIndex(element => element.taskCode === item.taskCode)
-        //单个文件处理
-        let mixFileList = [];
-        for (let i = 0; i < fileList.length; i++) {
-            const inner = {
-                'id': fileList[i].fileId,
-                'printMd5': fileList[i].printMd5,
-                'fileSuffix': fileList[i].fileSuffix,
-                'fileName': fileList[i].fileName,
-                'printUrl': fileList[i].printUrl,
-                'totalPage': fileList[i].totalPage,
-                'fileSource': fileList[i].fileSource
+        if (item.whetherAgainPrint){
+            const self = this
+            self.setState({ layerView: false });
+            let fileList = item.fileList;
+            //let index = fileList.findIndex(element => element.taskCode === item.taskCode)
+            //单个文件处理
+            let mixFileList = [];
+            for (let i = 0; i < fileList.length; i++) {
+                const inner = {
+                    'id': fileList[i].fileId,
+                    'printMd5': fileList[i].printMd5,
+                    'fileSuffix': fileList[i].fileSuffix,
+                    'fileName': fileList[i].fileName,
+                    'printUrl': fileList[i].printUrl,
+                    'totalPage': fileList[i].totalPage,
+                    'fileSource': fileList[i].fileSource
+                }
+                if (fileList.length > 1 || (fileList.length == 1 && fileList[0].fileSuffix != 'pdf')) {
+                    inner.printPDF = false,
+                        inner.previewUrl = (convertURL + '/file/preview/' + fileList[i].fileId + '_' + (i + 1) + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / (window.devicePixelRatio || 1)) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / (window.devicePixelRatio || 1)) + '')
+                } else {
+                    inner.printPDF = true
+                }
+                mixFileList.push(inner)
             }
-            if (fileList.length > 1 || (fileList.length == 1 && fileList[0].fileSuffix != 'pdf')){
-                inner.printPDF = false,
-                inner.previewUrl = (convertURL + '/file/preview/' + fileList[i].fileId + '_' + (i + 1) + '_' + Math.round((560 / 750) * document.documentElement.clientWidth / window.dpr) + '_' + Math.round((790 / 1334) * document.documentElement.clientHeight / window.dpr) + '')
-            }else{
-                inner.printPDF = true
-            }
-            mixFileList.push(inner)
+            let tmpPrintData = objectAssign({}, self.state.printData, {
+                'taskSource': item.taskSource,
+                'printEndPage': item.printEndPage,
+                'copyCount': item.copyCount,
+                'printStartPage': item.printStartPage
+            })
+            localStorage.removeItem('printPreviewData')
+            localStorage.setItem('printPreviewData', JSON.stringify(mixFileList))
+            self.setState({ layerView: false, redirect: { previewNav: true }, printer: { sn: item.printerSn, name: item.printerName, status: 1 }, fileType: (fileList.length > 1 || (fileList.length == 1 && fileList[0].fileSuffix != 'pdf')) ? 'image' : 'file', fileList: mixFileList }, function () {
+                Cookies.save('printPreviewType', self.state.fileType, { path: '/' })
+                localStorage.removeItem('printPreviewFrom');
+                localStorage.setItem('printPreviewFrom', 'printtask');
+                localStorage.removeItem('printData');
+                localStorage.setItem('printData', JSON.stringify(tmpPrintData));
+                if (deli.ios == 'IOS') {
+                    deli.common.notification.hidePreloader();
+                } else {
+                    setTimeout(() => {
+                        deli.common.notification.hidePreloader();
+                    }, 500);
+                }
+            });
+        }else{
+            deli.common.notification.toast({
+                "text": item.tips,
+                "duration": 2
+            }, function (data) { }, function (resp) { });
         }
-        let tmpPrintData = Object.assign({}, self.state.printData, {
-            'taskSource': item.taskSource,
-            'printEndPage': item.printEndPage,
-            'copyCount': item.copyCount,
-            'printStartPage': item.printStartPage
-        })
-        localStorage.removeItem('printPreviewData')
-        localStorage.setItem('printPreviewData', JSON.stringify(mixFileList))
-        self.setState({ layerView: false, redirect: { previewNav: true }, printer: { sn: item.printerSn, name: item.printerName, status: 1 }, fileType: (fileList.length > 1 || (fileList.length == 1 && fileList[0].fileSuffix != 'pdf')) ? 'image' : 'file', fileList: mixFileList },function(){
-            Cookies.save('printPreviewType', self.state.fileType, { path: '/' })
-            Cookies.save('printData', tmpPrintData, { path: '/' });
-            deli.common.notification.hidePreloader();
-        });
     }
 
     //删除任务
     handleDeleteTask(item) {
-        console.log("删除任务~~~~~~~~~~~~")
         const self = this
         self.setState({ layerView: false });
         let delData = new FormData()
         delData.append('id', item.id)
         fetch(mpURL + '/app/printerTask/delete', {
             method: 'POST',
+            timeout: 60000,
             headers: {
                 "MP_TOKEN": Cookies.load('token')
             },
@@ -181,23 +282,27 @@ class ChooseTask extends React.Component {
         }).then(
             function (response) {
                 if (response.status !== 200) {
+                    deli.common.notification.toast({
+                        "text": '网络错误，请重试',
+                        "duration": 2
+                    }, function (data) { }, function (resp) { });
                     return;
                 }
                 response.json().then(function (data) {
-                    console.log("data", data)
                     if (data.code == 0) {
                         let fileList = self.state.fileList
                         let index = fileList.findIndex(element => element.taskCode === item.taskCode)
                         fileList.splice(index, 1)
                         self.setState({
                             fileList: fileList,
-                            layerView: false
-                        }, function(){
+                            layerView: false,
+                            isEmpty: (fileList.length == 0) ? true : false
+                        }, function () {
                             deli.common.notification.prompt({
                                 "type": 'success',
                                 "text": "删除任务成功",
                                 "duration": 2
-                            },function(data){},function(resp){});
+                            }, function (data) { }, function (resp) { });
                         })
                     } else {
                         deli.common.notification.prompt({
@@ -218,11 +323,11 @@ class ChooseTask extends React.Component {
 
     //查询任务详情
     handleQueryTask(item) {
-        console.log("查询任务详情~~~~~~~~~~~~")
         const self = this
         self.setState({ layerView: false});
         fetch(mpURL + '/app/printerTask/queryDetais/' + item.taskCode, {
             method: 'GET',
+            timeout: 60000,
             headers: {
                 "MP_TOKEN": Cookies.load('token')
             }
@@ -232,48 +337,31 @@ class ChooseTask extends React.Component {
                     return;
                 }
                 response.json().then(function (data) {
-                    console.log("~~~~~~~~~~data", data)
                     if (data.code == 0 ) {
                         self.setState({ printer: { sn: data.data.printerSn, name: item.printerName, status: 1 }, redirect: { manageNav: true } });
                     } else {
-<<<<<<< HEAD
-                        deli.common.notification.prompt({
-                            "type": 'error',
-                            "text": "网络错误,请重试",
-                            "duration": 1.5
-                        }, function (data) {}, function (resp) {});
-=======
                         deli.common.notification.toast({
                             "text": '网络错误，请重试',
                             "duration": 2
                         }, function (data) { }, function (resp) { });
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     }
                 });
             }
         ).catch(function (err) {
-            console.log("错误:" + err);
-<<<<<<< HEAD
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
-=======
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
             }, function (data) { }, function (resp) { });
         });
     }
 
     //取消任务
     handleCancelTask(item) {
-        console.log("取消任务~~~~~~~~~~~~")
         const self = this
         self.setState({ layerView: false });
         fetch(mpURL + '/app/printerTask/cancel/' + item.taskCode, {
             method: 'GET',
+            timeout: 60000,
             headers: {
                 "MP_TOKEN": Cookies.load('token')
             }
@@ -283,21 +371,17 @@ class ChooseTask extends React.Component {
                     return;
                 }
                 response.json().then(function (data) {
-                    console.log("data", data)
                     if (data.code == 0) {
                         let fileList = self.state.fileList
                         let index = fileList.findIndex(element => element.taskCode === item.taskCode)
-                        fileList[index].task_status = '50'
+                        fileList[index].task_status = 'cancel'
                         self.setState({
                             fileList: fileList,
                             layerView: false
                         }, function(){
-                            console.log("self.state.fileList", self.state.fileList)
-                            //self.renderListItems();
                             let fileListInner = self.state.fileList
                             let indexInner = fileList.findIndex(element => element.taskCode === item.taskCode)
-                            console.log("fileList", fileListInner)
-                            fileListInner[indexInner].taskStatus = 50
+                            fileListInner[indexInner].taskStatus = 'cancel'
                             self.setState({
                                 fileList: fileListInner,
                                 layerView: false
@@ -319,13 +403,11 @@ class ChooseTask extends React.Component {
                 });
             }
         ).catch(function (err) {
-            console.log("错误:" + err);
         });
     }
     
     //扫码指定打印机
     handleQrcodeTask(item) {
-        console.log("扫码指定打印机~~~~~~~~~~~~")
         const self = this
         self.setState({ layerView: false });
         deli.app.code.scan({
@@ -335,10 +417,11 @@ class ChooseTask extends React.Component {
         }, function (data) {
             if(data){
                 let qrData = new FormData()
-                qrData.append('qrcode', data.text)
+                qrData.append('qrCode', data.text)
                 //处理扫码结果
-                fetch(mpURL + '/app/printer/scan', {
+                fetch(mpURL + '/app/printerTask/scanQrCode', {
                     method: 'POST',
+                    timeout: 60000,
                     headers: {
                         "MP_TOKEN": Cookies.load('token')
                     },
@@ -346,80 +429,61 @@ class ChooseTask extends React.Component {
                 }).then(
                     function (response) {
                         if (response.status !== 200) {
-<<<<<<< HEAD
-                            deli.common.notification.prompt({
-                                "type": 'error',
-                                "text": "网络错误,请重试",
-                                "duration": 1.5
-=======
                             deli.common.notification.toast({
                                 "text": '网络错误，请重试',
                                 "duration": 2
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
-                            }, function (data) { }, function (resp) { });
+                            }, function (data) {}, function (resp) {});
                             return;
                         }
                         response.json().then(function (json) {
                             if (json.code == 0) {
-                                let tmpPrintData = Object.assign({}, self.state.printData, {
-                                    'printerSn': json.data
-                                })
-                                //任务设置打印机 /v1/app/printTask/taskToPrinter/
-                                fetch(mpURL + '/v1/app/printTask/taskToPrinter/' + item.taskCode + '', {
-                                    method: 'POST',
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                        "MP_TOKEN": Cookies.load('token')
-                                    },
-                                    body: JSON.stringify(tmpPrintData)
-                                }).then(
-                                    function (response) {
-                                        if (response.status !== 200) {
-<<<<<<< HEAD
-                                            deli.common.notification.prompt({
-                                                "type": 'error',
-                                                "text": "网络错误,请重试",
-                                                "duration": 1.5
-=======
+                                //扫码切换至该打印机
+                                self.getPrinterData(json.data.printerSn, function(respPrinter){
+                                    if (item && item.whetherAgainPrint == false){
+                                        //虚拟打印直接打印
+                                        let tmpPrintData = objectAssign({}, self.state.printData, {
+                                            'printerSn': json.data.printerSn
+                                        })
+                                        //任务设置打印机 /v1/app/printTask/taskToPrinter/
+                                        fetch(mpURL + '/v1/app/printTask/taskToPrinter/' + item.taskCode + '', {
+                                            method: 'POST',
+                                            timeout: 60000,
+                                            headers: {
+                                                "Content-Type": "application/json",
+                                                "MP_TOKEN": Cookies.load('token')
+                                            },
+                                            body: JSON.stringify(tmpPrintData)
+                                        }).then(
+                                            function (response) {
+                                                if (response.status !== 200) {
+                                                    deli.common.notification.toast({
+                                                        "text": '网络错误，请重试',
+                                                        "duration": 2
+                                                    }, function (data) { }, function (resp) { });
+                                                    return;
+                                                }
+                                                response.json().then(function (data) {
+                                                    if (data.code == 0) {
+                                                        self.setState({ layerView: false, redirect: { printTask: true } });
+                                                    } else {
+                                                        deli.common.notification.prompt({
+                                                            "type": 'warning',
+                                                            "text": data.msg,
+                                                            "duration": 2
+                                                        }, function (data) { }, function (resp) { });
+                                                    }
+                                                });
+                                            }
+                                        ).catch(function (err) {
                                             deli.common.notification.toast({
                                                 "text": '网络错误，请重试',
                                                 "duration": 2
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                                             }, function (data) { }, function (resp) { });
-                                            return;
-                                        }
-                                        response.json().then(function (data) {
-                                            if (data.code == 0) {
-                                                self.setState({
-                                                    layerView: false
-                                                })
-                                                deli.common.notification.prompt({
-                                                    "type": 'success',
-                                                    "text": '打印成功',
-                                                    "duration": 2
-                                                }, function (data) {}, function (resp) {});
-                                            } else {
-                                                deli.common.notification.prompt({
-                                                    "type": 'warning',
-                                                    "text": data.msg,
-                                                    "duration": 2
-                                                }, function (data) {}, function (resp) {});
-                                            }
                                         });
+                                    }else{
+                                        //扫码打印跳转至打印预览界面
+                                        self.handleprintTask(item);
                                     }
-                                ).catch(function (err) {
-<<<<<<< HEAD
-                                    deli.common.notification.prompt({
-                                        "type": 'error',
-                                        "text": "网络错误,请重试",
-                                        "duration": 1.5
-                                    }, function (data) {}, function (resp) {});
-=======
-                                    deli.common.notification.toast({
-                                        "text": '网络错误，请重试',
-                                        "duration": 2
-                                    }, function (data) { }, function (resp) { });
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                                 });
                             } else {
                                 deli.common.notification.prompt({
@@ -431,18 +495,10 @@ class ChooseTask extends React.Component {
                         });
                     }
                 ).catch(function (err) {
-<<<<<<< HEAD
-                    deli.common.notification.prompt({
-                        "type": 'error',
-                        "text": "网络错误,请重试",
-                        "duration": 1.5
-                    }, function (data) {}, function (resp) {});
-=======
                     deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
                     }, function (data) { }, function (resp) { });
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                 });
             }
         }, function (resp) {});
@@ -453,8 +509,6 @@ class ChooseTask extends React.Component {
     //打印菜单
     handleLayerClick(value, file) {
         const self = this
-        console.log("value", value);
-        console.log("file", file);
         switch (value) {
             case 1:
                 self.handleprintTask(file);
@@ -500,15 +554,11 @@ class ChooseTask extends React.Component {
     renderlayerItems(viewData, fileData) {
         const pages = this.state.menuList;
         const result = [];
-        console.log("data", viewData);
-        console.log("pages", pages);
         for (let j = 0; j < viewData.length; j++) {
             for (let i = 0; i < pages.length; i++) {
                 if (pages[i].value == viewData[j]) {
                     let valueItem = pages[i].value;
                     let textItem = pages[i].text;
-                    console.log("valueItem", valueItem)
-                    console.log("textItem", textItem)
                     result.push(<div key={`page-${i}`} className="setting-item" onClick={this.handleLayerClick.bind(this, valueItem, fileData)}>{textItem}</div>);
                 }
             }
@@ -516,7 +566,23 @@ class ChooseTask extends React.Component {
         return result;
     }
 
+    // layerView
+    handlePropClick(e) {
+        e.stopPropagation();
+        this.setState({ layerView: false });
+    }
+
     render() {
+        //虚拟打印进入打印机任务列表
+        if (this.state.redirect.printTask) {
+            const sn = this.state.printer.printerSn
+            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == '1' ? 1 : 2))
+            const name = this.state.printer.printerName
+            return <Redirect push to={
+                { pathname: "/managetask", search: "?sn=" + sn + "&status=" + status + "&name=" + name + "", state: { "sn": sn, "status": status, "name": name } }
+            } />;
+        }
+
         if (this.state.redirect.manageNav) {
             const file = {
                 fileId: this.state.fileItemData.id,
@@ -531,6 +597,7 @@ class ChooseTask extends React.Component {
                 { pathname: "/managetask", search: "?sn=" + sn + "&name=" + name + "&status=" + status +"", state: { "sn": sn, "file": file }  }
             }/>;
         }
+
         if(this.state.redirect.previewNav){
             const file = {
                 fileId: this.state.fileItemData.id,
@@ -543,16 +610,25 @@ class ChooseTask extends React.Component {
             const status = this.state.printer.status
             const fileList = this.state.fileList
             return <Redirect push to={
-                { pathname: "/previewindex", search: "?sn=" + sn + "&name=" + name + "&status=" + status + "", state: { "sn": sn, "file": file, "fileList": fileList } }
+                { pathname: "/previewindex", search: "?sn=" + sn + "&status=" + status + "", state: { "sn": sn, "file": file, "fileList": fileList } }
             } />;
         }
+
+        let fileListDom;
+        if(this.state.isEmpty == true){
+            fileListDom = <div className="task-list-empty"><div className="task-list-empty-img"></div><p className="task-list-empty-text">暂无更多打印记录</p></div>;
+        }else{
+            fileListDom = <FileList isEmpty={this.state.isEmpty} pages={this.state.page} files={this.state.fileList} printer={this.state.printer} transFiler={filer => this.transFiler(filer)}></FileList>;
+        }
+
         return (
             <div className="print-index-task print-list" id="print-index-task">
-                <FileList pages={this.state.page} files={this.state.fileList} printer={this.state.printer} transFiler={filer => this.transFiler(filer)}></FileList>
-                <Layer bottom="0" visible={this.state.layerView} maskCloseable>
+                { fileListDom }
+                <Layer className="layer-blank" bottom="0" zIndex={888} visible={this.state.layerView} onClick={this.handlePropClick.bind(this)}  maskCloseable>
                     {this.renderlayerItems(this.state.layerViewData, this.state.fileItemData)}
                 </Layer>
             </div>);
+        
     }
 }
 

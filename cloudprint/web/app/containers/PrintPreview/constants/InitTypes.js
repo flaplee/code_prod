@@ -1,3 +1,3 @@
-import key from './../key';
+import key from '../key';
 
 export const INIT = `${key}/INIT`;

@@ -1,27 +1,22 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
-import { Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom'
 import Cookies from 'react-cookies'
 import printimg from '../../images/L1000DNW@3x.png'
 import printimgNone from '../../images/Printer_management01@3x.png'
-import { Progress } from 'saltui';
+import { Progress } from 'saltui'
 import './Index.scss';
 class Printer extends Component {
     constructor(props) {
         super(props);
         const t = this;
         t.state = {
-            printer: {},
-            printerCurrent: Cookies.load('printercurrent') || 0,
-            inkbox: {
-                percent: 0
-            },
+            printer: t.props.printer ? t.props.printer : {},
+            printerCurrent: localStorage.getItem('printerCurrent') || 0,
             printerList: {},
             redirect: false,
             current: 0
         };
-        console.log("printer props", props)
-        //t.props.transPrinter({'printCurrent':0});
     }
 
     handleOnClick(){
@@ -29,44 +24,40 @@ class Printer extends Component {
     }
 
     componentWillReceiveProps(transProps){
-        console.log("transProps", transProps)
-        if (transProps.user && transProps.printer && transProps.inkbox){
+        if (transProps.user && transProps.printer){
             this.setState({
                 printer: transProps.printer,
                 printerCurrent: transProps.printerCurrent
-            }, function() {
-                if (transProps.inkbox.inkboxColors){
-                    this.setState({
-                        inkbox: {
-                            percent: parseInt(transProps.inkbox.inkboxColors[0].tonerRemain)
-                        }
-                    }, function () {});
-                }
-            });
-            /* this.setState({
-                user: transProps.user,
-                printerList: transProps.printer.printList.rows,
-                current: transProps.printer.printCurrent
-            });
-            if (transProps.printer.printList.rows.length > 0){
-                this.setState({
-                    printer: transProps.printer.printList.rows[transProps.printer.printCurrent]
-                });
-            } */
+            }, function() {});
         }
     }
 
     componentWillUpdate(transProps, transState){
-        console.log("componentWillUpdate", transProps)
-        console.log("transState", transState)
     }
 
     componentWillMount(props, state){
-        console.log("props", props)
-        console.log("state", state)
     }
 
     render() {
+        let printerData = this.state.printer
+        let inboxItems = ''
+        if (printerData && printerData.hasOwnProperty('inkboxDetails')){
+            inboxItems = printerData.inkboxDetails.map((inbox, index) => {
+                let inboxItem = inbox.inkboxColors.map((item, i) => {
+                    return (
+                        <div key={'progress' + i} className={(printerData.inkboxDetails.length == 1 && inbox.inkboxColors.length == 1) ? 'progress-wrap-bar-long progress-wrap-bar-more short-' + item.color + '-bar' : 'progress-wrap-bar-short progress-wrap-bar-more short-' + item.color + '-bar'}>
+                            <Progress key={index + 'progress' + i} inbox={inbox} index={index} percent={parseInt(item.tonerRemain)} status={((printerData.inkboxDetails.length == 1 && inbox.inkboxColors.length == 1) ? (item.tonerRemain <= 20 ? 'normal' : 'success') : 'normal')} showInfo={false} strokeWidth={(printerData.inkboxDetails.length == 1 && inbox.inkboxColors.length == 1) ? 14 : 14} />
+                        </div>
+                    )
+                })
+                return (
+                    <div key={index + 'progress'} className="progress-wrap-bar">
+                        {inboxItem}
+                    </div>
+                );
+            });
+        }
+        
         if (this.state.redirect) {
             return <Redirect push to={
                 { pathname: "/printlist", search: "?printercurrent=" + this.state.printerCurrent + "", state: { "printercurrent": this.state.printerCurrent}  }
@@ -74,36 +65,36 @@ class Printer extends Component {
         }
         return (
             <header className="header header-print">
-                <div className={this.state.printer.workStatus ? 'print-box' : 'print-box hide'}>
+                <div className={(this.state.printer && printerData.workStatus) ? 'print-box' : 'print-box hide'}>
                     <div className="print-wrap">
                         <div className="print-inner">
                             <div className="print-img">
                                 <div className="print-img-inner">
-                                    <img src={printimg} className="print-img-info" />
-                                    <div className={(this.state.printer.workStatus == 'error' ? 'print-img-status print-status-error' : (this.state.printer.onlineStatus == 1 ? 'print-img-status print-status-success' : 'print-img-status print-status-offline'))}></div>
+                                    <img src={printerData.logo} className="print-img-info" />
+                                    <div className={(printerData.workStatus == 'error' ? 'print-img-status print-status-error' : (printerData.onlineStatus == '1' ? 'print-img-status print-status-success' : 'print-img-status print-status-offline'))}></div>
                                 </div>
                             </div>
-                            <div className="print-progress">
-                                <div className="progress-bar bg-success">
-                                    <Progress percent={this.state.inkbox.percent} status={this.state.inkbox.percent <= 20 ? 'normal' : 'success'} showInfo={false} strokeWidth={12} />
+                            <div className={(printerData.inkboxDetails && printerData.inkboxDetails.length == 1 && printerData.inkboxDetails[0].inkboxColors.length == 1) ? 'print-progress' : 'print-progress print-progress-inboxs'} style={{ display: (printerData.onlineStatus != '1') ? 'none' : '' }}>
+                                <div className="progress-inbox">
+                                    {inboxItems}
                                 </div>
                             </div>
                         </div>
                         <div className="print-title">
-                            <p className="print-title-sup">{this.state.printer.printerName}</p>
-                            <div className="print-title-sub"><i className={(this.state.printer.errorMsg ? 'icon icon-notice' : 'icon')}></i><span>{this.state.printer.errorMsg}</span></div>
+                            <p className="print-title-sup">{printerData.printerName}</p>
+                            <div className="print-title-sub"><i className={(printerData.errorMsg ? 'icon icon-notice' : 'icon')}></i><span>{printerData.errorMsg}</span></div>
                         </div>
                     </div>
                     <div className="print-switch">
                         <a className="print-switch-btn" onClick={this.handleOnClick.bind(this)} href="javascript:;">切换</a>
                     </div>
                 </div>
-                <div className={this.state.printer.workStatus ? 'print-box hide' : 'print-box'}>
+                <div className={(this.state.printer && printerData.workStatus) ? 'print-box hide' : 'print-box'}>
                     <div className="print-wrap">
                         <div className="print-inner">
                             <div className="print-img">
                                 <div className="print-img-inner">
-                                    <img src={printimgNone} className="print-img-info" />
+                                    <img src={printimgNone} className="print-img-info print-imgNone-info" />
                                     <div className="print-img-status print-status-empty"></div>
                                 </div>
                             </div>

@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="stylesheet" href="__PUBLIC__/newlogin/css/reset.css">
+    <link rel="stylesheet" href="__PUBLIC__/newlogin/css/login.css">
+    <script src="__PUBLIC__/static/js/jquery.min.js" charset="utf-8"></script>
+<script src="__PUBLIC__/layui/layui.js"></script>
+<script src="__PUBLIC__/static/js/common.js?v=<?php echo mt_rand(1,10000000);?>" charset="utf-8"></script>
+<script src="__PUBLIC__/fancybox/jquery.fancybox.js" charset="utf-8"></script>
+ <script>if(window.top !== window.self){ window.top.location = window.location;}</script>
+</head>
+<body>
+             <form   method="post" action="{:url('/Client/save_lable',['flag'=>'test'])}" enctype="multipart/form-data">
+                            <input type="hidden" name="type_id" value="1" ><br>
+                            <input type="hidden" name="type" value="1" ><br>
+                            <input type="hidden" name="flag" value="test" ><br>
+                            <input type="text" name="data" value="" placeholder="data值"><br>
+                            <input type="file" name="lable_cover" value="" placeholder="封面"><br>
+                            <input type="file" name="backurl" value="" placeholder="模板"><br>
+                            <input type="file" multiple="multiple" name="dataimg[]" value="" placeholder="多图"><br>
+                           <button type="submit" value="Submit">Submit</button><br>
+             </form>
+</body>
+</html>

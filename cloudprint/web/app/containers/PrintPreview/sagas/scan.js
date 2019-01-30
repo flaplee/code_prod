@@ -3,19 +3,24 @@ import { select, call, put, takeLatest } from 'redux-saga/effects';
 /* eslint-disable-next-line */
 import delay from '@redux-saga/delay-p';
 
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router/immutable';
 import { authRequest } from 'utils/request';
 import apis from 'containers/PrintPreview/apis';
 
+import verifyForm from 'containers/PrintPreview/verifyForm';
+
 import { addMessages } from 'containers/App/actions/MessagesActions';
 
-import { SCAN_SUBMIT_TASK, RECEIVE_TASK } from './../constants/TaskTypes';
+import { SCAN_SUBMIT_TASK, RECEIVE_TASK } from '../constants/TaskTypes';
 
-import { makeSelectForm } from './../selectors/form';
+import { makeSelectForm } from '../selectors/form';
 
 function* scanSubmit() {
   try {
     const data = yield select(makeSelectForm());
+
+    verifyForm(data); // verify form
+
     const { fileList } = data;
 
     const method = 'post';

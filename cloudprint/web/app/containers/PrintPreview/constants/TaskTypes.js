@@ -1,4 +1,4 @@
-import key from './../key';
+import key from '../key';
 
 export const REQUEST_TASK = `${key}/REQUEST_TASK`;
 
@@ -11,3 +11,5 @@ export const RECEIVE_TASK_DETAIL = `${key}/RECEIVE_TASK_DETAIL`;
 export const SUBMIT_TASK = `${key}/SUBMIT_TASK`;
 export const SCAN_SUBMIT_TASK = `${key}/SCAN_SUBMIT_TASK`;
 export const RECEIVE_TASK = `${key}/RECEIVE_TASK`;
+
+export const SET_FILE_TRANSTIPDIR = `${key}/SET_FILE_TRANSTIPDIR`;

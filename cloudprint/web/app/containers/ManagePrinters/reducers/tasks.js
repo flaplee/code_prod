@@ -5,7 +5,7 @@ import {
   RECEIVE_TASKS,
   TASKS_ERROR,
   SET_TASKS_PAGE,
-} from './../constants/TasksTypes';
+} from '../constants/TasksTypes';
 
 const initialState = fromJS({
   data: false,

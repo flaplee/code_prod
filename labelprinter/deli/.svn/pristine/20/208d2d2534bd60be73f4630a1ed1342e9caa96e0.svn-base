@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="stylesheet" href="__PUBLIC__/newlogin/css/reset.css">
+    <link rel="stylesheet" href="__PUBLIC__/newlogin/css/login.css">
+    <script src="__PUBLIC__/static/js/jquery.min.js" charset="utf-8"></script>
+<script src="__PUBLIC__/layui/layui.js"></script>
+<script src="__PUBLIC__/static/js/common.js?v=<?php echo mt_rand(1,10000000);?>" charset="utf-8"></script>
+<script src="__PUBLIC__/fancybox/jquery.fancybox.js" charset="utf-8"></script>
+ <script>if(window.top !== window.self){ window.top.location = window.location;}</script>
+</head>
+<body>
+    <div class="login-wrap">
+        <!-- LOGO -->
+        <div class="login-hd">
+            <img class="login-logo" src="__PUBLIC__/clogin/images/logo2.png" alt="" title="">
+        </div>
+        
+        <!-- BODY -->
+        <div class="login-bd clearfix">
+            <div class="login-cover">
+                <img src="__PUBLIC__/newlogin/img/login_cover.jpg" alt="" title="">
+            </div>
+            
+            <!-- MAIN -->
+            <div class="login-main">
+                <form class="form-horizontal"  method="post" action="{:url('/Client/save_lable')}" enctype="multipart/form-data">
+                    <div class="main-top">
+                        <span class="fn-fl">登录</span>
+                        <span class="fn-fr" style="font-size:14px;">
+                            没有账号？<a href="{:url('apply')}" title="">立即申请></a>
+                        </span>
+                    </div>
+
+                    <div class="main-body">
+                        <div class="input-item">
+                            <label for="phone">
+                                <img src="__PUBLIC__/newlogin/img/account.png">
+                            </label>
+                            <input type="hidden" name="type_id" value="1" >
+                            <input type="hidden" name="type" value="1" >
+                            <input type="text" name="data" value="" placeholder="data值">
+                        </div>
+                        <div class="input-item">
+                            <label for="psd">
+                                <img src="__PUBLIC__/newlogin/img/password.png">
+                            </label>
+                            <input type="file" name="lable_cover" value="" placeholder="封面">
+                            <input type="file" name="backurl" value="" placeholder="模板">
+                            <input type="file" name="dataimg" value="" placeholder="多图">
+                        </div>
+                        <div class="remind-pw">
+                            <!--<div class="remind-wrap">
+                                <input type="checkbox" name="remind">
+                                <label>记住账号</label>
+                            </div>-->
+                            <a href="" title="">忘记密码？</a>
+                        </div>
+                       <input type="submit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

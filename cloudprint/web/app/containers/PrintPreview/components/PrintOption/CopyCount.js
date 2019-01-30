@@ -37,18 +37,18 @@ const CopyCount = ({ count, typeCopyCount, increase, decrease }) => (
       <SelectBtn
         disable={count <= 1}
         src={arrow01Src}
-        onClick={() => {
-          if (count > 1) {
-            decrease(count - 1);
-          }
-        }}
+        onClick={() => decrease(count - 1)}
       />
       <Count
         type="number"
         value={count}
         onChange={e => typeCopyCount(parseInt(e.target.value, 10))}
       />
-      <SelectBtn onClick={() => increase(count + 1)} src={arrow02Src} />
+      <SelectBtn
+        disable={count >= 99}
+        onClick={() => increase(count + 1)}
+        src={arrow02Src}
+      />
     </Options>
   </Wrap>
 );

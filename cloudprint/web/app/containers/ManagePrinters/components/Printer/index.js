@@ -11,21 +11,19 @@ import NoPrinter from './NoPrinter';
 const Wrap = styled.div`
   padding: 0 45px;
   height: ${size}px;
+  line-height: ${size}px;
+  text-align: center;
 `;
 
 const PrinterBox = styled.div`
   margin-right: ${size + 20}px;
   height: 100%;
-  line-height: ${size}px;
   border: 1px solid #ddd;
   border-radius: 10px;
-  text-align: center;
 `;
 
 const LoadingBox = styled.div`
   height: 360px;
-  line-height: 360px;
-  text-align: center;
 `;
 
 const Info = ({ loading, data, current, makeSelect }) => {
@@ -40,7 +38,12 @@ const Info = ({ loading, data, current, makeSelect }) => {
     <Wrap>
       <Inkbox />
       <PrinterBox>
-        <PrinterShow data={data} current={current} makeSelect={makeSelect} />
+        <PrinterShow
+          isFetching={loading}
+          data={data}
+          current={current}
+          makeSelect={makeSelect}
+        />
       </PrinterBox>
     </Wrap>
   );

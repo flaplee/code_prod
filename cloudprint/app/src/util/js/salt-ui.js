@@ -39634,7 +39634,7 @@ var LayerBody = function (_React$Component) {
           },
           closeable: true,
           visible: t.state.visible,
-          opacity: 0.6
+          opacity: 0.3
         }),
         _react2.default.createElement(
           'div',
@@ -39668,7 +39668,7 @@ LayerBody.defaultProps = {
   onDidShow: _Context.noop,
   onWillHide: _Context.noop,
   onDidHide: _Context.noop,
-  maskOpacity: 0.6,
+  maskOpacity: 0.3,
   maskCloseable: false,
   hasMask: true,
   visible: false,

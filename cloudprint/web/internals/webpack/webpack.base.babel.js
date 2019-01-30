@@ -69,11 +69,13 @@ module.exports = options => ({
       },
       {
         test: /\.(jpg|png|gif)$/,
-        loader: 'file-loader',
-      },
-      {
-        test: /\.html$/,
-        use: 'html-loader',
+        use: {
+          loader: 'url-loader',
+          options: {
+            // Inline files smaller than 100 kB
+            limit: 100 * 1024,
+          },
+        },
       },
       {
         test: /\.(mp4|webm)$/,

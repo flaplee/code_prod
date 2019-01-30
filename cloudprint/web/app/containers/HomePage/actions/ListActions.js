@@ -2,7 +2,7 @@ import {
   RECEIVE_LIST,
   SET_LIST_PAGE,
   ERROR_LIST,
-} from './../constants/ListTypes';
+} from '../constants/ListTypes';
 
 export const receiveList = json => ({
   type: RECEIVE_LIST,

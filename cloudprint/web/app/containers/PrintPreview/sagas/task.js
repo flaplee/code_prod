@@ -8,9 +8,9 @@ import {
   REQUEST_TASK,
   REQUEST_TASK_FILE,
   REQUEST_TASK_DETAIL,
-} from './../constants/TaskTypes';
+} from '../constants/TaskTypes';
 
-import { makeSelectSearch } from './../selectors/search';
+import { makeSelectSearch } from '../selectors/search';
 
 function* fetchTask() {
   try {

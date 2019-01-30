@@ -43,7 +43,9 @@ class Item extends React.Component {
   };
 
   showTask = null;
+
   hideTask = null;
+
   removeTask = null;
 
   clearTasks = () => {

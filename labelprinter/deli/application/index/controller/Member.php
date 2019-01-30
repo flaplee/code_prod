@@ -1,0 +1,248 @@
+<?php
+namespace app\index\controller;
+use think\Db;
+use think\Config;
+use think\Request;
+header('content-type:text/html;charset=utf-8' );  
+
+class Member extends ApiBase
+{
+    
+/*登陆 
+ * @param string $account 帐号
+ * @param string $password 密码 加密后
+ */    
+    public function member_login(){
+        setSessionName('Member');
+        $this->__checkParam('account,password,type',$this->input);
+        extract($this->input);
+
+        if(!isset($type) || ($type!=1 && $type!=2)){
+            $this->returnJson(0,'类型有误');
+        }
+
+
+        $login_result = dl_login($account,$password);
+        if($login_result===false || !isset($login_result['code'])){
+            $this->returnJson(0, '登陆失败');
+        }
+        
+        if($login_result['code']!=0){
+            $msg =to_return_code($login_result['code'],'登陆失败');
+            $this->returnJson(0, $msg);
+        }
+     //   echo $login_result['data']['user_id'];exit;
+        
+        $model_member =model('Member');
+        $login_result =$model_member->dl_login($account,$password,$login_result['data']['user_id'],$type);
+        if($login_result===false){
+            $this->returnJson(0,$model_member->getError());
+        }
+        $login_result['sessid']=session_id();
+        
+        
+        //记录dau
+        model('admin/Dau')->add_dau($login_result['id'],$type);
+        
+        $this->returnJsonData(1,'登陆成功',$login_result);
+    }
+    
+/*发送验证码
+ * @param varchar telephone 电话号码
+ * @param int type 1注册用2 找回密码用 3验证首选号码 4验证备选号码
+ */    
+    public function send_code(){
+        $this->__checkParam('telephone,type',$this->input);
+        extract($this->input);
+        
+        
+        
+        
+//        if(!check_phone($telephone)){
+//            $this->returnJson(0,'联系人电话号码格式不正确');
+//        }
+        
+        if($type!=1 && $type!=2){
+            $this->returnJson(0,'请求类型有误');
+        }
+        
+        $checkphone =model('Member')->isExitPhone($telephone);
+        
+        if($checkphone>0 && $type==1){
+            $this->returnJson(0,'该号码已经注册过，请重新换号码');
+        }
+        
+        if($checkphone==0 && $type==2){
+     //       $this->returnJson(0,'该号码未注册，请输入正确号码');
+        }
+        
+        //检验发送 1分钟1次，1小时5次，1天10次
+        $model_phone =model('PhoneVerify');
+        $check_result =$model_phone->checkPhoneAble($telephone);
+        if($check_result===false){
+            $this->returnJson(0,$model_phone->getError());
+        }
+        
+        $result =dl_send_msg($telephone,$type);
+        if($result===false || !isset($result['code'])){
+            $this->returnJson(0,'发送失败');
+        }
+        
+        
+        if($result['code']!=0){
+            $msg =to_return_code($result['code'],'发送失败');
+            $this->returnJson(0, $msg);
+        }
+        
+        
+        //记录发送
+        $model_phone->addVerify($telephone,'',$type);
+        
+        $this->returnJson(1,'发送成功');
+    }
+    
+ 
+/*注册
+ * @param varchar telephone 电话号码
+ * @param varchar verify 验证码
+ * @param varchar passwd 密码
+ * @param varchar repeat_passwd 重复密码
+ * 
+ */    
+    public function member_register(){
+        $this->__checkParam('telephone,verify,passwd,repeat_passwd,reg_platform',$this->input);
+        extract($this->input);
+        if($reg_platform!=1 && $reg_platform!=2){
+            $reg_platform=3;
+        }
+        
+        //检验各类参数
+//        if(!check_phone($telephone)){
+//            $this->returnJson(0,'联系人电话号码格式不正确');
+//        }
+        if($passwd!=$repeat_passwd){
+            $this->returnJson(0, '两次密码不一致，请重新输入');
+        }
+        
+        //检验是否已经注册
+        if(model('Member')->isExitPhone($telephone)){
+            $this->returnJson(0,'该号码已经注册过');
+        }
+        
+        //调用得力接口进行注册，如果注册成功则返回，否则提示无法注册
+        $register_result =dl_register($telephone,$passwd,$verify);
+        if($register_result===false || !isset($register_result['code'])){
+            $this->returnJson(0, '注册失败');
+        }
+        
+        if($register_result['code']!=0){
+            $msg =to_return_code($register_result['code'],'发送失败');
+            $this->returnJson(0, $msg);
+        }
+        
+        
+        
+        $data['user_id']=$register_result['data']['user_id'];
+        $data['account']=$telephone;
+        $data['name']=$telephone;
+        $data['password']=$passwd;
+        $data['reg_platform']=$reg_platform;
+        $data['create_time']=time();
+        $last_id =db('Member')->insert($data);
+        
+        //记录每日统计
+        model('admin/DayStatic')->add_static(1);
+        
+        $this->returnJson(1, '注册成功');
+    }
+    
+    
+/*修改用户信息
+ * 
+ */
+    
+    public function change_message(){
+        $member_result =$this->verifyUser();
+        $member_id =$member_result['id'];
+        $name =isset($this->input['name'])?$this->input['name']:"";
+        $sex =isset($this->input['sex'])?$this->input['sex']:"";
+        $birth =isset($this->input['birth'])?$this->input['birth']:"";
+        $province =isset($this->input['province'])?$this->input['province']:"";
+        $city =isset($this->input['city'])?$this->input['city']:"";
+        $area =isset($this->input['area'])?$this->input['area']:"";
+        $avator ="";
+       
+        
+        
+        $file = request()->file('avator');
+        if(!empty($file)){
+            // 移动到框架应用根目录/public/uploads/ 目录下
+            $info = $file->validate(['size'=>2*1024*1024,'ext'=>'jpg,png,gif'])->move(ROOT_PATH . 'public' . DS . 'uploads'. DS .'avator');
+            if($info){
+                    $save_name =$info->getSaveName();
+                    $save_name =  str_replace('\\', '/', $save_name);
+                    $file_path ='/uploads/avator/'.$save_name;
+                    $avator=$file_path;
+            }else{
+                    $this->returnJson(0,$file->getError());
+            }
+        }
+        
+        if(empty($avator) && empty($name) && empty($province) && empty($city) && empty($area) && empty($sex)&& empty($birth)){
+            $this->returnJson(0,'您未提交信息');
+        }
+        $data= $this->input;
+        $data['id']=$member_id;
+        if(!empty($avator)){
+            $data['avator']=$avator;
+        }
+        $data['update_time']=time();
+        
+        $result =model('Member')->__msave($data,'Member','changemsg');
+        if($result['code']==1){
+            $data['avator'] = isset($data['avator'])?generalImg($data['avator']):"";
+            $this->returnJsonData(1,'修改成功',$data);
+        }else{
+            $this->returnJson(0,$result['msg']);
+        }  
+        
+        
+    }
+    
+    
+/*重置密码
+ * @param varchar telephone 电话号码
+ * @param varchar verify 验证码
+ * @param varchar passwd 密码
+ * @param varchar repeat_passwd 重复密码
+ */    
+    public function set_pwd(){
+        $this->__checkParam('mobile,veri_code,passwd,repeat_passwd',$this->input);
+        extract($this->input);
+        
+        
+        
+        //检验各类参数
+//        if(!check_phone($mobile)){
+//            $this->returnJson(0,'联系人电话号码格式不正确');
+//        }
+        if($passwd!=$repeat_passwd){
+            $this->returnJson(0, '两次密码不一致，请重新输入');
+        }
+        
+        //调用得力接口进行注册，如果注册成功则返回，否则提示无法注册
+        $register_result =dl_reset_pwd($mobile,$passwd,$veri_code);
+        if($register_result===false || !isset($register_result['code'])){
+            $this->returnJson(0, '注册失败');
+        }
+        if($register_result['code']!=0){
+            $msg =to_return_code($register_result['code'],'发送失败');
+            $this->returnJson(0, $msg);
+        }
+        
+     //   model('admin/Member')->saveNewPwd($mobile,$passwd);
+        $this->returnJson(1,'修改成功');
+    }
+    
+    
+}

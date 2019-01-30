@@ -1,4 +1,4 @@
-import { RECEIVE_INKBOX, ERROR_INKBOX } from './../constants/InkboxTypes';
+import { RECEIVE_INKBOX, ERROR_INKBOX } from '../constants/InkboxTypes';
 
 export const receiveInkbox = json => ({
   type: RECEIVE_INKBOX,

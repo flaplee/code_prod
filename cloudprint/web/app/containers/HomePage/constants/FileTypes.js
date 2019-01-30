@@ -1,4 +1,4 @@
-import key from './../key';
+import key from '../key';
 
 export const SET_FILE_DATA = `${key}/SET_FILE_DATA`;
 

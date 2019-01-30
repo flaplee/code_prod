@@ -1,5 +1,5 @@
 import axios from 'axios';
-import request, { authRequest } from './../request';
+import request, { authRequest } from '../request';
 
 jest.mock('axios');
 

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Portrait from './Portrait';
 import Landscape from './Landscape';
+import Tip from './Tip';
 
 const Wrap = styled.div`
   position: relative;
@@ -15,8 +16,14 @@ const Picture = props => {
   const { fileId } = props;
   return (
     <Wrap>
-      {fileId && <Portrait {...props} />}
-      {fileId && <Landscape {...props} />}
+      {fileId ? (
+        <>
+          <Landscape {...props} />
+          <Portrait {...props} />
+        </>
+      ) : (
+        <Tip isFetching error={false} />
+      )}
     </Wrap>
   );
 };

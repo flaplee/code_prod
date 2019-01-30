@@ -1,4 +1,3 @@
-/* eslint-disable */
 import axios from 'axios';
 import apis from 'containers/App/apis';
 
@@ -31,21 +30,19 @@ export default () => {
       console.log(e);
     });
 };
+
+/* eslint-disable */
 const sdk = config => {
-  (function(o, s, id) {
-    var js,
-      fjs = o.getElementsByTagName(s)[0];
-    if (o.getElementById(id)) {
-      return;
-    }
-    js = o.createElement(s);
-    js.id = id;
-    js.src = process.env.SDK_WEB;
-    fjs.parentNode.insertBefore(js, fjs);
-  })(document, 'script', ' delicloud-web');
-  window.deliAsyncInit = function() {
+  const runDeli = () => {
     deli.config(config);
     deli.ready(function() {});
     deli.error(function() {});
   };
+  if (document.readyState === 'loading') {
+    // Loading hasn't finished yet
+    document.addEventListener('DOMContentLoaded', runDeli);
+  } else {
+    // `DOMContentLoaded` has already fired
+    runDeli();
+  }
 };

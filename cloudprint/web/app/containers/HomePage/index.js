@@ -9,6 +9,7 @@
  * the linting exception.
  */
 
+import { captureException } from '@sentry/browser';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import PropTypes from 'prop-types';
@@ -21,6 +22,8 @@ import { compose } from 'redux';
 import injectSaga from 'utils/injectSaga';
 import injectReducer from 'utils/injectReducer';
 
+import withBackWardCompat from 'components/BackWardCompat';
+
 import ExtraParam from 'components/ExtraParam';
 
 import Modal from './Modal';
@@ -28,6 +31,7 @@ import ViewTaskItem from './ViewTaskItem';
 
 import MyPrintTasks from './components/MyPrintTasks';
 import UploadFile from './UploadFile';
+import BackwardUploadFile from './components/BackwardUploadFile';
 
 import key from './key';
 import reducer from './reducers';
@@ -40,7 +44,7 @@ import { REQUEST_LIST } from './constants/ListTypes';
 import { setListPage } from './actions/ListActions';
 
 const Wrap = styled.div`
-  padding: 20px;
+  padding: 15px;
 `;
 
 const Content = styled.div`
@@ -49,7 +53,11 @@ const Content = styled.div`
   background-color: #fff;
 `;
 
-/* eslint-disable react/prefer-stateless-function */
+const Upload = withBackWardCompat({
+  recommend: UploadFile,
+  backward: BackwardUploadFile,
+});
+
 class HomePage extends React.PureComponent {
   componentDidMount() {
     this.props.init();
@@ -61,6 +69,11 @@ class HomePage extends React.PureComponent {
 
     this.props.fetchList();
   }
+
+  componentDidCatch(error) {
+    captureException(error);
+  }
+
   render() {
     return (
       <Wrap>
@@ -69,7 +82,7 @@ class HomePage extends React.PureComponent {
           <Helmet>
             <title>首页</title>
           </Helmet>
-          <UploadFile />
+          <Upload />
           <MyPrintTasks />
           <Modal />
           <ViewTaskItem />

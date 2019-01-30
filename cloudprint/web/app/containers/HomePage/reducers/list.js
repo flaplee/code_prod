@@ -4,9 +4,9 @@ import {
   RECEIVE_LIST,
   SET_LIST_PAGE,
   ERROR_LIST,
-} from './../constants/ListTypes';
+} from '../constants/ListTypes';
 
-import { INIT } from './../constants/InitTypes';
+import { INIT } from '../constants/InitTypes';
 
 const initialState = fromJS({
   isFetching: false,

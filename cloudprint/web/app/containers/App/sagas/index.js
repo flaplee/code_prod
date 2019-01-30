@@ -1,7 +1,7 @@
 import { all } from 'redux-saga/effects';
 
-import messages from './messages';
+import auth from './auth';
 
 export default function* rootSaga() {
-  yield all([messages()]);
+  yield all([auth()]);
 }

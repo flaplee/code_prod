@@ -9,11 +9,11 @@ import PAGE_SIZE from 'containers/ManagePrinters/pageSize';
 import delay from '@redux-saga/delay-p';
 
 import apis from 'containers/ManagePrinters/apis';
-import { REQUEST_TASKS, TASKS_ERROR } from './../constants/TasksTypes';
+import { REQUEST_TASKS, TASKS_ERROR } from '../constants/TasksTypes';
 
-import { makeSelectTasksPage } from './../selectors/tasks';
+import { makeSelectTasksPage } from '../selectors/tasks';
 
-import { receiveTasks } from './../actions/TasksActions';
+import { receiveTasks } from '../actions/TasksActions';
 
 function* fetchTasks() {
   try {

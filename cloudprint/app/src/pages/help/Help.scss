@@ -1,0 +1,42 @@
+@import "../../util/sass/lib/util";
+@import "../../util/sass/salt-ui.css";
+@import "../../util/sass/dd.css";
+@import "../../util/sass/swipers.min.css";
+
+#page-index .content.print-android{overflow-y: scroll}
+#page-index .content > div.print-help{
+  background-color: #f2f8ff;
+  width: 100%;
+  height: 100%;
+  display: block;
+  padding: 2rem 0;
+  .help-list{
+    .t-group-list{
+      background-color: #f2f8ff;
+      border: 0;
+      .t-group-list-item{
+        background-color: #fff;
+        margin-bottom: 2rem;
+        .print-list-wrap-single{
+          padding: 2rem 2.5rem;
+        }
+        .print-list-title-single{
+          font-size: 2.5rem;
+        }
+        &::after{
+          border: 0;
+        }
+      }
+    }
+  }
+}
+#page-index .content > div.print-help-info{height:auto;overflow-y:scroll;-webkit-overflow-scrolling:touch;}
+.help-center{text-align: center!important;margin-top: 2rem;}
+.print-help-info{padding: 5rem 3rem;height:100%;background-color:#F5FCFF;overflow-y:scroll;-webkit-overflow-scrolling:touch;}
+.print-help-info h3{margin-bottom:5rem;color:#333;font-weight:500;font-size:3rem;}
+.print-help-info-item{margin-top:5rem;color:#333;text-align:center;font-weight:normal;font-size:3rem;}
+.print-help-info-item p.print-help-info-text{margin-bottom:3rem;text-align:left;line-height: 3.5rem;}
+.print-help-info-item p.print-help-info-text span.print-help-info-tips{color:#666666;margin-bottom:3rem;font-size: 2.5rem;}
+.print-help-info-item p.print-help-info-text span.print-help-info-link{color:#5689FF;}
+.print-help-info-item img{width:100%;}
+@media (min-width:1200px){.print-help{margin:0 auto;width:1000px;}}

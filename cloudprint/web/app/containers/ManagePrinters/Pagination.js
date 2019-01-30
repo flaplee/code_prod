@@ -27,8 +27,8 @@ const Wrap = styled.div`
 const MyTasksPagination = ({ data, isFetching, page, ...props }) => {
   if (isFetching === true) return null;
   if (data === false) return null;
-  if (data.rows.length === 0) return null;
   const pages = Math.ceil(data.total / PAGE_SIZE.tasks);
+  if (pages <= 1) return null;
   return (
     <Wrap>
       <Pagination

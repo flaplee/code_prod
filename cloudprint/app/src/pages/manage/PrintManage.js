@@ -4,6 +4,7 @@ import { Group, Boxs, List } from 'saltui';
 import Cookies from 'react-cookies';
 import Icon from 'salt-icon';
 import './Print.scss';
+import PrintHelp from '../help/PrintHelp';
 import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL } from '../../configs/config'
 
 const { HBox, Box } = Boxs;
@@ -19,9 +20,8 @@ class PrintManage extends React.Component {
             cleanRedirect: false,
             sn: (new URLSearchParams(props.location.search)).get('sn'),
             isShowUpdate: false,
-            printer:{}
+            printer: JSON.parse(localStorage.getItem('printer')) || {}
         };
-        console.log("props.location.query.sn", this.state.sn)
     }
 
     handleOnClick(type) {
@@ -41,7 +41,6 @@ class PrintManage extends React.Component {
             default:
                 break;
         }
-        
     }
 
     componentWillMount() {
@@ -72,6 +71,9 @@ class PrintManage extends React.Component {
             Cookies.remove('orgId');
             Cookies.remove('token');
             Cookies.remove('admin');
+            localStorage.removeItem('printer')
+            localStorage.removeItem('printPreviewData')
+            localStorage.removeItem('chooseTaskInfo')
         }, function (resp) {});
     }
 
@@ -82,22 +84,15 @@ class PrintManage extends React.Component {
 
     //更新
     handleOnUpdate(){
-        console.log("update")
     }
 
     handleClick(event, dataItem) {
-        console.log(event);
-        console.log(dataItem);
     }
 
     handleClickImg(event, imgUrl) {
-        console.log(event);
-        console.log(imgUrl);
     }
 
     handleDelete(event, dataItem) {
-        console.log(event);
-        console.log(dataItem);
     }
 
     //获取打印机数据
@@ -106,6 +101,7 @@ class PrintManage extends React.Component {
         //查询打印机信息
         fetch(mpURL + '/app/printer/queryStatus/' + sn, {
             method: 'GET',
+            timeout: 60000,
             headers: {
                 "MP_TOKEN": Cookies.load('token')
             }
@@ -114,38 +110,10 @@ class PrintManage extends React.Component {
                 if (response.status !== 200) {
                     return;
                 }
-                response.json().then(function (data) {
-                    console.log("data", data)
-                    if (data.code == 0) {
-                        self.setState({ printer: data.data }, function () {
-                            console.log("test2")
-                            //查询打印机墨水信息
-                            fetch(mpURL + '/app/inkbox/queryDetails/' + self.state.printer.inkboxSn, {
-                                method: 'POST',
-                                headers: {
-                                    "MP_TOKEN": Cookies.load('token')
-                                },
-                                body: {}
-                            }).then(
-                                function (response) {
-                                    if (response.status !== 200) {
-                                        return;
-                                    }
-                                    response.json().then(function (data) {
-                                        if (data.code == 0) {
-                                            self.setState({ inkbox: data.data }, function () {
-                                                console.log("test3")
-                                                Cookies.save('toner', parseInt(data.data.inkboxColors[0].tonerRemain), { path: '/' });
-                                            });
-                                        }
-                                    });
-                                }
-                            ).catch(function (err) {
-                                deli.common.notification.toast({
-                                    "text": '网络错误，请重试',
-                                    "duration": 2
-                                }, function (data) { }, function (resp) { });
-                            });
+                response.json().then(function (json) {
+                    if (json.code == 0) {
+                        self.setState({ printer: json.data, inkbox: json.data.inkboxDetails }, function () {
+                            Cookies.save('toner', ((json.data.inkboxDetails.length > 0) ? parseInt(json.data.inkboxDetails[0].inkboxColors[0].tonerRemain) : 0), { path: '/' });
                         })
                     } else {
                         deli.common.notification.toast({
@@ -167,27 +135,16 @@ class PrintManage extends React.Component {
         if (this.state.taskListRedirect) {
             const sn = this.state.sn
             const name = this.state.printer.printerName
-            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == 1 ? 1 : 2))
+            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == '1' ? 1 : 2))
             return <Redirect push to={
                 { pathname: "/managetask", search: "?sn=" + sn + "&name="+ name +"&status="+ status +"", state: { "sn": sn, "name": name, "status": status}  }
             } />;
         }
         if (this.state.inkRedirect) {
-            return <Redirect push to="/printink" />;
+            return <Redirect push to="/printinks" />;
         }
         if (this.state.helpRedirect) {
-            deli.common.notification.toast({
-                "text": "开发中...",
-                "duration": 1.5
-            },function(data){},function(resp){});
-            //return <Redirect push to="/printhelp" />;
-        }
-        if (this.state.cleanRedirect) {
-            deli.common.notification.toast({
-                "text": "开发中...",
-                "duration": 1.5
-            }, function (data) { }, function (resp) { });
-            //return <Redirect push to="/printclean" />;
+            return <Redirect push to="/printhelp" />;
         }
         return (<div className="print-manage" id="print-manage" onTouchMove={this.unableTouchMove.bind(this)}>
             <Group className="print-list">
@@ -206,7 +163,7 @@ class PrintManage extends React.Component {
                             </HBox>
                         </div>
                     </div>
-                    <div style={{ display: (this.state.printer.onlineStatus == 2) ? 'none' : '' }}>
+                    <div style={{ display: (this.state.printer.onlineStatus == '0') ? 'none' : '' }}>
                         <div className="print-list-wrap-single print-list-wrap-single-tap" onClick={this.handleOnClick.bind(this, 'ink')}>
                             <HBox vAlign="center">
                                 <HBox flex={1}>
@@ -261,12 +218,12 @@ class PrintManage extends React.Component {
                                     </Box>
                                 </HBox>
                                 <Box>
-                                    <div name="angle-right" width={20} fill="#ccc" className={(this.state.printer.workStatus == 'error' ? 'print-list-status status-fault' : (this.state.printer.onlineStatus == 1 ? 'print-list-status status-online' : 'print-list-status status-offline'))}>{this.state.printer.workStatus == 'error' ? '故障' : (this.state.printer.onlineStatus == 1 ? '在线' : '离线')}</div>
+                                    <div name="angle-right" width={20} fill="#ccc" className={(this.state.printer.workStatus == 'error' ? 'print-list-status status-fault' : (this.state.printer.onlineStatus == '1' ? 'print-list-status status-online' : 'print-list-status status-offline'))}>{this.state.printer.workStatus == 'error' ? '故障' : (this.state.printer.onlineStatus == '1' ? '在线' : '离线')}</div>
                                 </Box>
                             </HBox>
                         </div>
                     </div>
-                    <div style={{ display: (this.state.printer.onlineStatus == 2) ? 'none' : '' }}>
+                    <div style={{ display: (this.state.printer.onlineStatus == '0') ? 'none' : '' }}>
                         <div className="print-list-wrap-single">
                             <HBox vAlign="center">
                                 <HBox flex={1}>
@@ -280,7 +237,7 @@ class PrintManage extends React.Component {
                             </HBox>
                         </div>
                     </div>
-                    <div>
+                    <div style={{ display: (this.state.printer.onlineStatus == '0') ? 'none' : '' }}>
                         <div className="print-list-wrap-single">
                             <HBox vAlign="center">
                                 <HBox flex={1}>
@@ -306,20 +263,6 @@ class PrintManage extends React.Component {
                                 <HBox flex={1}>
                                     <Box className="print-list-text-content-single" flex={1}>
                                         <p className="print-list-title-single omit">帮助手册</p>
-                                    </Box>
-                                </HBox>
-                                <Box>
-                                    <Icon className="print-list-arrow" name='direction-right' fill="#ccc" width="7rem" height="3rem" />
-                                </Box>
-                            </HBox>
-                        </div>
-                    </div>
-                    <div>
-                        <div className="print-list-wrap-single print-list-wrap-single-tap" onClick={this.handleOnClick.bind(this, 'clean')}>
-                            <HBox vAlign="center">
-                                <HBox flex={1}>
-                                    <Box className="print-list-text-content-single" flex={1}>
-                                        <p className="print-list-title-single omit">清洗打印头</p>
                                     </Box>
                                 </HBox>
                                 <Box>

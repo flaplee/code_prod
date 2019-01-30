@@ -1,0 +1,42 @@
+.browser {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  font-size: 0;
+  vertical-align: center;
+  background-color: #f8f4ce;
+  z-index: 9999;
+}
+
+
+body,
+a,
+img {
+  margin: 0;
+  padding: 0;
+}
+
+.browser-img,
+.browser-text,
+.browser-link {
+  vertical-align: middle;
+}
+
+.browser-img {
+  margin-right: 6px;
+}
+
+.browser-text {
+  font-size: 12px;
+  color: #333;
+}
+
+.browser-link {
+  font-size: 12px;
+  color: #5d85e0;
+  text-decoration: none;
+}

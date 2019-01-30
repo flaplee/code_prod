@@ -22,6 +22,30 @@
       right: 0;
       bottom: 0;
       overflow: auto;
+
+      .print-list-empty{
+        display: block;
+        text-align: center;
+        height: 100%;
+        width: 100%;
+        padding-top: 26rem;
+        .print-list-empty-img{
+          width: 19rem;
+          height: 19rem;
+          background-image: url(../../images/blank@3x.png);
+          background-repeat: no-repeat;
+          background-size: 100% 100%;
+          display: block;
+          text-align: center;
+          margin: 0 auto;
+        }
+        .print-list-empty-text{
+          font-size: 2.5rem;
+          color: #999999;
+          margin-top: 3rem;
+          text-align: center;
+        }
+      }
   }
 
   .container .t-scroll-view {
@@ -85,7 +109,7 @@
             white-space: nowrap;
           }
           .title{
-            width: auto;
+            width: 40rem;
             height: 3rem;
             line-height: 3rem;
             font-size: 2.5rem;
@@ -93,7 +117,7 @@
             margin-bottom: 1rem;
           }
           .title-sub{
-            width: auto;
+            width: 48rem;
             height: 2rem;
             line-height: 2rem;
             font-size: 2rem;
@@ -112,6 +136,8 @@
         color:rgba(153,153,153,1);
         text-align: center;
         border-radius: 2rem;
+        z-index: 101;
+        background-color: #fff;
         &.status-online{color: $successColor; border:1px solid $successColor;}
         &.status-offline{color: $offColor;border:1px solid $offColor;}
         &.status-fault{color: $errorColor;border:1px solid $errorColor;}
@@ -123,7 +149,6 @@
       }
     }
   }
-
   .t-refresh-control{
     height: 7rem;
     &.refreshing{
@@ -214,14 +239,47 @@
           line-height : 2rem;
         }
       }
-      .list-item-status{
-        color: #222;
-        font-size : 2rem;
-        height: 2rem;
-        line-height : 2rem;
+      .list-item-text-status{
+        position: relative;
+        width: 12rem;
+        height: 6rem;
+        .list-item-status{
+          color: #222;
+          font-size : 2rem;
+          height: 2rem;
+          line-height : 2rem;
+          text-align: right;
+          padding-right: 3rem;
+        }
+        .list-item-arrow-super{
+          position: absolute;
+          top: .5rem;
+          right: 0;
+          width: 0;
+          height: 0;
+          border-width: 1rem 1rem 0;
+          border-style: solid;
+          border-color: #999999 transparent transparent;
+        }
       }
       &.task-list-item-wrap-success{
-        color: #FFFF534D;
+        color: #FF534D;
+      }
+      &.task-list-item-fail{
+        color: #FF534D;
+        .list-item-text-content{
+          .list-item-title {
+            color: #FF534D;
+          }
+          .list-item-text {
+            color: #FF534D;
+          }
+        }
+        .list-item-text-status{
+          .list-item-status{
+            color: #FF534D;
+          }
+        }
       }
     }
   }
@@ -233,7 +291,9 @@
   .task-list-empty{
     display: block;
     text-align: center;
-    margin: 26rem auto 0;
+    height: 100%;
+    width: 100%;
+    padding-top: 26rem;
     .task-list-empty-img{
       width: 19rem;
       height: 19rem;

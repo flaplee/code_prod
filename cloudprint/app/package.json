@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "bundle-loader": "^0.5.6",
     "chart.js": "^2.7.2",
     "child_process": "^1.0.2",
     "clean-webpack-plugin": "^0.1.19",
     "compression-webpack-plugin": "^2.0.0",
+    "eruda": "^1.5.4",
     "file-loader": "^1.1.11",
     "fs": "0.0.1-security",
     "history": "^4.7.2",
@@ -37,7 +39,9 @@
     "saltui": "^3.10.7",
     "tls": "0.0.1",
     "uglifyjs-webpack-plugin": "^1.3.0",
-    "webpack-tinypng-compress": "^1.0.1"
+    "url-search-params-polyfill": "^5.0.0",
+    "webpack-tinypng-compress": "^1.0.1",
+    "whatwg-fetch-timeout": "^2.0.2-timeout"
   },
   "scripts": {
     "start": "webpack-dev-server --config ./webpack.test.js",
@@ -45,13 +49,14 @@
     "test": "cross-env NODE_ENV=testing webpack --mode development -p --config ./webpack.test.js",
     "build": "webpack --mode production -p --config ./webpack.test.js",
     "dev": "webpack-dev-server --mode development --open --hot",
-    "product": "./node_modules/.bin/webpack --mode production -p --progress --colors"
+    "product": "cross-env NODE_ENV=production webpack --mode production -p --config ./webpack.production.js"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "copy-webpack-plugin": "^4.6.0",
     "cross-env": "^5.2.0",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file": "^0.2.2",
@@ -59,6 +64,7 @@
     "i": "^0.3.6",
     "image-webpack-loader": "^4.3.1",
     "node-sass": "^4.9.3",
+    "object-assign": "^4.1.1",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "sass-loader": "^7.1.0",
     "url-loader": "^1.1.1",

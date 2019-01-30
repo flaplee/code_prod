@@ -15,8 +15,8 @@ import 'raf/polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'react-router-redux';
-import createHistory from 'history/createBrowserHistory';
+import { ConnectedRouter } from 'connected-react-router/immutable';
+import history from 'utils/history';
 import 'sanitize.css/sanitize.css';
 
 // Import root app
@@ -33,6 +33,9 @@ import consoleColor from 'utils/consoleColor';
 /* eslint-disable import/no-unresolved, import/extensions */
 import '!file-loader?name=[name].[ext]!./images/favicon.ico';
 import 'file-loader?name=[name].[ext]!./.htaccess';
+import '!file-loader?name=[name].[ext]!./browser.css';
+import 'file-loader?name=[name].[ext]!./browser.js';
+import '!file-loader?name=[name].[ext]!./browser.html';
 /* eslint-enable import/no-unresolved, import/extensions */
 
 import configureStore from './configureStore';
@@ -42,14 +45,17 @@ import { translationMessages } from './i18n';
 
 import auth from './auth';
 
+import sentry from './sentry';
+
+if (process.env.NODE_ENV === 'production') {
+  sentry();
+}
+
 // make DEV_LOG available
 window.DEV_LOG = consoleColor;
 
 // Create redux store with history
 const initialState = {};
-export const history = createHistory({
-  basename: '/cloudprint/web',
-});
 export const store = configureStore(initialState, history);
 const MOUNT_NODE = document.getElementById('app');
 

@@ -1,4 +1,4 @@
-import key from './../key';
+import key from '../key';
 
 export const TOGGLE_VIEW_TASK_ITEM = `${key}/TOGGLE_VIEW_TASK_ITEM`;
 

@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
-import { Redirect } from 'react-router-dom'
-import Cookies from 'react-cookies'
-import 'whatwg-fetch'
 import {
+    Redirect,
     BrowserRouter as Router,
     Route
 } from 'react-router-dom'
+import Cookies from 'react-cookies';
+import objectAssign from 'object-assign'
+import 'whatwg-fetch'
 import Nav from './Nav'
 import Printer from './Printer'
-
+import Loading from '../../util/component/Loading.js';
+import Utils from '../../util/js/util.js';
 import { serverIp, path, baseURL, mpURL, convertURL, timeout, mockURL } from '../../configs/config'
+import util from '../../util/js/util.js';
 class PrintIndex extends Component{
     constructor(props) {
         super(props);
@@ -22,9 +25,9 @@ class PrintIndex extends Component{
                 app_id:'',
                 admin: false
             },
-            sn: (new URLSearchParams(props.location.search)).get('sn') || Cookies.load('sn') || '',
-            printer:{},
-            printerCurrent: (new URLSearchParams(props.location.search)).get('printercurrent') || Cookies.load('printercurrent') || 0,
+            sn: (localStorage.getItem('printer') && localStorage.getItem('printer') != "undefined") ? JSON.parse(localStorage.getItem('printer')).printerSn : '',
+            printer: (localStorage.getItem('printer') && localStorage.getItem('printer') != "undefined") ? JSON.parse(localStorage.getItem('printer')) : undefined,
+            printerCurrent: (localStorage.getItem('printerCurrent') && localStorage.getItem('printerCurrent') != "undefined") ? localStorage.getItem('printerCurrent') : 0,
             printerList:{},
             inkbox:{},
             navlist: [
@@ -53,13 +56,11 @@ class PrintIndex extends Component{
                 previewIndex: false,
                 scandenied: false,
                 scanunbind: false,
-                login: false
-<<<<<<< HEAD
-            }
-=======
+                login: false,
+                printTask: false
             },
             printData: {
-                'duplexMode': 1,
+                'duplexMode': 0,
                 'taskSource': (deli.android ? 'ANDROID' : (deli.ios ? 'IOS' : 'WBE')),
                 'printDirection': 2,
                 'printEndPage': 1,
@@ -67,32 +68,31 @@ class PrintIndex extends Component{
                 'printDpi': 600,
                 'paperSize': 'A4',
                 'printColorMode': 'black',
-                'printWhole': 0,
+                'printWhole': 1,
                 'printStartPage': 1
-            },
-            timer: ''
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
+            }
         };
     };
 
-    componentWillUpdate(props, state) {
-    }
+    componentWillUpdate(props, state) {}
 
-    componentWillMount(){
-    }
+    componentWillMount(){}
     
     componentDidMount() {
+        Utils.goVisible();
         // 屏蔽触摸移动
-        document.getElementById('print-index').addEventListener("touchmove", (e) => {
-            this.unableTouchMove(e)
-        }, {
-            passive: false
-        })
+        if(deli.ios == 'IOS'){
+            document.getElementById('print-index').addEventListener("touchmove", (e) => {
+                this.unableTouchMove(e)
+            }, {
+                passive: false
+            })
+        }
         const self = this
         if (self.state.sn != '') { Cookies.save('sn', self.state.sn, { path: '/' });}
         let signPrint;
         let appIdPrint;
-        let timestampPrint = '1536041270823';
+        let timestampPrint = (new Date()).valueOf();
         let nonceStrPrint = 'abcdefg';
         if (Cookies.load('sign') && Cookies.load('timestamp') && Cookies.load('nonceStr')) {
             signPrint = Cookies.load('sign')
@@ -102,7 +102,6 @@ class PrintIndex extends Component{
             timestampPrint = (Date.now().toString())
             nonceStrPrint = "abcdefg";
         }
-        
         self.getAppData(timestampPrint, nonceStrPrint, function (response) {
             if (response && response.signStr) {
                 signPrint = response.signStr
@@ -121,7 +120,7 @@ class PrintIndex extends Component{
                 timestamp: timestampPrint, // 必填，生成签名的时间戳
                 signature: signPrint || Cookies.load('sign') // 必填，服务端生成的签名 26fcd1cab8ff455bfea0ee59a67bf122
             });
-
+            
             // 验证签名成功
             deli.ready(function () {
                 // 通用设置
@@ -130,7 +129,7 @@ class PrintIndex extends Component{
                 }, function(data) {}, function(resp) {});
 
                 deli.common.navigation.setRight({
-                    "icon": "http://t.static.delicloud.com/h5/web/cloudprint/images/icon/scan_code@3x.png"
+                    "icon": "https://static.delicloud.com/h5/web/cloudprint/images/icon/scan_code@3x.png?v=20181226"
                 }, function(data) {
                     deli.app.code.scan({
                         type: 'qrcode',
@@ -145,6 +144,18 @@ class PrintIndex extends Component{
                     "nav_theme": "white"
                 }, function (data) {}, function (resp) {});
 
+                // 返回
+                deli.common.navigation.goBack({}, function (data) {
+                    if (Utils.timer.printListTimer) { Utils.stopGetPrinterInfo(Utils.timer.printListTimer) }
+                }, function (resp) {});
+
+                //获取手机基础信息
+                deli.common.phone.getBaseInfo({}, function (data) {
+                    if ((window.screen.availWidth * 3 == data.screenWidth) && ((window.screen.availHeight <= 640 && (window.screen.availHeight * 3 > data.screenHeight)) || (window.screen.availHeight <= 592 && window.screen.availHeight * 3 <= data.screenHeight))) {
+                        Utils.previewSuitClass = "preview-box preview-box-suit"
+                    }
+                }, function (resp) {});
+                
                 // 关闭
                 deli.common.navigation.close({}, function (data) {
                     // 重置
@@ -155,9 +166,18 @@ class PrintIndex extends Component{
                     Cookies.remove('token');
                     Cookies.remove('admin');
                     //Cookies.remove('loginToken');
+                    localStorage.removeItem('printCount');
+                    localStorage.removeItem('printer')
+                    localStorage.removeItem('printerChg')
+                    localStorage.removeItem('printerCurrent')
+                    localStorage.removeItem('printerList')
+                    localStorage.removeItem('printTaskInfo')
+                    localStorage.removeItem('printPreviewData')
+                    localStorage.removeItem('printCountData')
+                    localStorage.removeItem('chooseTaskInfo')
+                    localStorage.removeItem('printData')
+                    localStorage.removeItem('previewSetupData')
                 }, function (resp) {});
-                
-                deli.common.notification.showPreloader();
                 if(!(Cookies.load('userId') && Cookies.load('orgId') && Cookies.load('token'))){
                     deli.app.user.get({
                         "user_id": ""
@@ -178,20 +198,15 @@ class PrintIndex extends Component{
                                             org_id: odata.organization.id,
                                             token: udata.token
                                         }, self.state.sn, function(){
-<<<<<<< HEAD
                                             if (udata._d_from && udata._d_from == 'qrCode') {
-                                                self.setState({ "redirect": { "login": true }, "user": { "task_code": udata._d_data } })
-                                            } else if (udata._d_from && udata._d_from == 'app_file') {
-                                                self.setState({ "user": { "app_file": udata._d_data } })
-=======
-                                            if (udata._d_data && udata._d_from && udata._d_from == 'qrCode') {
-                                                if ((udata._d_data).indexOf('/ca/') >= 0){
+                                                if (udata._d_qr && (udata._d_qr).indexOf('/ca/') >= 0) {
                                                     self.setState({ "redirect": { "login": true }, "user": { "task_code": udata._d_data } })
                                                 }
-                                            } else if (udata._d_data && udata._d_from && udata._d_from == 'app_file') {
+                                            }else if (udata._d_from && udata._d_from == 'app_file') {
                                                 let urlFileList = []
                                                 //文件转换
                                                 self.handleFileUpload(udata._d_data, function(json){
+                                                    Utils.showLoading('loading', '文件转换中...')
                                                     //单个文件处理
                                                     if (json.status == 1) {
                                                         urlFileList.push({
@@ -204,50 +219,80 @@ class PrintIndex extends Component{
                                                             'fileSource': json.fileSource,
                                                             'printPDF': true
                                                         })
-                                                        let tmpPrintData = Object.assign({}, self.state.printData, { printStartPage: 1, printEndPage: json.totalPage })
+                                                        let tmpPrintData = objectAssign({}, self.state.printData, { printStartPage: 1, printEndPage: json.totalPage })
                                                         self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: urlFileList }, function () {
                                                             localStorage.removeItem('printPreviewData')
                                                             localStorage.setItem('printPreviewData', JSON.stringify(urlFileList))
+                                                            localStorage.removeItem('printData')
+                                                            localStorage.setItem('printData', JSON.stringify(tmpPrintData))
                                                             Cookies.save('printPreviewType', 'file', { path: '/' });
-                                                            Cookies.save('printData', tmpPrintData, { path: '/' });
-                                                            deli.common.notification.hidePreloader();
+                                                            Utils.goVisible();
                                                         });
                                                         // 处理文件转化未完成
-                                                        if (self.state.timer) { self.stopConvertPoll(self.state.timer) }
+                                                        if (Utils.timer.convertTimer) { self.stopConvertPoll(Utils.timer.convertTimer) }
                                                     } else {
-                                                        // 处理文件转化未完成
-                                                        self.startConvertPoll(json.id, function (trans) {
-                                                            for (let i = 1; i <= trans.totalPage; i++) {
-                                                                urlFileList.push({
-                                                                    'id': trans.id,
-                                                                    'fileSuffix': trans.fileType,
-                                                                    'fileName': trans.fileName,
-                                                                    'totalPage': trans.totalPage,
-                                                                    'printMd5': trans.pdfMd5,
-                                                                    'printUrl': trans.printUrl,
-                                                                    'fileSource': trans.fileSource,
-                                                                    'printPDF': true
-                                                                })
-                                                            }
-                                                            let tmpPrintData = Object.assign({}, self.state.printData, { printStartPage: 1, printEndPage: trans.totalPage })
-                                                            self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: urlFileList }, function () {
-                                                                localStorage.removeItem('printPreviewData')
-                                                                localStorage.setItem('printPreviewData', JSON.stringify(urlFileList))
-                                                                Cookies.save('printPreviewType', 'file', { path: '/' });
-                                                                Cookies.save('printData', tmpPrintData, { path: '/' });
-                                                                deli.common.notification.hidePreloader();
-                                                            });
-                                                            // 处理文件转化完成
-                                                            if (self.state.timer) { self.stopConvertPoll(self.state.timer) }
-                                                        })
+                                                        if(json.status == 0){
+                                                            // 处理文件转化未完成
+                                                            self.startConvertPoll(json.id, function (trans) {
+                                                                for (let i = 1; i <= trans.totalPage; i++) {
+                                                                    urlFileList.push({
+                                                                        'id': trans.id,
+                                                                        'fileSuffix': trans.fileType,
+                                                                        'fileName': trans.fileName,
+                                                                        'totalPage': trans.totalPage,
+                                                                        'printMd5': trans.pdfMd5,
+                                                                        'printUrl': trans.printUrl,
+                                                                        'fileSource': trans.fileSource,
+                                                                        'printPDF': true
+                                                                    })
+                                                                }
+                                                                let tmpPrintData = objectAssign({}, self.state.printData, { printStartPage: 1, printEndPage: trans.totalPage })
+                                                                self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: urlFileList }, function () {
+                                                                    localStorage.removeItem('printData')
+                                                                    localStorage.removeItem('printPreviewData')
+                                                                    localStorage.setItem('printData', JSON.stringify(tmpPrintData))
+                                                                    localStorage.setItem('printPreviewData', JSON.stringify(urlFileList))
+                                                                    Cookies.save('printPreviewType', 'file', { path: '/' });
+                                                                });
+                                                                // 处理文件转化完成
+                                                                if (Utils.timer.convertTimer) { self.stopConvertPoll(Utils.timer.convertTimer) }
+                                                            })
+                                                        }else{
+                                                            Utils.goVisible();
+                                                            deli.common.notification.toast({
+                                                                "text": '文件无法识别，请重新选择',
+                                                                "duration": 2
+                                                            }, function (data) { }, function (resp) { });
+                                                        }
                                                     }
                                                 })
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
+                                            } else if (udata._d_from && udata._d_from == 'outer_file'){
+                                                let docFileList = []
+                                                Utils.showLoading('loading', '文件正在上传...')
+                                                //文件上传
+                                                self.handleTmpFileUpload(decodeURIComponent(udata._d_data), docFileList)
+                                            }
+                                            if (udata._d_qr){
+                                                const device_sn = self.getUrlQuery('device', udata._d_qr)
+                                                if (device_sn && udata._d_from == 'qrCode') {
+                                                    self.getPrinterData(device_sn, function () {
+                                                        self.getNewListPage(undefined, function (printTaskInfo) {
+                                                            self.scanQrcodePrint(device_sn, printTaskInfo)
+                                                        });
+                                                    })
+                                                }
                                             }
                                         });
-                                    }, function (uresp) {});
+                                    }, function (uresp) {
+                                        Utils.goVisible();
+                                        deli.common.notification.prompt({
+                                            "type": 'error',
+                                            "text": '获取登录信息失败',
+                                            "duration": 1.5
+                                        }, function (data) { }, function (resp) { });
+                                    });
                                 }else{
-                                    deli.common.notification.hidePreloader();
+                                    Utils.goVisible();
                                     deli.common.notification.prompt({
                                         "type": 'error',
                                         "text": '获取组织信息失败',
@@ -256,7 +301,7 @@ class PrintIndex extends Component{
                                 }
                             }, function (oresp) {});
                         }else{
-                            deli.common.notification.hidePreloader();
+                            Utils.goVisible();
                             deli.common.notification.prompt({
                                 "type": 'error',
                                 "text": '获取员工信息失败',
@@ -264,7 +309,7 @@ class PrintIndex extends Component{
                             }, function (data) {}, function (resp) {});
                         }
                     }, function (resp) {
-                        deli.common.notification.hidePreloader();
+                        Utils.goVisible();
                         deli.common.notification.prompt({
                             "type": 'error',
                             "text": '获取员工信息失败',
@@ -275,7 +320,7 @@ class PrintIndex extends Component{
                     self.startGetNewListPage()
                     if (self.state.sn) {
                         self.getPrinterData(self.state.sn)
-                        deli.common.notification.hidePreloader();
+                        Utils.goVisible();
                     } else {
                         //获取打印机列表并选择上次的打印机
                         self.getPrinterList({
@@ -283,10 +328,16 @@ class PrintIndex extends Component{
                             'limit': 10
                         }, function (sn) {
                             if(sn){self.getPrinterData(sn)}
-                            deli.common.notification.hidePreloader();
+                            Utils.goVisible();
                         });
                     }
                 }
+                localStorage.removeItem('printTaskInfo')
+                localStorage.removeItem('printCount')
+                localStorage.removeItem('printCountData')
+                localStorage.removeItem('printerChg')
+                localStorage.removeItem('printDataChg')
+                localStorage.setItem('printCount', 1)
             });
 
             //验证签名失败
@@ -303,14 +354,8 @@ class PrintIndex extends Component{
     
     //监听Printer变化状态
     transPrinter(printer) {
-        console.log("printer", printer);
     }
 
-<<<<<<< HEAD
-    transTimer(timer){
-        this.stopGetNewListPage(timer)
-    }
-=======
     //监听Timer变化状态
     transTimer(timer){
         this.stopGetNewListPage(timer)
@@ -318,8 +363,9 @@ class PrintIndex extends Component{
 
     // 处理deli e+ 第三方url文件转PDF
     handleFileUpload(url, callback) {
+        Utils.showLoading('loading', '文件转换中...')
         const self = this
-        fetch(convertURL + '/file/uploadByUrl', {
+        Utils.timeoutFetch(convertURL + '/file/uploadByUrl', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
@@ -333,28 +379,42 @@ class PrintIndex extends Component{
                     "fileSource": "disk"
                 }]
             })
+        }, 60000, function () {
+            Utils.hideLoading('loading')
+            /* deli.common.notification.prompt({
+                "type": "error",
+                "text": '网络超时，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { }); */
         }).then(
             function (response) {
                 if (response.status !== 200) {
+                    Utils.hideLoading('loading')
+                    deli.common.notification.prompt({
+                        "type": "error",
+                        "text": '网络错误，请重试',
+                        "duration": 2
+                    }, function (data) { }, function (resp) { });
                     return;
                 }
                 response.json().then(function (json) {
-                    console.log("json1", json)
                     if (json.code == 0) {
                         if (json.data[0] && json.data[0].status != -1) {
                             if (typeof callback === 'function') {
                                 callback(json.data[0])
                             }
                         } else {
-                            deli.common.notification.hidePreloader();
-                            deli.common.notification.prompt({
-                                "type": "error",
-                                "text": "文件无法解析,请重试",
-                                "duration": 2
-                            }, function (data) { }, function (resp) { });
+                            Utils.hideLoading('loading')
+                            setTimeout(() => {
+                                deli.common.notification.prompt({
+                                    "type": "error",
+                                    "text": "文件转换失败",
+                                    "duration": 2
+                                }, function (data) { }, function (resp) { });
+                            }, 500);
                         }
                     } else {
-                        deli.common.notification.hidePreloader();
+                        Utils.hideLoading('loading')
                         deli.common.notification.prompt({
                             "type": "error",
                             "text": json.msg,
@@ -364,13 +424,155 @@ class PrintIndex extends Component{
                 });
             }
         ).catch(function (err) {
-            deli.common.notification.hidePreloader();
+            Utils.hideLoading('loading')
             deli.common.notification.prompt({
                 "type": "error",
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) { }, function (resp) { });
-            console.log("错误:" + err);
+        });
+    }
+
+    // 处理deli e+ 本地临时文件
+    handleTmpFileUpload(tmpPath, docFileList) {
+        const self = this
+        deli.common.file.upload({
+            url: convertURL + '/file/uploadByFile',
+            file: tmpPath,
+            isShowProgress: true
+        }, function (json) {
+            Utils.showLoading('loading', '文件转换中...')
+            let jsonInner;
+            let jsonIndex;
+            if (json) {
+                jsonIndex = (json.hasOwnProperty('index') ? json.index : undefined)
+                jsonInner = (json.hasOwnProperty('index') ? json.data : json)
+            }
+            //单个文件处理
+            if (jsonInner[0].status == 1) {
+                Utils.hideLoading('loading')
+                let file_name = tmpPath.substring(tmpPath.lastIndexOf("\.") + 1, tmpPath.length)
+                docFileList.push({
+                    'id': jsonInner[0].id,
+                    'fileSuffix': jsonInner[0].fileType,
+                    'fileName': jsonInner[0].fileName,
+                    'totalPage': jsonInner[0].totalPage,
+                    'printMd5': jsonInner[0].pdfMd5,
+                    'printUrl': jsonInner[0].printUrl,
+                    'fileSource': jsonInner[0].fileSource,
+                    'printPDF': ((['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'txt']).indexOf(file_name.substring(file_name.lastIndexOf("\.") + 1, file_name.length)) >= 0) ? true : false
+                })
+                let tmpPrintData = objectAssign({}, self.state.printData, { printStartPage: 1, printEndPage: jsonInner[0].totalPage })
+                self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList }, function () {
+                    localStorage.removeItem('printData')
+                    localStorage.removeItem('printPreviewData')
+                    localStorage.setItem('printData', JSON.stringify(tmpPrintData))
+                    localStorage.setItem('printPreviewData', JSON.stringify(docFileList))
+                    Cookies.save('printPreviewType', 'file', { path: '/' });
+                });
+                // 处理文件转化完成
+                if (Utils.timer.convertTimer) { self.stopConvertPoll(Utils.timer.convertTimer) }
+            } else if (jsonInner[0].status == 0){
+                // 处理文件转化未完成
+                self.startConvertPoll(jsonInner[0].id, function (trans) {
+                    Utils.hideLoading('loading')
+                    docFileList.push({
+                        'id': trans.id,
+                        'fileSuffix': trans.fileType,
+                        'fileName': trans.fileName,
+                        'totalPage': trans.totalPage,
+                        'printMd5': trans.pdfMd5,
+                        'printUrl': trans.printUrl,
+                        'fileSource': trans.fileSource,
+                        'printPDF': true
+                    })
+                    let tmpPrintData = objectAssign({}, self.state.printData, { printStartPage: 1, printEndPage: trans.totalPage })
+                    self.setState({ redirect: { fileNav: true }, fileType: 'file', fileList: docFileList }, function () {
+                        localStorage.removeItem('printData')
+                        localStorage.removeItem('printPreviewData')
+                        localStorage.setItem('printData', JSON.stringify(tmpPrintData))
+                        localStorage.setItem('printPreviewData', JSON.stringify(docFileList))
+                        Cookies.save('printPreviewType', 'file', { path: '/' });
+                    });
+                    // 处理文件转化完成
+                    if (Utils.timer.convertTimer) { self.stopConvertPoll(Utils.timer.convertTimer) }
+                })
+            }else{
+                Utils.hideLoading('loading')
+                deli.common.notification.toast({
+                    "text": '文件无法识别，请重新选择',
+                    "duration": 2
+                }, function (data) { }, function (resp) { });
+            }
+        }, function (resp) {
+            Utils.hideLoading('loading')
+            deli.common.notification.toast({
+                "text": '网络错误，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { });
+        });
+    }
+
+    // 获取文件转换状态
+    getConvertStatus(id, callback) {
+        const self = this
+        let statusData = new FormData();
+        statusData.append('fileId', id);
+        //文件转换情况
+        Utils.timeoutFetch(convertURL + '/file/findByFileId', {
+            method: 'POST',
+            headers: {
+                "MP_TOKEN": Cookies.load('token')
+            },
+            body: statusData
+        }, 60000, function () {
+            if (Utils.timer.convertTimer) { self.stopConvertPoll(Utils.timer.convertTimer) }
+            Utils.hideLoading('loading')
+            /* deli.common.notification.toast({
+                "text": '网络超时，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { }); */
+        }).then(
+            function (response) {
+                if (response.status !== 200) {
+                    if (Utils.timer.convertTimer) { self.stopConvertPoll(Utils.timer.convertTimer) }
+                    return;
+                }
+                response.json().then(function (resp) {
+                    if (resp.code == 0) {
+                        if (resp.data.status == 1) {
+                            if (Utils.timer.convertTimer) { self.stopConvertPoll(Utils.timer.convertTimer) }
+                            if (typeof callback === 'function') {
+                                callback(resp.data)
+                            }
+                        }
+                        if (resp.data.status == -1) {
+                            if (Utils.timer.convertTimer) { self.stopConvertPoll(Utils.timer.convertTimer) }
+                            Utils.hideLoading('loading')
+                            deli.common.notification.prompt({
+                                "type": "error",
+                                "text": '文件打印失败',
+                                "duration": 2
+                            }, function (data) { }, function (resp) { });
+                        }
+                    } else {
+                        if (Utils.timer.convertTimer) { self.stopConvertPoll(Utils.timer.convertTimer) }
+                        Utils.hideLoading('loading')
+                        deli.common.notification.prompt({
+                            "type": "error",
+                            "text": resp.msg,
+                            "duration": 2
+                        }, function (data) { }, function (resp) { });
+                    }
+                });
+            }
+        ).catch(function (err) {
+            if (Utils.timer.convertTimer) { self.stopConvertPoll(Utils.timer.convertTimer) }
+            Utils.hideLoading('loading')
+            deli.common.notification.toast({
+                "text": '网络错误，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { });
         });
     }
 
@@ -380,14 +582,16 @@ class PrintIndex extends Component{
         const timer = setInterval(() => {
             self.getConvertStatus(id, callback);
         }, 2000);
-        self.setState({ timer: timer })
+        Utils.timer.convertTimer = timer
     }
 
     //关闭文件转换状态
     stopConvertPoll(timer) {
         clearInterval(timer)
+        Utils.timer.getNewListTimer = 0
     }
 
+    //获取URL参数
     getUrlQuery(param, url) {
         let searchIndex = url.lastIndexOf('?');
         let searchParams = url.slice(searchIndex + 1).split('&');
@@ -398,53 +602,42 @@ class PrintIndex extends Component{
             }
         }
     }
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
     
-    renderPrinter() {
-        const user = this.state.user;
-        const printer = this.state.printer;
-        const printerCurrent = this.state.printerCurrent;
-        const result = <Printer user={user} printer={printer} printerCurrent={printerCurrent}></Printer>;
-        return result;
-    }
-
     //获取auth信息
     getLocalData(data, printSn, callback){
         var self = this
         //登录api
-        fetch(mpURL + '/a/auth/login', {
+        Utils.timeoutFetch(mpURL + '/a/auth/login', {
             method: 'POST',
             headers: {
                 user_id: data.user_id,
                 org_id: data.org_id,
                 token: data.token
             }
+        }, 60000, function () {
+            Utils.goVisible();
+            /* deli.common.notification.toast({
+                "text": '网络超时，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { }); */
         }).then(
             function (response) {
                 if (response.status !== 200) {
-                    deli.common.notification.hidePreloader();
-<<<<<<< HEAD
-                    deli.common.notification.prompt({
-                        "type": 'error',
-                        "text": "网络错误,请重试",
-                        "duration": 1.5
-=======
+                    Utils.goVisible();
                     deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     }, function (data) { }, function (resp) { });
                     return;
                 }
                 response.json().then(function (json) {
-                    console.log("json", json)
                     if (json.code == 0) {
-                        self.startGetNewListPage()
                         self.setState({"user":{token: data.data }}, function(){
                             Cookies.save('userId', data.user_id, { path: '/' });
                             Cookies.save('orgId', data.org_id, { path: '/' });
                             Cookies.save('token', json.data.token, { path: '/' });
                             Cookies.save('admin', json.data.admin, { path: '/' });
+                            self.startGetNewListPage()
                             self.setState({ "user": { "token": json.data.token, "user_id": data.user_id, "org_id": data.org_id, "admin": json.data.admin } })
                         })
                         if(printSn){
@@ -455,18 +648,18 @@ class PrintIndex extends Component{
                                 'page': 1,
                                 'limit': 10
                             }, function(sn) {
-<<<<<<< HEAD
-                                if (sn) { self.getPrinterData(sn, callback)}
-=======
                                 if(sn){
                                     self.getPrinterData(sn, callback)
+                                }else{
+                                    if (typeof callback === 'function'){
+                                        callback();
+                                    }
                                 }
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
-                                deli.common.notification.hidePreloader();
+                                Utils.goVisible();
                             });
                         }
                     }else{
-                        deli.common.notification.hidePreloader();
+                        Utils.goVisible();
                         deli.common.notification.prompt({
                             "type": 'error',
                             "text": json.msg,
@@ -476,20 +669,11 @@ class PrintIndex extends Component{
                 });
             }
         ).catch(function (err) {
-            console.log("错误:" + err);
-            deli.common.notification.hidePreloader();
-<<<<<<< HEAD
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
-            },function(data){},function(resp){});
-=======
+            Utils.goVisible();
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
-            }, function (data) { }, function (resp) { });
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
+            }, function (data) {}, function (resp) {});
         });
     }
 
@@ -500,71 +684,66 @@ class PrintIndex extends Component{
         formData.append('pageNo', data.page);
         formData.append('pageSize', data.limit);
         //打印机列表
-        fetch(mpURL + '/app/printer/queryPage', {
+        Utils.timeoutFetch(mpURL + '/app/printer/queryPage', {
             method: 'POST',
             headers: {
                 "MP_TOKEN": Cookies.load('token')
             },
             body: formData
+        }, 60000, function () {
+            Utils.goVisible();
+            /* deli.common.notification.toast({
+                "text": '网络超时，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { }); */
         }).then(
             function (response) {
                 if (response.status !== 200) {
-                    deli.common.notification.hidePreloader();
-<<<<<<< HEAD
-                    deli.common.notification.prompt({
-                        "type": 'error',
-                        "text": "网络错误,请重试",
-                        "duration": 1.5
-                    }, function (data) {}, function (resp) {});
-=======
+                    Utils.goVisible();
                     deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
                     }, function (data) { }, function (resp) { });
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     return;
                 }
                 response.json().then(function (json) {
                     if (json.code == 0) {
                         // update 20180904
-                        if(json.data.rows.length > 0){
+                        if (json.data.total > 0 && json.data.rows.length > 0){
                             let current = self.state.printerCurrent;
                             self.setState({ printer: json.data.rows[current]}, function () {
                                 if(typeof callback === 'function'){
                                     callback(json.data.rows[current].printerSn);
                                 }
                             });
-                        }else if(json.data.rows.length == 0){
-                            self.setState({ printer: '' }, function () {
+                        } else if (json.data.rows.length == 0 && data.page == 1){
+                            self.setState({ printer: {} }, function () {
                                 if (typeof callback === 'function') {
                                     callback();
                                 }
                             });
                         }
                     } else {
-                        deli.common.notification.hidePreloader();
+                        Utils.goVisible();
                         deli.common.notification.prompt({
                             "type": 'error',
                             "text": json.msg,
-                            "duration": 1.5
+                            "duration": 2
                         },function(data){},function(resp){});
+                        self.setState({ printer: {} }, function () {
+                            if (typeof callback === 'function') {
+                                callback();
+                            }
+                        });
                     }
                 });
             }
         ).catch(function (err) {
-            deli.common.notification.hidePreloader();
-<<<<<<< HEAD
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
-            },function(data){},function(resp){});
-=======
+            Utils.goVisible();
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) { }, function (resp) { });
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
 
@@ -572,83 +751,67 @@ class PrintIndex extends Component{
     getPrinterData(sn, callback){
         const self = this
         //查询打印机信息
-        fetch(mpURL + '/app/printer/queryStatus/' + sn, {
+        Utils.timeoutFetch(mpURL + '/app/printer/queryStatus/' + sn, {
             method: 'GET',
             headers: {
                 "MP_TOKEN": Cookies.load('token')
             }
+        }, 60000, function () {
+            /* deli.common.notification.toast({
+                "text": '网络超时，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { }); */
         }).then(
             function (response) {
                 if (response.status !== 200) {
-<<<<<<< HEAD
-                    deli.common.notification.prompt({
-                        "type": 'error',
-                        "text": "网络错误,请重试",
-                        "duration": 1.5
-                    }, function (data) {}, function (resp) {});
-=======
                     deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
                     }, function (data) { }, function (resp) { });
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     return;
                 }
                 response.json().then(function (resp1) {
-                    console.log("resp1", resp1)
                     if (resp1.code == 0) {
-                        alert(JSON.stringify(resp1.data))
-                        Cookies.save('printer', resp1.data, { path: '/' });
-                        self.setState({ printer: resp1.data }, function () {
-                            console.log("test2")
-                            //查询打印机墨水信息
-                            fetch(mpURL + '/app/inkbox/queryDetails/' + self.state.printer.inkboxSn, {
-                                method: 'POST',
-                                headers: {
-                                    "MP_TOKEN": Cookies.load('token')
+                            if (Utils.timer.printerTimer) { Utils.stopGetPrinterInfo(Utils.timer.printerTimer) }
+                            localStorage.removeItem('printer')
+                            localStorage.setItem('printer', (resp1.data.hasPermissions == true ? JSON.stringify(resp1.data) : undefined))
+                            self.setState({ printer: resp1.data, inkbox: resp1.data.inkboxDetails }, function () {})
+                            if (typeof callback === 'function') {
+                                callback(resp1.data);
+                            }
+                            //开始打印机信息状态轮询
+                            Utils.startGetPrinterInfo({
+                                token: Cookies.load('token'),
+                                sn: sn,
+                                error: function () {
+                                    if (Utils.timer.printerTimer) { Utils.stopGetPrinterInfo(Utils.timer.printerTimer) }
+                                    deli.common.notification.toast({
+                                        "text": '网络错误，请重试',
+                                        "duration": 2
+                                    }, function (data) { }, function (resp) { });
                                 },
-                                body: {}
-                            }).then(
-                                function (response) {
-                                    if (response.status !== 200) {
-<<<<<<< HEAD
+                                success: function (resp1) {
+                                    if (resp1.code == 0) {
+                                        if (resp1.data.printerSn == JSON.parse(localStorage.getItem('printer')).printerSn) {
+                                            localStorage.removeItem('printer')
+                                            localStorage.setItem('printer', JSON.stringify(resp1.data))
+                                            self.setState({ printer: resp1.data, inkbox: resp1.data.inkboxDetails }, function () {
+                                            })
+                                        } else {
+                                            if (Utils.timer.printerTimer) { Utils.stopGetPrinterInfo(Utils.timer.printerTimer) }
+                                        }
+                                    } else {
+                                        if (Utils.timer.printerTimer) { Utils.stopGetPrinterInfo(Utils.timer.printerTimer) }
                                         deli.common.notification.prompt({
                                             "type": 'error',
-                                            "text": "网络错误,请重试",
+                                            "text": resp1.msg,
                                             "duration": 1.5
-=======
-                                        deli.common.notification.toast({
-                                            "text": '网络错误，请重试',
-                                            "duration": 2
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                                         }, function (data) { }, function (resp) { });
-                                        return;
                                     }
-                                    response.json().then(function (resp2) {
-                                        if (resp2.code == 0) {
-                                            self.setState({ inkbox: resp2.data }, function () {
-                                                console.log("test3")
-                                            });
-                                        }else{
-                                            deli.common.notification.prompt({
-                                                "type": 'error',
-                                                "text": resp2.msg,
-                                                "duration": 1.5
-                                            }, function (data) { }, function (resp) { });
-                                        }
-                                        if (typeof callback === 'function') {
-                                            callback();
-                                        }
-                                    });
                                 }
-                            ).catch(function (err) {
-                                deli.common.notification.toast({
-                                    "text": '网络错误，请重试',
-                                    "duration": 2
-                                }, function (data) { }, function (resp) { });
-                            });
-                        })
+                            }, 'printer');
                     } else {
+                        Utils.stopGetPrinterInfo(Utils.timer.printerTimer)
                         deli.common.notification.prompt({
                             "type": 'error',
                             "text": resp1.msg,
@@ -658,18 +821,10 @@ class PrintIndex extends Component{
                 });
             }
         ).catch(function (err) {
-<<<<<<< HEAD
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
-            }, function (data) {}, function (resp) {});
-=======
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) { }, function (resp) { });
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
 
@@ -680,23 +835,21 @@ class PrintIndex extends Component{
         appData.append('timestamp', timestamp);
         appData.append('nonceStr', nonceStr);
         //获取应用id
-        fetch(mpURL + '/a/auth/config', {
+        Utils.timeoutFetch(mpURL + '/a/auth/config', {
             method: 'POST',
             headers: {},
             body: appData
+        }, 60000, function () {
+            /* deli.common.notification.toast({
+                "text": '网络超时，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { }); */
         }).then(
             function (response) {
                 if (response.status !== 200) {
-<<<<<<< HEAD
-                    deli.common.notification.prompt({
-                        "type": 'error',
-                        "text": "网络错误,请重试",
-                        "duration": 1.5
-=======
                     deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     }, function (data) { }, function (resp) { });
                     return;
                 }
@@ -712,19 +865,10 @@ class PrintIndex extends Component{
                 });
             }
         ).catch(function (err) {
-            console.log("错误:" + err);
-<<<<<<< HEAD
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
-            }, function (data) {}, function (resp) {});
-=======
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) { }, function (resp) { });
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
 
@@ -732,7 +876,7 @@ class PrintIndex extends Component{
     setQrcodeStatus(data){
         const self = this
         deli.common.navigation.setRight({
-            "icon": "http://t.static.delicloud.com/h5/web/cloudprint/images/icon/scan_code" + ((data  && data.length > 0) ? '02' : '')+"@3x.png"
+            "icon": "https://static.delicloud.com/h5/web/cloudprint/images/icon/scan_code" + ((data  && data.length > 0) ? '02' : '')+"@3x.png?v=20181226"
         }, function(innerdata) {
             deli.app.code.scan({
                 type: 'qrcode',
@@ -747,47 +891,42 @@ class PrintIndex extends Component{
     }
 
     // 获取新的任务状态及数据
-    getNewListPage() {
+    getNewListPage(timer, callback) {
         const self = this
         let appData = new FormData();
         appData.append('pageNo', 1);
-        appData.append('pageSize', 100);
+        appData.append('pageSize', 200);
         //分页查询打印机任务列表
-        fetch(mpURL + '/v1/app/printTask/queryScanPrintTask/P_1_10', {
+        Utils.timeoutFetch(mpURL + '/v1/app/printTask/queryScanPrintTask/P_1_10', {
             method: 'GET',
             headers: {
                 "MP_TOKEN": Cookies.load('token')
             }
+        }, 60000, function () {
+            if (timer) self.stopGetNewListPage(timer);
         }).then(
             function (response) {
                 if (response.status !== 200) {
-                    self.stopGetNewListPage(self.state.timer)
-<<<<<<< HEAD
-                    deli.common.notification.prompt({
-                        "type": 'error',
-                        "text": "网络错误,请重试",
-                        "duration": 1.5
-=======
-                    deli.common.notification.toast({
-                        "text": '网络错误，请重试',
-                        "duration": 2
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
-                    }, function (data) { }, function (resp) { });
+                    if (timer) self.stopGetNewListPage(timer);
                     return;
                 }
                 response.json().then(function (json) {
                     if (json.code == 0) {
                         if (json.data.total >= 0){
-                            self.setState({
-                                printTaskInfo: json.data.list
-                            }, function () {
-                                self.setQrcodeStatus(json.data.list)
-                            })
+                            if (json.data.total >= 1 && typeof callback === 'function'){
+                                callback(json.data.list)
+                            }else{
+                                self.setState({
+                                    printTaskInfo: json.data.list
+                                }, function () {
+                                    self.setQrcodeStatus(json.data.list)
+                                })
+                            }
                         }else{
                             self.setQrcodeStatus()
                         }
                     }else{
-                        self.stopGetNewListPage(self.state.timer)
+                        if (timer) self.stopGetNewListPage(timer);
                         deli.common.notification.prompt({
                             "type": 'error',
                             "text": json.msg,
@@ -797,35 +936,24 @@ class PrintIndex extends Component{
                 });
             }
         ).catch(function (err) {
-            console.log("错误:" + err);
-            self.stopGetNewListPage(self.state.timer)
-<<<<<<< HEAD
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
-            }, function (data) {}, function (resp) {});
-=======
-            deli.common.notification.toast({
-                "text": '网络错误，请重试',
-                "duration": 2
-            }, function (data) { }, function (resp) { });
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
+            if (timer) self.stopGetNewListPage(timer);
         });
     }
 
     // 开始获取新的任务状态及数据
     startGetNewListPage() {
         const self = this
+        self.getNewListPage();
         const timer = setInterval(() => {
-            self.getNewListPage();
-        }, 10000);
-        self.setState({ timer: timer })
+            self.getNewListPage(Utils.timer.getNewListTimer);
+        }, 3000);
+        Utils.timer.getNewListTimer = timer
     }
 
     // 关闭获取新的任务状态及数据
     stopGetNewListPage(timer){
         clearInterval(timer)
+        Utils.timer.getNewListTimer = 0
     }
     
     // 处理扫码结果
@@ -835,70 +963,32 @@ class PrintIndex extends Component{
         appData.append('qrCode', text);
         //appData.append('printerType', type);
         //查询打印机状态
-        fetch(mpURL + '/app/printerTask/scanQrCode', {
+        Utils.timeoutFetch(mpURL + '/app/printerTask/scanQrCode', {
             method: 'POST',
             headers: {
                 "MP_TOKEN": Cookies.load('token')
             },
             body: appData
+        }, 60000, function () {
+            /* deli.common.notification.toast({
+                "text": '网络超时，请重试',
+                "duration": 2
+            }, function (data) { }, function (resp) { }); */
         }).then(
             function (response) {
                 if (response.status !== 200) {
-<<<<<<< HEAD
-                    deli.common.notification.prompt({
-                        "type": 'error',
-                        "text": "网络错误,请重试",
-                        "duration": 1.5
-=======
                     deli.common.notification.toast({
                         "text": '网络错误，请重试',
                         "duration": 2
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     }, function (data) { }, function (resp) { });
                     return;
                 }
                 response.json().then(function (json) {
                     if(json.code == 0){
-                        if (printTaskInfo) {
-                            //只有一条数据时进入打印预览，否则进入选择打印任务
-                            if (printTaskInfo.length > 1) {
-                                self.setState({
-                                    sn: text,
-                                    printType: 'scan',
-                                    printTaskInfo: printTaskInfo,
-                                    fileType: 'file',
-                                    fileList: [],
-                                    redirect: {
-                                        chooseTask: true,
-                                        previewIndex: false
-                                    }
-                                })
-                            } else if (printTaskInfo.length == 1){
-                                const singleFileList = printTaskInfo[0].fileList
-                                const singleFileType = (singleFileList.length > 1 || (singleFileList.length == 1 && singleFileList[0].fileSuffix != 'pdf')) ? 'image' : 'file'
-                                Cookies.save('printPreviewType', singleFileType, { path: '/' });
-                                self.setState({
-                                    sn: text,
-                                    printType: 'scan',
-                                    printTaskInfo: printTaskInfo[0],
-                                    fileType: singleFileType,
-                                    fileList: singleFileList,
-                                    redirect: {
-                                        chooseTask: false,
-                                        previewIndex: true
-                                    }
-                                })
-                            }
-                        } else {
-                            self.setState({
-                                sn: text,
-                                fileList: [],
-                                redirect: {
-                                    chooseTask: false,
-                                    previewIndex: false
-                                }
-                            })
-                        }
+                        //扫码绑定打印机
+                        self.getPrinterData(json.data.printerSn, function(){
+                            self.scanQrcodePrint(text, printTaskInfo)
+                        });
                     } else if(json.code == -1) {
                         deli.common.notification.prompt({
                             "type": "error",
@@ -906,103 +996,215 @@ class PrintIndex extends Component{
                             "duration": 1.5
                         }, function (data) {}, function (resp) {});
                     } else if (json.code == -3) {
-                        self.setState({ "redirect": { "scandenied": true } }, function(){})
-                    } else if (json.code == -4) {
-                        self.setState({ "redirect": { "scanunbind": true } }, function(){})
-                    }else{
                         deli.common.notification.prompt({
                             "type": 'error',
                             "text": json.msg,
                             "duration": 1.5
                         }, function (data) {}, function (resp) {});
+                    } else if (json.code == -4) {
+                        self.setState({ "redirect": { "scandenied": true } }, function () { })
+                    } else if (json.code == -5){
+                        self.setState({ "redirect": { "scanunbind": true } }, function () { })
+                    }else{
+                        deli.common.notification.prompt({
+                            "type": 'error',
+                            "text": json.msg,
+                            "duration": 1.5
+                        }, function (data) { }, function (resp) { });
                     }
                 });
             }
         ).catch(function (err) {
-            console.log("错误:" + err);
-<<<<<<< HEAD
-            deli.common.notification.prompt({
-                "type": 'error',
-                "text": "网络错误,请重试",
-                "duration": 1.5
-            }, function (data) {}, function (resp) {});
-=======
             deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) { }, function (resp) { });
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
+        });
+    }
+
+    // 绑定打印机并打印
+    scanQrcodePrint(sn, printTaskInfo){
+        const self = this
+        if (printTaskInfo) {
+            //只有一条数据时进入打印预览，否则进入选择打印任务
+            if (printTaskInfo.length > 1) {
+                self.setState({
+                    sn: sn,
+                    printType: 'scan',
+                    printTaskInfo: printTaskInfo,
+                    fileType: 'file',
+                    fileList: [],
+                    redirect: {
+                        chooseTask: true,
+                        previewIndex: false
+                    }
+                })
+            } else if (printTaskInfo.length == 1) {
+                const singleFileList = printTaskInfo[0].fileList
+                const singleFileType = (singleFileList.length == 1 && singleFileList[0].fileSuffix == 'other') ? 'other' : ((singleFileList.length > 1 || (singleFileList.length == 1 && singleFileList[0].fileSuffix != 'pdf')) ? 'image' : 'file')
+                let tmpPrintData = objectAssign({}, self.state.printData, { printStartPage: 1, printEndPage: (singleFileList.length > 1 ? singleFileList.length : singleFileList[0].totalPage) })
+                localStorage.removeItem('printData')
+                localStorage.removeItem('printTaskInfo')
+                localStorage.removeItem('printPreviewData')
+                localStorage.setItem('printData', JSON.stringify(tmpPrintData))
+                localStorage.setItem('printTaskInfo', JSON.stringify(printTaskInfo[0]))
+                localStorage.setItem('printPreviewData', JSON.stringify(singleFileList))
+                Cookies.save('printPreviewType', singleFileType, { path: '/' });
+                if (printTaskInfo[0].printTaskType == 'virtual') {
+                    self.handleVirPrintClick(printTaskInfo[0])
+                } else {
+                    self.setState({
+                        sn: sn,
+                        printType: 'scan',
+                        printTaskInfo: printTaskInfo[0],
+                        fileType: singleFileType,
+                        fileList: singleFileList,
+                        redirect: {
+                            chooseTask: false,
+                            previewIndex: true
+                        }
+                    })
+                }
+            }
+        } else {
+            self.setState({
+                sn: sn,
+                fileList: [],
+                redirect: {
+                    chooseTask: false,
+                    previewIndex: false
+                }
+            })
+        }
+    }
+
+    // 虚拟打印
+    handleVirPrintClick(data) {
+        const self = this;
+        let printItems = {};
+        const fileList = data.fileList;
+        printItems = self.state.printData;
+        printItems.taskSource = 'VIRTUAL';
+        if (data.downloadUrl){
+            printItems.downloadUrl = data.downloadUrl;
+        }
+        printItems.printerSn = self.state.printer.printerSn; 
+        printItems.fileList = [];
+        for (let i = 0; i < fileList.length; i++) {
+            printItems.fileList.push({
+                fileSource: fileList[i].fileSource,
+                printMd5: fileList[i].printMd5,
+                fileSuffix: fileList[i].fileSuffix,
+                printPDF: fileList[i].printPDF,
+                totalPage: fileList[i].totalPage,
+                fileId: fileList[i].fileId,
+                printUrl: fileList[i].printUrl,
+                fileName: fileList[i].fileName
+            })
+        }
+        //创建虚拟打印任务和任务设置打印机
+        Utils.timeoutFetch(mpURL + '/v1/app/printTask/taskToPrinter/' + data.taskCode + '', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "MP_TOKEN": Cookies.load('token')
+            },
+            body: JSON.stringify(printItems)
+        }, 60000, function () {
+            deli.common.notification.toast({
+                "text": "网络超时,请重试",
+                "duration": 1.5
+            }, function (data) { }, function (resp) { });
+        }).then(
+            function (response) {
+                if (response.status !== 200) {
+                    deli.common.notification.toast({
+                        "text": "网络错误,请重试",
+                        "duration": 1.5
+                    }, function (data) { }, function (resp) { });
+                    return;
+                }
+                response.json().then(function (json) {
+                    if (json.code == 0) {
+                        self.setState({ redirect:{ printTask: true } }, function () { })
+                    } else {
+                        deli.common.notification.toast({
+                            "text": json.msg,
+                            "duration": 1.5
+                        }, function (data) { }, function (resp) { });
+                    }
+                });
+            }
+        ).catch(function (err) {
+            deli.common.notification.toast({
+                "text": "网络错误,请重试",
+                "duration": 1.5
+            }, function (data) { }, function (resp) { });
         });
     }
 
     render(){
+        //虚拟打印进入打印机任务列表
+        if (this.state.redirect.printTask){
+            const sn = this.state.printer.printerSn
+            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == '1' ? 1 : 2))
+            const name = this.state.printer.printerName
+            return <Redirect push to={
+                { pathname: "/managetask", search: "?sn=" + sn + "&status=" + status + "&name=" + name + "", state: { "sn": sn, "status": status, "name": name } }
+            } />;
+        }
+
         if (this.state.redirect.chooseTask) {
             const sn = this.state.printer.printerSn
-<<<<<<< HEAD
-=======
             const name = this.state.printer.printerName
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
             const fileList = this.state.fileList
-            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == 1 ? 1 : 2))
-            this.stopGetNewListPage(this.state.timer)
+            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == '1' ? 1 : 2))
+            this.stopGetNewListPage(Utils.timer.getNewListTimer)
             const printTaskInfo = this.state.printTaskInfo
             const printType = 'scan'
             const fileType = []
             localStorage.removeItem('chooseTaskInfo')
             localStorage.setItem('chooseTaskInfo', JSON.stringify(printTaskInfo))
             return <Redirect push to={
-<<<<<<< HEAD
-                { pathname: "/choosetask", search: "?sn=" + sn + "&status=" + status + "&type=" + printType + "", state: { "sn": sn, "fileType": fileType, "fileList": fileList, "printTaskInfo": printTaskInfo, "status": status}  }
-=======
                 { pathname: "/choosetask", search: "?sn=" + sn + "&status=" + status + "&type=" + printType + "&name=" + name +"", state: { "sn": sn, "fileType": fileType, "fileList": fileList, "printTaskInfo": printTaskInfo, "status": status}  }
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
             } />;
         }
 
         if (this.state.redirect.previewIndex) {
             const sn = this.state.printer.printerSn
-<<<<<<< HEAD
-            const fileList = this.state.fileList
-            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == 1 ? 1 : 2))
-            this.stopGetNewListPage(this.state.timer)
             const name = this.state.printer.printerName
+            const fileList = this.state.fileList
+            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == '1' ? 1 : 2))
+            this.stopGetNewListPage(Utils.timer.getNewListTimer)
             const printTaskInfo = this.state.printTaskInfo
             const printType = this.state.printType
             const fileType = this.state.fileType
-            alert(JSON.stringify(this.state.printer))
+            localStorage.removeItem('printPreviewFrom');
+            localStorage.setItem('printPreviewFrom', 'printindex');
             return <Redirect push to={
-                { pathname: "/previewindex", search: "?sn=" + sn + "&status=" + status + "&type=" + printType + "&name="+ name +"", state: { "sn": sn, "fileType": fileType, "fileList": fileList, "printTaskInfo": printTaskInfo, "status": status}  }
-=======
-            const name = this.state.printer.printerName
-            const fileList = this.state.fileList
-            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == 1 ? 1 : 2))
-            this.stopGetNewListPage(this.state.timer)
-            const printTaskInfo = this.state.printTaskInfo
-            const printType = this.state.printType
-            const fileType = this.state.fileType
-            return <Redirect push to={
-                { pathname: "/previewindex", search: "?sn=" + sn + "&status=" + status + "&type=" + printType + "&name=" + name +"", state: { "sn": sn, "fileType": fileType, "fileList": fileList, "printTaskInfo": printTaskInfo, "status": status}  }
+                { pathname: "/previewindex", search: "?sn=" + sn + "&status=" + status + "&type=" + printType + "&name=" + name + "", state: { "sn": sn, "fileType": fileType, "fileList": fileList, "printTaskInfo": printTaskInfo, "status": status } }
             } />;
         }
         
         if (this.state.redirect.fileNav) {
             const sn = this.state.printer.printerSn
             const name = this.state.printer.printerName
+            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == '1' ? 1 : 2))
             const fileList = this.state.fileList
-            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == 1 ? 1 : 2))
-            this.stopGetNewListPage(this.state.timer)
+            this.stopGetNewListPage(Utils.timer.getNewListTimer)
             const fileType = this.state.fileType
+            localStorage.removeItem('printPreviewFrom');
+            localStorage.setItem('printPreviewFrom', 'printindex');
             return <Redirect push to={
-                { pathname: "/previewindex", search: "?sn=" + sn + "&status=" + status + "&type=upload&name=" + name +"", state: { "sn": sn, "fileList": fileList, "fileType": fileType, 'printType': 'upload', "status": status } }
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
+                { pathname: "/previewindex", search: "?sn=" + sn + "&status=" + status + "&type=upload", state: { "sn": sn, "fileList": fileList, "fileType": fileType, 'printType': 'upload', "status": status } }
             } />;
         }
 
         if (this.state.redirect.scandenied) {
             const sn = this.state.printer.printerSn
             const fileList = this.state.fileList
-            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == 1 ? 1 : 2))
-            this.stopGetNewListPage(this.state.timer)
+            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == '1' ? 1 : 2))
+            this.stopGetNewListPage(Utils.timer.getNewListTimer)
             return <Redirect push to={
                 { pathname: "/scandenied", search: "?sn=" + sn + "&status=" + status +"", state: { "sn": sn, "fileList": fileList, "status": status}  }
             } />;
@@ -1011,18 +1213,15 @@ class PrintIndex extends Component{
         if (this.state.redirect.scanunbind) {
             const sn = this.state.printer.printerSn
             const fileList = this.state.fileList
-            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == 1 ? 1 : 2))
-            this.stopGetNewListPage(this.state.timer)
+            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == '1' ? 1 : 2))
+            this.stopGetNewListPage(Utils.timer.getNewListTimer)
             return <Redirect push to={
                 { pathname: "/scanunbind", search: "?sn=" + sn + "", state: { "sn": sn, "fileList": fileList } }
             } />;
         }
 
         if (this.state.redirect.login) {
-            const sn = this.state.printer.printerSn
-            const fileList = this.state.fileList
-            const status = (this.state.printer.workStatus == 'error' ? 0 : (this.state.printer.onlineStatus == 1 ? 1 : 2))
-            this.stopGetNewListPage(this.state.timer)
+            this.stopGetNewListPage(Utils.timer.getNewListTimer)
             const taskCode = this.state.user.task_code
             return <Redirect push to={
                 { pathname: "/login", search: "?taskCode=" + taskCode + "", state: { "taskCode": taskCode} }
@@ -1032,9 +1231,10 @@ class PrintIndex extends Component{
         return(
             <div className="print-index"
             id="print-index"
-            onTouchMove={this.unableTouchMove.bind(this)}>
+                onTouchMove={this.unableTouchMove.bind(this)}>
                 <Printer user={this.state.user} printer={this.state.printer} printerCurrent={this.state.printerCurrent} inkbox={this.state.inkbox} transPrinter={printer => this.transPrinter(printer)}></Printer>
                 <Nav navlist={this.state.navlist} printer={this.state.printer} timer={this.state.timer} transTimer={timer => this.transTimer(timer)} transPrinter={printer => this.transPrinter(printer)} ></Nav>
+                {(Utils.loadinger.printLoading == true) ? <Loading pageLoading={true} pageLoadingText={ Utils.loadinger.printLoadingText }></Loading> : ''}
             </div>
         );
     }

@@ -25,15 +25,12 @@ class Header extends Component {
     }
 
     handleOnLeftClick() {
-        console.log("back");
     }
 
     handleOnRightClick() {
-        console.log("qrcode");
     }
 
     handleCloseViewClick() {
-        console.log("close");
     }
     render() {
         return (

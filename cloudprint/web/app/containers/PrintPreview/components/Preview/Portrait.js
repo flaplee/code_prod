@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import apis from 'containers/PrintPreview/apis';
 import Tip from './Tip';
+import PortraitImg from './PortraitImg';
 
 const Wrap = styled.div`
-  display: ${props => (props.show ? 'block' : 'none')};
   position: absolute;
   left: 0;
   top: 0;
@@ -13,29 +13,35 @@ const Wrap = styled.div`
   height: 100%;
   text-align: center;
   background-color: #fff;
-  z-index: 2;
+  transform: rotate(${props => (props.show ? '0' : '-90deg')});
+  transform-origin: center;
+  transition: 0.3s;
+  visibility: ${props => (props.show ? 'visible' : 'hidden')};
+  z-index: ${props => (props.show ? '9' : '-10')};
 `;
 
-const Img = styled.img`
-  display: inline-block;
-  vertical-align: middle;
-`;
-
-class Portrait extends React.Component {
+class Portrait extends React.PureComponent {
   state = {
-    complete: false,
+    isFetching: false,
     error: false,
   };
 
-  loadSuccess = () => {
+  request = () => {
     this.setState({
-      complete: true,
+      isFetching: true,
+      error: false,
     });
   };
 
-  loadError = () => {
+  receive = () => {
     this.setState({
-      complete: true,
+      isFetching: false,
+    });
+  };
+
+  error = () => {
+    this.setState({
+      isFetching: false,
       error: true,
     });
   };
@@ -43,13 +49,13 @@ class Portrait extends React.Component {
   render() {
     const { imgIndex, fileId, w, h, printDirection } = this.props;
     return (
-      <Wrap show={printDirection === 1}>
+      <Wrap show={printDirection !== 1}>
         <Tip {...this.state} />
-        <Img
-          ref={this.imgRef}
+        <PortraitImg
+          request={this.request}
+          receive={this.receive}
+          error={this.error}
           src={`${apis.preview}/${fileId}_${imgIndex}_${w}_${h}`}
-          onLoad={this.loadSuccess}
-          onError={this.loadError}
         />
       </Wrap>
     );

@@ -15,16 +15,15 @@ class ChooseList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            printer: props.printer,
-            page: props.pages,
+            printer: props.printer || JSON.parse(localStorage.getItem('printer')),
+            page: props.pages || 1,
             loading: false,
             isEmpty: false,
-            noMore: false, 
+            noMore: false,
             force: true,
             printTaskInfo: props.files || [],
             fileList: []
         };
-
     }
 
     //监听transFilerList变化状态
@@ -34,10 +33,9 @@ class ChooseList extends Component {
 
     //获取列表数据
     getListPage(data) {
-        console.log("data~~~~~~~~~~~~", data)
         const self = this
-        self.setState({ loading: true });
-        deli.common.notification.showPreloader();
+        self.setState({ loading: false });
+        //deli.common.notification.showPreloader();
         let pages = self.state.fileList;
         let appData = new FormData();
         appData.append('pageNo', data.pageNo);
@@ -46,6 +44,7 @@ class ChooseList extends Component {
         //分页查询打印机任务列表
         fetch(mpURL + '/app/printerTask/queryMyPage', {
             method: 'POST',
+            timeout: 60000,
             headers: {
                 "MP_TOKEN": Cookies.load('token')
             },
@@ -53,12 +52,18 @@ class ChooseList extends Component {
         }).then(
             function (response) {
                 if (response.status !== 200) {
+                    self.setState({ loading: false });
+                    //deli.common.notification.hidePreloader();
+                    deli.common.notification.toast({
+                        "text": '网络错误，请重试',
+                        "duration": 2
+                    }, function (data) { }, function (resp) { });
                     return;
                 }
                 response.json().then(function (json) {
+                    //deli.common.notification.hidePreloader();
                     if (json.code == 0) {
                         self.setState({ loading: false });
-                        deli.common.notification.hidePreloader();
                         if(data.pageNo == 1 && json.data.total == 0){
                             self.setState({
                                 fileList: [],
@@ -82,68 +87,64 @@ class ChooseList extends Component {
                             }
                         }
                     }else{
-                        self.setState({ loading: false });
-                        deli.common.notification.hidePreloader();
-                        deli.common.notification.prompt({
-                            "type": "error",
-                            "text": '网络错误，请重试',
+                        deli.common.notification.toast({
+                            "text": json.msg,
                             "duration": 2
-                        }, function (data) {}, function (resp) {});
+                        }, function (data) { }, function (resp) { });
+                        self.setState({
+                            fileList: [],
+                            isEmpty: (data.pageNo == 1) ? true : false,
+                            loading: false,
+                            force: false
+                        }, function () {})
                     }
                 });
             }
         ).catch(function (err) {
             self.setState({ loading: false });
-            deli.common.notification.hidePreloader();
-<<<<<<< HEAD
-=======
-            deli.common.notification.prompt({
-                "type": "error",
+            //deli.common.notification.hidePreloader();
+            deli.common.notification.toast({
                 "text": '网络错误，请重试',
                 "duration": 2
             }, function (data) {}, function (resp) {});
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
 
     onLoad() {
         //this.getListPage({ pageNo: this.state.page + 1, pageLimit: 12, sn: this.state.printer.sn })
         /* this.setState({ page: this.state.page + 1, loading: false }, function(){
-            console.log("page", this.state.page)
             //this.getListPage({ pageNo: this.state.page, pageLimit: 12, sn: this.state.printer.sn })
         }); */
     }
 
     render() {
-        let fileItems, fileItemEmpty
         if (this.state.isEmpty == true){
-            fileItemEmpty = <div className="task-list-empty"><div className="task-list-empty-img"></div><p className="task-list-empty-text">暂无更多打印记录</p></div>
+            return (<div className="task-list-empty"><div className="task-list-empty-img"></div><p className="task-list-empty-text">暂无更多打印记录</p></div>);
         }else{
             const files = this.state.printTaskInfo
-            fileItems = files.map((file, index) => {
+            let fileItems = files.map((file, index) => {
                 return (
                     <ChooseItem key={index} index={index} file={file} transFilerList={filer => this.transFilerList(filer)} />
                 );
             });
+            return (
+                <ScrollView
+                    infiniteScroll={this.state.force}
+                    infiniteScrollOptions={{
+                        loading: this.state.loading,
+                        onLoad: this.onLoad.bind(this),
+                    }}
+                    className='scroll-view-demo'
+                >
+                    <Group className="list-item">
+                        <Group.List lineIndent={15}>
+                            {fileItems}
+                            <div className="task-list-more" style={{ display: (this.state.noMore == true) ? 'block' : 'none' }}><p>没有更多了</p></div>
+                        </Group.List>
+                    </Group>
+                </ScrollView>
+            );
         }
-
-        return (
-            <ScrollView
-                infiniteScroll={this.state.force}
-                infiniteScrollOptions={{
-                    loading: this.state.loading,
-                    onLoad: this.onLoad.bind(this),
-                }}
-                className={this.state.isEmpty == true ? 'scroll-view-empty' : 'scroll-view-demo'}
-            >
-                <Group className="list-item">
-                    <Group.List lineIndent={15}>
-                        {this.state.isEmpty == true ? fileItemEmpty : fileItems}
-                        <div className="task-list-more" style={{ display: (this.state.noMore == true) ? 'block' : 'none' }}><p>没有更多了</p></div>
-                    </Group.List>
-                </Group>
-            </ScrollView>
-        );
     }
 }
 

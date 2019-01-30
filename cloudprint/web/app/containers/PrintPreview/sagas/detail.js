@@ -1,22 +1,22 @@
 /**
  * 仅重新打印才执行以下
  */
-
-/* eslint-disable */
 import { select, call, put, takeLatest } from 'redux-saga/effects';
-import { authRequest } from 'utils/request';
+import { authRequest, checkJson } from 'utils/request';
 /* eslint-disable-next-line */
 import delay from '@redux-saga/delay-p';
 import apis from 'containers/PrintPreview/apis';
 
-import { addForm } from './../actions/FormActions';
+import { addMessages } from 'containers/App/actions/MessagesActions';
+
+import { addForm } from '../actions/FormActions';
 
 import {
   REQUEST_TASK_DETAIL,
   RECEIVE_TASK_DETAIL,
-} from './../constants/TaskTypes';
+} from '../constants/TaskTypes';
 
-import { makeSelectSearch } from './../selectors/search';
+import { makeSelectSearch } from '../selectors/search';
 
 function* fetchDetail() {
   try {
@@ -26,21 +26,36 @@ function* fetchDetail() {
       authRequest,
       `${apis.printerTaskDetail}/${taskCode}`,
     );
-    const { code, msg } = json || { code: -1, msg: '获取数据失败' };
-    if (code !== 0) throw msg;
+    checkJson(json);
+    const { whetherAgainPrint, tips } = json.data;
+
+    if (whetherAgainPrint !== true) throw tips;
+
     const fileList = json.data.fileList[0];
     // 重新打印 初始化表单信息
+
+    const { fileId, fileName } = fileList;
+
+    // 临时处理后端未完善的数据
+    const stringReg = `^${fileId}_`;
+    const reg = new RegExp(stringReg);
+
     yield put(
       addForm({
-        printEndPage: fileList.totalPage,
-        fileList,
+        fileList: {
+          ...fileList,
+          fileName: fileName.replace(reg, ''),
+        },
       }),
     );
 
     yield put({ type: RECEIVE_TASK_DETAIL });
   } catch (e) {
-    /* eslint-disable-next-line */
-    console.log(e);
+    const error = {
+      type: 'error',
+      text: typeof e === 'string' ? e : '文件转换失败',
+    };
+    yield put(addMessages(error));
   }
 }
 

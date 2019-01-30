@@ -3,13 +3,13 @@
  */
 import { fromJS } from 'immutable';
 
-import { INIT } from './../constants/InitTypes';
+import { INIT } from '../constants/InitTypes';
 
 import {
   SUBMIT_TASK,
   SCAN_SUBMIT_TASK,
   RECEIVE_TASK,
-} from './../constants/TaskTypes';
+} from '../constants/TaskTypes';
 
 const initialState = fromJS({
   isFetching: false,

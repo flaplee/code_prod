@@ -36,6 +36,4 @@
 		v = parseFloat(v);
 		return v / rem;
 	}
-	window.dpr = dpr;
-	window.rem = rem;
 })();

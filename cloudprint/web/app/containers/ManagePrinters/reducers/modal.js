@@ -1,4 +1,4 @@
-import { SET_MODAL, CLOSE_MODAL } from './../constants/ModalTypes';
+import { SET_MODAL, CLOSE_MODAL } from '../constants/ModalTypes';
 
 const initialState = {
   type: '',

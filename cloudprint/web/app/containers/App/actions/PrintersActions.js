@@ -5,6 +5,7 @@ import {
   SET_PRINTERS_CURRENT,
   REQUEST_PRINTERS_ITEM,
   RECEIVE_PRINTERS_ITEM,
+  ERROR_PRINTERS_ITEM,
 } from '../constants/PrintersTypes';
 
 export const requestPrinters = () => ({
@@ -33,4 +34,9 @@ export const requestPrinterItem = () => ({
 export const receivePrinterItem = json => ({
   type: RECEIVE_PRINTERS_ITEM,
   value: json.data,
+});
+
+export const errorPrintersItem = value => ({
+  type: ERROR_PRINTERS_ITEM,
+  value,
 });

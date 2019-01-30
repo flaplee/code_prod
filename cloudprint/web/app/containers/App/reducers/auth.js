@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
 
-import { REQUEST_AUTH, RECEIVE_AUTH } from './../constants/AuthTypes';
+import { REQUEST_AUTH, RECEIVE_AUTH } from '../constants/AuthTypes';
 
 const initialState = fromJS({
   isFetching: false,

@@ -1,20 +1,27 @@
 import { takeLatest, select, call, put, cancel } from 'redux-saga/effects';
 
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router/immutable';
 
-import { authRequest } from 'utils/request';
+import { authRequest, checkJson } from 'utils/request';
 import delay from '@redux-saga/delay-p';
 import apis from 'containers/PrintPreview/apis';
 
 import { addMessages } from 'containers/App/actions/MessagesActions';
 
-import { REQUEST_TASK_FILE, RECEIVE_TASK_FILE } from './../constants/TaskTypes';
+import { REQUEST_TASK_FILE, RECEIVE_TASK_FILE } from '../constants/TaskTypes';
 
-import { makeSelectSearch } from './../selectors/search';
+import { makeSelectSearch } from '../selectors/search';
 
-import { addForm } from './../actions/FormActions';
+import { addForm } from '../actions/FormActions';
+
+import { setFileTransTipDir } from '../actions/FileActions';
+import directive from '../components/ProcessModal/directive';
+
+const DURING = 1000 * 3;
 
 function* find() {
+  const { activate, deactivateWithClose } = directive;
+  yield put(setFileTransTipDir(activate));
   while (true) {
     try {
       const search = yield select(makeSelectSearch());
@@ -28,8 +35,7 @@ function* find() {
         params,
       };
       const json = yield call(authRequest, apis.findByFileId, options);
-      const { code, msg } = json || { code: -1, msg: '获取数据失败' };
-      if (code !== 0) throw msg;
+      checkJson(json);
 
       const {
         fileSource,
@@ -39,15 +45,26 @@ function* find() {
         pdfMd5,
         totalPage,
         status,
-      } = (json && json.data) || {
-        status: 0,
-      };
+        id,
+      } = (json && json.data) || { status: -1 };
+
+      // status is first priority to handing error
+      if (status === -1) {
+        const error = { type: 'error', text: '文件转换失败，请重新上传' };
+        yield put(addMessages(error));
+        yield put(push('/'));
+        yield cancel();
+      }
+
+      // 临时处理后端未完善的数据
+      const stringReg = `^${id}_`;
+      const reg = new RegExp(stringReg);
 
       const form = {
         printEndPage: totalPage,
         fileList: {
           fileSource,
-          fileName,
+          fileName: fileName.replace(reg, ''),
           fileSuffix: fileType,
           printPDF: fileType === 'pdf',
           printUrl,
@@ -56,25 +73,22 @@ function* find() {
           fileId,
         },
       };
+
       if (status === 1) {
         // 设置表单信息
         yield put(addForm(form));
 
         yield put({ type: RECEIVE_TASK_FILE });
 
+        yield put(setFileTransTipDir(deactivateWithClose));
+
         yield cancel();
       }
-      if (status === -1) {
-        const error = { type: 'error', text: '文件转换失败，请重新上传' };
-        yield put(addMessages(error));
-        yield put(push('/'));
-        yield cancel();
-      }
-      yield delay(3 * 1000);
+
+      yield delay(DURING);
     } catch (e) {
-      yield cancel();
-      /* eslint-disable-next-line */
-      console.log(e);
+      // console.log(e);
+      yield delay(DURING);
     }
   }
 }

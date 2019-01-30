@@ -1,4 +1,4 @@
-import { RECEIVE_TASKS, SET_TASKS_PAGE } from './../constants/TasksTypes';
+import { RECEIVE_TASKS, SET_TASKS_PAGE } from '../constants/TasksTypes';
 
 export const receiveTasks = json => ({
   type: RECEIVE_TASKS,

@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-
 import loadingSrc from 'images/loading-gray-500.gif';
-
-import PrinterChart from './PrinterChart';
+import Chart from './Chart';
 
 export const size = 360;
 
 const Wrap = styled.div`
+  position: relative;
   float: right;
   width: ${size}px;
   height: 100%;
@@ -46,28 +45,53 @@ const ErrorText = styled.div`
   color: #999;
 `;
 
-const Inkbox = ({ isFetching, data, error }) => (
-  <Wrap>
-    {(isFetching === true && (
-      <Loading>
-        <LoadingCenter>
-          <LoadingImg src={loadingSrc} />
-          <LoadingText>查询墨量信息中...</LoadingText>
-        </LoadingCenter>
-      </Loading>
-    )) ||
-      (data && <PrinterChart data={data} />) ||
-      (error && (
+const Inkbox = ({ itemIsFetching, item, error }) => {
+  const { onlineStatus, inkboxDetails } = item;
+
+  const renderContent = () => {
+    if (itemIsFetching === true) {
+      return (
+        <Loading>
+          <LoadingCenter>
+            <LoadingImg src={loadingSrc} />
+            <LoadingText>查询墨量信息中...</LoadingText>
+          </LoadingCenter>
+        </Loading>
+      );
+    }
+
+    if (error) {
+      return (
         <ErrorWrap>
           <ErrorText>{error}</ErrorText>
         </ErrorWrap>
-      ))}
-  </Wrap>
-);
+      );
+    }
+
+    if (onlineStatus !== '1') {
+      return (
+        <ErrorWrap>
+          <ErrorText>设备现处离线状态</ErrorText>
+        </ErrorWrap>
+      );
+    }
+
+    if (!inkboxDetails || inkboxDetails.length < 1) {
+      return (
+        <ErrorWrap>
+          <ErrorText>未查询到墨量</ErrorText>
+        </ErrorWrap>
+      );
+    }
+
+    return <Chart {...item} />;
+  };
+  return <Wrap>{renderContent()}</Wrap>;
+};
 
 Inkbox.propTypes = {
-  isFetching: PropTypes.bool.isRequired,
-  data: PropTypes.any.isRequired,
+  itemIsFetching: PropTypes.bool.isRequired,
+  item: PropTypes.any.isRequired,
   error: PropTypes.any.isRequired,
 };
 

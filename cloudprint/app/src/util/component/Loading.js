@@ -5,8 +5,8 @@ class PrintLoading extends Component {
         super(props);
         this.state = {
             loadingData: props.pageLoading,
+            loadingText: props.pageLoadingText
         }
-        console.log("props.pageLoading", props.pageLoading)
     }
 
     componentWillMount() {
@@ -20,15 +20,18 @@ class PrintLoading extends Component {
             visibility: (this.state.loadingData == true ? 'visible' : 'hidden')
         }
 
+        const loadingText = this.state.loadingText
+
         const loadingImg = {
-            background: "url(" + printLoading +") no-repeat center"
+           "background": "url(" + printLoading +") no-repeat center",
+           "background-size": "100% 100%"
         }
 
         return (
             <div className="loading" id="loading" style={loadingShow }>
                 <div>
                     <div className="ico" style={ loadingImg }></div>
-                    <div className="text">打印准备中…</div>
+                    <div className="text">{loadingText }</div>
                 </div>
             </div>
         )

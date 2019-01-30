@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import qs from 'qs';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
+import withTooltip from 'components/Tooltip';
 
 const Wrap = styled.div`
   font-size: 12px;
@@ -32,15 +33,43 @@ const Right = styled.div`
   margin-left: 1.5em;
 `;
 
-const Operate = props => {
-  const { id, taskStatus, taskCode } = props.data;
-  const { makeViewTaskItem, makeCancel, makeDelete } = props;
+const DisablePrintAgain = styled.div`
+  position: relative;
+  padding: 0 1em;
+  width: 6em;
+  display: inline-block;
+  vertical-align: middle;
+  color: #999;
+  cursor: not-allowed;
+`;
 
+const DisablePrintAgainTip = withTooltip(DisablePrintAgain);
+
+const PrintAgain = ({ whetherAgainPrint, tips, taskCode }) => {
   let search = qs.stringify({
     taskCode,
     restart: 'yes',
   });
   search = `?${search}`;
+
+  return whetherAgainPrint === true ? (
+    <Left as={Link} to={{ pathname: '/printpreview', search }}>
+      重新打印
+    </Left>
+  ) : (
+    <DisablePrintAgainTip tip={tips}>重新打印</DisablePrintAgainTip>
+  );
+};
+
+PrintAgain.propTypes = {
+  whetherAgainPrint: PropTypes.bool.isRequired,
+  tips: PropTypes.string.isRequired,
+  taskCode: PropTypes.string.isRequired,
+};
+
+const Operate = props => {
+  const { id, taskStatus, taskCode } = props.data;
+  const { makeViewTaskItem, makeCancel, makeDelete } = props;
 
   const ContentRender = () => {
     switch (taskStatus) {
@@ -59,9 +88,7 @@ const Operate = props => {
       case 'success':
         return (
           <Wrap>
-            <Left as={Link} to={{ pathname: '/printpreview', search }}>
-              重新打印
-            </Left>
+            <PrintAgain {...props.data} />
             <Right onClick={() => makeDelete(id)}>删除</Right>
           </Wrap>
         );

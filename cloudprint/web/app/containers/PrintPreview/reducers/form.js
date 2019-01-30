@@ -3,20 +3,20 @@
  */
 import { fromJS } from 'immutable';
 
-import { INIT } from './../constants/InitTypes';
+import { INIT } from '../constants/InitTypes';
 
-import { SET_FORM, ADD_FORM } from './../constants/FormTypes';
+import { SET_FORM, ADD_FORM } from '../constants/FormTypes';
 
 const initialState = fromJS({
   taskSource: 'WEB',
   printerSn: '',
-  printDirection: 1,
+  printDirection: 2,
   printStartPage: 1,
   printEndPage: 1,
   paperSize: 'A4',
   printColorMode: 'black',
-  printWhole: 0,
-  duplexMode: 1,
+  printWhole: 1,
+  duplexMode: 0,
   copyCount: 1,
   printDpi: 600, // 300 600 1200
   fileList: {

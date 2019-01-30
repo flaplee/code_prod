@@ -3,7 +3,7 @@
  * Layout
  *
  */
-
+import { captureException } from '@sentry/browser';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import PropTypes from 'prop-types';
@@ -42,6 +42,11 @@ class ManagePrinters extends React.PureComponent {
   componentDidMount() {
     this.props.init();
   }
+
+  componentDidCatch(error) {
+    captureException(error);
+  }
+
   render() {
     return (
       <Wrap>

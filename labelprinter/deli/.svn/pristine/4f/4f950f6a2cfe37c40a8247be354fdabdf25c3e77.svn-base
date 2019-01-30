@@ -1,0 +1,238 @@
+<?php
+namespace app\index\model;
+
+use app\admin\model\Base;
+
+class Member extends Base{
+    
+//自动填充时间    
+protected $autoWriteTimestamp = false;
+
+    
+
+
+    public function dl_login($account,$pwd,$user_id,$reg_platform){
+        $data['account']=$account;
+        $user =db($this->getTheTable())->where($data)->find();
+        
+        $return=[];
+        if(empty($user)){
+            //则新建账号
+            $data['password']=$pwd;
+            $data['name']=$account;
+            $data['reg_platform']=$reg_platform;
+            $data['type']=1;
+            $data['sex']=3;
+            $data['user_id']=$user_id;
+            $data['create_time']=time();
+            $data['last_login_time']=time();
+            $data['last_login_ip']= get_client_ip(1);
+            $inser_id =db($this->getTheTable())->insert($data,false,true);
+            $auth = array(
+                'id'                  => $inser_id,
+                'name'                =>$account,
+                'type'                =>1,
+                'account'=>$account,    
+                'avator'=>"",    
+                'age'=>"",    
+                'sex'=>"3",    
+                'birth'=>"",    
+                'province'=>"",    
+                'city'=>"",    
+                'area'=>"",    
+                'last_login_time'     =>time(),
+            );
+             settingSession($auth);
+             return $auth;
+            
+        }else{
+            $data = array(
+                'id'             => $user['id'],
+                'last_login_time' => time(),
+                'password' => $pwd,
+                'last_login_ip'   => get_client_ip(1),
+            );
+            $this->update($data);
+            $auth = array(
+                'id'                  => $user['id'],
+                'name'                =>$user['name'],
+                'type'                =>$user['type'],
+                'account'=>$user['account'],    
+                'avator'=> generalImg($user['avator']),    
+                'age'=>$user['age'],    
+                'sex'=>$user['sex'],    
+                'birth'=>$user['birth'],    
+                'province'=>$user['province'],    
+                'city'=>$user['city'],    
+                'area'=>$user['area'],    
+                'last_login_time'     =>time(),
+            );
+             settingSession($auth);
+             return $auth;
+        }
+    }
+
+
+    /**
+     * 登录指定用户
+     * @param  integer $uid 用户ID
+     * @return boolean      ture-登录成功，false-登录失败
+     */
+    public function login($account,$pwd){
+        $data['account']=$account;
+        $prex =config('database.prefix');
+        $result =db($this->getTheTable())->alias('a')
+                ->where($data)->find();
+        if(empty($result)){
+             $this->setError('帐号不存在');
+             return false;
+        }
+        if($pwd!=$result['password']){
+             $this->setError('您的密码有误');
+             return false;
+        }
+        
+//        //验证密码
+//        if(!$this->verifyPassNotSalt($pwd,$result['password'])){
+//             $this->setError('您的密码有误');
+//             return false;
+//        }
+        if($result['status']!=1){
+            $this->setError('您已被管理员禁用');
+            return false;
+        }
+        //存储session
+        $result =$this->autoLogin($result);
+        return $result;
+    }
+
+    /**
+     * 注销当前用户
+     * @return void
+     */
+    public function out(){
+      
+                clearSession();
+                return true;
+    }
+    
+    
+    public function LoginById($id){
+        $result =db($this->getTheTable())->where('id='.$id)->find();
+        if(empty($result)){
+            return $this->showMsg(0,'您的账号不存在');
+        }
+        $this->autoLogin($result);
+        return $this->showMsg(1,'登录成功','','Index/index');
+    }
+    
+
+    /**
+     * 自动登录用户
+     * @param  integer $user 用户信息数组
+     */
+    private function autoLogin($user){
+        /* 更新登录信息 */
+        $data = array(
+            'id'             => $user['id'],
+            'last_login_time' => time(),
+            'last_login_ip'   => get_client_ip(1),
+        );
+        $this->update($data);
+        /* 记录登录SESSION和COOKIES */
+     //   $merchant_id =model('admin/Merchant')->getUseMerchant();
+        $auth = array(
+            'id'                  => $user['id'],
+            'name'                =>$user['name'],
+            'type'                =>$user['type'],
+            'account'=>$user['account'],    
+            'avator'=> generalImg($user['avator']),    
+            'age'=>$user['age'],    
+            'sex'=>$user['sex'],    
+            'birth'=>$user['birth'],    
+            'province'=>$user['province'],    
+            'city'=>$user['city'],    
+            'area'=>$user['area'],    
+            'last_login_time'     =>time(),
+        );
+         settingSession($auth);
+        return $auth;
+      //  print_r($auth);exit;
+        
+       
+        
+    }
+/*验证密码
+ * 
+ */    
+    protected  function verifyPass($need,$pass,$salt){
+        $key =config('PS_MER_KEY');
+        return(md5($need)===$pass)?true:false;
+    }
+    protected  function verifyPassNotSalt($need,$pass){
+        return(md5($need)===$pass)?true:false;
+    }
+
+    
+    
+    
+    
+    public function __formatEdit($data = null) {
+        return $data;
+    }
+    
+    public function __formatList($list = null) {
+        
+        if(!empty($list)){
+            foreach($list as $k=>$v){
+                $list[$k]['last_login_time']=date('Y-m-d H:i:s',$v['last_login_time']);
+                $list[$k]['last_login_ip']= long2ip($v['last_login_ip']);
+            }
+        }
+        
+        return $list;
+    }
+
+    
+/*更新之前
+ * 
+ */    
+    public function __my_before_update(&$data){
+
+        return true;
+    }
+    
+/*插入之前
+ * 
+ */
+    
+    public function __my_before_insert(&$data){
+        
+       $data['create_time']=time();
+       if($data['password']!=$data['repassword']){
+           $this->setError ('两次密码不一致，请重新填写');
+           return FALSE;
+       }
+       
+       unset($data['repassword']);
+       $data['password']=md5($data['password']);
+       
+        if(!isset($data['group_id']) || empty($data['group_id'])){
+            $this->setError('请选择正确的分组');
+            return false;
+        }
+        
+       
+        return TRUE;
+    }
+/*判断电话号码是否存在
+ * 
+ */    
+    
+    public function isExitPhone($account){
+        $data['account']=$account;
+        $result =$this->where($data)->count();
+        return $result;
+    }
+    
+}

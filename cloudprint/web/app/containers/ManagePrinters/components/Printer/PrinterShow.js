@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import printerSrc from 'containers/ManagePrinters/images/Printer_management.png';
 import checkSrc from 'containers/HomePage/images/check.png';
+import noticeSrc from 'containers/HomePage/images/Notice.png';
 import PrinterOptions from './PrinterOptions';
 import PrinterInfo from './PrinterInfo';
 
@@ -40,7 +41,9 @@ export default props => (
   <Wrap>
     <Printer>
       <PrinterImg src={printerSrc} />
-      <StatusImg src={checkSrc} />
+      <StatusImg
+        src={props.current.onlineStatus === '1' ? checkSrc : noticeSrc}
+      />
     </Printer>
     <InfoWrap>
       <PrinterOptions {...props} />

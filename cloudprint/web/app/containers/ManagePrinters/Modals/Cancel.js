@@ -3,10 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import {
-  CLOSE_MODAL,
-  REQUEST_CANCEL_TASK_ITEM,
-} from './../constants/ModalTypes';
+import { CLOSE_MODAL, REQUEST_CANCEL_TASK_ITEM } from '../constants/ModalTypes';
 
 const Wrap = styled.div`
   padding: 50px 150px 50px 150px;

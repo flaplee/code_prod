@@ -18,7 +18,6 @@ class Footer extends Component {
 
     //打印
     handlePrintClick() {
-        console.log("close");
     }
     render() {
         return (

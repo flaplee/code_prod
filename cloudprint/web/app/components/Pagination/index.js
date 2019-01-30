@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import qs from 'qs';
-import { history } from 'app';
+import history from 'utils/history';
 import styled, { css } from 'styled-components';
 
 const Wrap = styled.div`

@@ -22,7 +22,7 @@ import { SUBMIT_TASK, SCAN_SUBMIT_TASK } from './constants/TaskTypes';
 const mapStateToProps = createStructuredSelector({
   search: makeSelectSearch(),
   fileId: makeSelectFormItem(['fileList', 'fileId']),
-  total: makeSelectFormItem(['fileList', 'totalPage']),
+  totalPage: makeSelectFormItem(['fileList', 'totalPage']),
 
   fileIsFetching: makeSelectFileIsFetching(),
   detailIsFetching: makeSelectDetailIsFetching(),

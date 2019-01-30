@@ -1,23 +1,25 @@
-import React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { requestPrinterItem } from 'containers/App/actions/PrintersActions';
+import {
+  setPrintersCurrent,
+  requestPrinterItem,
+} from 'containers/App/actions/PrintersActions';
 
 import {
+  makeSelectAppPrintersIsFetching,
   makeSelectAppPrintersData,
   makeSelectAppPrintersCurrent,
 } from 'containers/App/selectors/printers';
 
-import PrintersOption from './components/PrintOption/PrintersOption';
+import Printers from './components/PrintOption/Printers';
 
 import { setForm } from './actions/FormActions';
-
-const Printers = props => <PrintersOption label="打印机" {...props} />;
 
 const key = ['printerSn'];
 
 const mapStateToProps = createStructuredSelector({
+  isFetching: makeSelectAppPrintersIsFetching(),
   current: makeSelectAppPrintersCurrent(),
   list: makeSelectAppPrintersData(),
 });
@@ -25,8 +27,16 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = dispatch => ({
   makeSelect: value => {
     const { printerSn } = value;
-    dispatch(requestPrinterItem(value));
+    dispatch(setPrintersCurrent(value));
     dispatch(setForm({ key, value: printerSn }));
+
+    // 重置 打印颜色, 如果存在cmyk 默认切换到 cmyk, 否则 则切换至 black
+    const { colorTypes } = value && value.printerSettings;
+    const color = colorTypes.indexOf('cmyk') !== -1 ? 'cmyk' : 'black';
+
+    dispatch(setForm({ key: ['printColorMode'], value: color }));
+
+    dispatch(requestPrinterItem()); // put end
   },
 });
 

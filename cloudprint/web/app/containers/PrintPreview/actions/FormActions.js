@@ -1,4 +1,4 @@
-import { SET_FORM, ADD_FORM } from './../constants/FormTypes';
+import { SET_FORM, ADD_FORM } from '../constants/FormTypes';
 
 /**
  *

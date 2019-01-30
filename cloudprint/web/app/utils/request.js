@@ -5,6 +5,7 @@
  *
  * @return {object}          The parsed JSON from the request
  */
+import { captureException } from '@sentry/browser';
 
 import axios from 'axios';
 
@@ -19,6 +20,9 @@ const timeout = 1000 * 30;
 
 const getData = response => response.data;
 
+// Global axios defaults
+axios.defaults.headers.common.Pragma = 'no-cache';
+
 const request = (url, options) => {
   const baseOptions = {
     headers: {
@@ -27,7 +31,12 @@ const request = (url, options) => {
     timeout,
     ...options,
   };
-  return axios(url, baseOptions).then(getData);
+  return axios(url, baseOptions)
+    .then(getData)
+    .catch(e => {
+      captureException(e);
+      throw e;
+    });
 };
 
 export const authRequest = (url, options) => {
@@ -39,7 +48,12 @@ export const authRequest = (url, options) => {
     timeout,
     ...options,
   };
-  return axios(url, authOptions).then(getData);
+  return axios(url, authOptions)
+    .then(getData)
+    .catch(e => {
+      captureException(e);
+      throw e;
+    });
 };
 
 export default request;

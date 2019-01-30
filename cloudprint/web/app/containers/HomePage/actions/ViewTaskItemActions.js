@@ -2,7 +2,7 @@ import {
   SET_VIEW_TASK_ITEM_TARGET,
   RECEIVE_VIEW_TASK_ITEM_DETAIL,
   SET_VIEW_TASK_ITEM_PAGE,
-} from './../constants/ViewTaskItemTypes';
+} from '../constants/ViewTaskItemTypes';
 
 export const setViewTaskItemTarget = value => ({
   type: SET_VIEW_TASK_ITEM_TARGET,

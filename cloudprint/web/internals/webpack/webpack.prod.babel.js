@@ -2,6 +2,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { HashedModuleIdsPlugin } = require('webpack');
+const htmlConfig = require('./htmlConfig');
 
 module.exports = require('./webpack.base.babel')({
   mode: 'production',
@@ -41,6 +42,7 @@ module.exports = require('./webpack.base.babel')({
         minifyURLs: true,
       },
       inject: true,
+      ...htmlConfig,
     }),
 
     new HashedModuleIdsPlugin({

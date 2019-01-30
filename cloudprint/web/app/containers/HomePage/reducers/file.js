@@ -6,9 +6,9 @@ import {
   FILE_DRAGLEAVE,
   UPLOAD_FILE_COMPLETE,
   UPLOAD_FILE_ERROR,
-} from './../constants/FileTypes';
+} from '../constants/FileTypes';
 
-import { INIT } from './../constants/InitTypes';
+import { INIT } from '../constants/InitTypes';
 
 const initialState = fromJS({
   data: false,

@@ -1,6 +1,6 @@
 import React from 'react';
 import qs from 'qs';
-import { history } from 'app';
+import history from 'utils/history';
 import docCookies from 'utils/docCookies';
 
 export default class ExtraParam extends React.Component {

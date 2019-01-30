@@ -14,7 +14,6 @@ import styled from 'styled-components';
 
 import LoadingIndicator from 'components/LoadingIndicator';
 import SideNav from 'components/SideNav';
-import RightSide from 'components/RightSide';
 
 import HomePage from 'containers/HomePage/Loadable';
 import ManagePrinters from 'containers/ManagePrinters/Loadable';
@@ -31,15 +30,14 @@ const Layout = ({ isFetching }) =>
     <LoadingIndicator />
   ) : (
     <Wrap>
-      <SideNav />
-      <RightSide>
+      <SideNav>
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route exact path="/manageprinters" component={ManagePrinters} />
           <Route exact path="/printpreview" component={PrintPreview} />
           <Redirect to="/notfound" />
         </Switch>
-      </RightSide>
+      </SideNav>
     </Wrap>
   );
 

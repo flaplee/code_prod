@@ -62,7 +62,6 @@ const Col = styled.div`
   vertical-align: middle;
   line-height: 1.3;
   word-break: break-all;
-  color: ${props => props.theme.color};
   ${props =>
     props.bold &&
     css`

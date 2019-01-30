@@ -1,4 +1,4 @@
-import key from './../key';
+import key from '../key';
 
 export const REQUEST_TASKS = `${key}/REQUEST_TASKS`;
 export const RECEIVE_TASKS = `${key}/RECEIVE_TASKS`;

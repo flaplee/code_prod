@@ -4,10 +4,10 @@ import { authRequest, checkJson } from 'utils/request';
 import apis from 'containers/HomePage/apis';
 import PAGE_SIZE from 'containers/HomePage/pageSize';
 
-import { REQUEST_LIST } from './../constants/ListTypes';
-import { receiveList, errorList } from './../actions/ListActions';
+import { REQUEST_LIST } from '../constants/ListTypes';
+import { receiveList, errorList } from '../actions/ListActions';
 
-import { selectListPage } from './../selectors/list';
+import { selectListPage } from '../selectors/list';
 
 function* fetchList() {
   try {
@@ -20,8 +20,8 @@ function* fetchList() {
     const options = {
       params,
     };
-    yield delay(1500);
     const json = yield call(authRequest, apis.printerTask, options);
+    yield delay(1500);
     checkJson(json, '获取列表失败');
     yield put(receiveList(json));
   } catch (e) {

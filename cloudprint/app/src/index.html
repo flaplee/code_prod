@@ -1,39 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="loading">
   <head>
     <meta charset="utf-8">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="format-detection" content="email=no" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" name="viewport">
-<!--     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico"> -->
     <title>云打印</title>
+    <style>
+      blockquote,body,dd,div,dl,dt,fieldset,form,h1,h2,h3,h4,h5,h6,input,legend,li,ol,p,td,textarea,th,ul{margin:0;padding:0}
+      table{border-collapse:collapse;border-spacing:0}
+      fieldset,img{border:0}
+      li{list-style:none}
+      caption,th{text-align:left}
+      q:after,q:before{content:""}
+      input:password{ime-mode:disabled}
+      :focus{outline:0}
+      *{-box-sizing:border-box;-overflow:hidden;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;font-size:inherit;-webkit-text-size-adjust:none;-moz-text-size-adjust:none;-ms-text-size-adjust:none;line-height:inherit;outline:0;z-index:0;color:inherit;text-decoration:inherit;font-family:inherit;visibility:inherit}
+      html{position:absolute;top:0;left:0;right:0;bottom:0;-ms-user-select:none;-moz-user-select:none;user-select:none;font-family:-apple-system-font,"Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;line-height:1;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;touch-action: manipulation;}
+      body,html{min-height:100%}
+      a,img{-webkit-touch-callout:none}
+      body,button,input,select,textarea{line-height:1.5;color:#333;font-family:-apple-system-font,"Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+      input,textarea{-webkit-appearance:none}
+      textarea{overflow:auto;vertical-align:top;resize:none}
+      input:-webkit-autofill,select:-webkit-autofill,textarea:-webkit-autofill{box-shadow:inset 0 0 0 1000px #fff;-moz-box-shadow:inset 0 0 0 1000px #fff;-webkit-box-shadow:inset 0 0 0 1000px #fff}
+      body{margin:0;width:100%;height:100%;-webkit-user-select:none;user-select:none;background-color:#ffffff;overflow:hidden}
+      input{line-height:normal}
+      a{color:#5d85e0;text-decoration:none}
+      .clearfix{display:block;zoom:1}
+      .clearfix:after{content:" ";display:block;font-size:0;height:0;clear:both;visibility:hidden}
+      *,:after,:before{-webkit-tap-highlight-color:transparent}
+      .clear:after{visibility:hidden;display:block;font-size:0;content:" ";clear:both;height:0}
+      .hide{display:none!important}
+      .show{display:block!important}
+      .left{float:left}
+      .right{float:right}
+      img{image-orientation:from-image}
+      .iosScrollFix{line-height:1.47058824;overflow:hidden;position:relative}
+      .iosScrollFix:after,.iosScrollFix:before{content:"";position:absolute;left:0;right:0;height:1px;visibility:hidden;z-index:2}
+      .iosScrollFix:after{bottom:0;border-bottom:1px solid #e5e5e5;-webkit-transform-origin:0 100%;transform-origin:0 100%;-webkit-transform:scaleY(.5);transform:scaleY(.5)}
+      .iosScrollFix:before{top:0;border-top:1px solid #e5e5e5;-webkit-transform-origin:0 0;transform-origin:0 0;-webkit-transform:scaleY(.5);transform:scaleY(.5)}
+      html.loading{width:100%;height: 100%; background-image: url("loading.svg"); background-size: 15% auto; background-repeat: no-repeat; background-position: 50% 50%; }
+      html.loading > body{ visibility: hidden; }
+      /* page */
+      #page{position:relative;width:100%;height:100%;-webkit-box-orient:vertical;-o-flex-direction:column;-ms-flex-direction:column;-webkit-flex-direction:column;flex-direction:column;display:box;display:-webkit-box;display:-moz-box;display:-ms-flexbox;display:-webkit-flex;display:flex}
+      #page>#page-index>.header{position:relative;color:#fff;background-color:#5d85e0;box-shadow:0 0 1px #B2B2B2;-webkit-box-flex:0;-moz-box-flex:0 0 auto;-webkit-flex:0 0 auto;-ms-flex:0 0 auto;flex:0 0 auto}
+      #page>#page-index>.header>.back{position:absolute;top:0;bottom:0;font-size:3rem;line-height: 4rem;margin:auto 0;color:#fff;overflow:visible;}
+      #page>#page-index>.header>.back .icon-back{margin: 1.5rem auto;}
+      #page>#page-index>.header>.title{font-weight:700;font-size: 3rem;font-weight: normal;height:7rem;line-height:7rem;text-align:center;white-space:nowrap}
+      #page>#page-index>.header>.leftMenuBtn,#page>#page-index>.header>.rightMenuBtn{position:absolute;top:0;bottom:0;height:4rem;font-size:3rem;line-height: 4rem;margin:auto 0;color:#fff;overflow:visible}
+      #page>#page-index>.header>.back>svg,#page>#page-index>.header>.leftMenuBtn>svg,#page>#page-index>.header>.rightMenuBtn>svg{vertical-align:top;height:100%;fill:#fff}
+      #page>#page-index>.header>.leftMenuBtn{left:7rem}
+      #page>#page-index>.header>.rightMenuBtn{right:3rem}
+      /* content */
+      #page>.content{-webkit-box-flex:1;-moz-box-flex:1 1 auto;-webkit-flex:1 1 auto;-ms-flex:1 1 auto;flex:1 1 auto;position:relative;width:100%}
+      #page>.content>div{position:absolute;width:100%;height:100%;color:#4A4A4A;overflow-y:auto;visibility:visible}
+      /* loading */
+      #loading{position: absolute; left: 0; right: 0; bottom: 0; top: 0; visibility: hidden; background-color: rgba(0,0,0,0.3); z-index: 1000; }
+      #loading > div {position: absolute; margin: auto; border-radius: 2rem; background-color: #ffffff; color: #ffffff; }
+      #loading > div {right: 0; left: 0; bottom: 0; top: 0; width: 45rem; height: 25rem; text-align: center; font-size: 0; line-height: 1; white-space: pre-wrap; }
+      #loading > div >.ico {margin: 5rem auto 3rem; width: 10rem; height: 10rem; background: url("loading.gif") no-repeat center; background-size: 100% 100%; }
+      #loading > div >.text{font-size:3rem; color: #333333; }
+      /* popups */
+      #popups{position: absolute; left: 0; right: 0; bottom: 0; top: 0; display: none; background-color: rgba(0,0,0,0.3); z-index: 1000; }
+      #popups > div {position: absolute; margin: auto; border-radius: 2rem; background-color: #ffffff; color: #ffffff; }
+      #popups > div {right: 0; left: 0; bottom: 0; top: 0; width: 45rem; height: 25rem; text-align: center; font-size: 0; line-height: 1; white-space: pre-wrap; }
+      #popups > div >.progress{margin: 0 5rem; }
+      #popups > div >.progress .t-progress {position: relative; height: 18px; border-radius: 9px; border:1px solid rgba(93, 133, 224, 1); overflow: hidden; padding-left: 3px; padding-right: 3px; }
+      #popups > div >.progress .t-progress .progress-bar {width: 100%; height: 12px; background-color: #fff; border-radius:6px; }
+      #popups > div >.progress .t-progress .progress-bar .bar-core {width: 80%; height: 12px; background-color: #5D85E0; -webkit-transition: width 0.2s; transition: width 0.2s; border-radius:6px; }
+      #popups > div >.progress .t-progress .progress-bar.blue-bar .bar-core {background-color: #5D85E0; }
+      #popups > div >.text {margin: 5rem auto 3rem; font-size: 2.3rem; color: #333333; }
+      #popups > div >.close{display: block; font-size: 2.6rem; color: #007AFF; padding: 2rem 0; position: absolute; bottom: 0; text-align: center; width: 100%; border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem; border-top: 1px solid #D5D6D8; }
+      #popups > div >.close:active{background: rgba(31,56,88,0.1); color: #007AFF; }
+    </style>
   </head>
   <body>
     <div id="page"></div>
-    <div id="home-page-skeleton" class="shimmer loading">
-      <div id="home-container-skeleton">
-        <div id="shelves">
-          <div class="shelf-skeleton">
-            <div class="shelf-title text-shell skeleton-bg-color"></div>
-            <div class="shelf-datums">
-              <div class="datum-skeleton">
-                <div class="datum-details">
-                  <div class="thumbnail skeleton-bg-color"></div>
-                  <div class="thumbnail skeleton-bg-color"></div>
-                  <div class="thumbnail skeleton-bg-color"></div>
-                  <div class="thumbnail skeleton-bg-color"></div>
-                  <div class="thumbnail skeleton-bg-color"></div>
-                  <div class="thumbnail skeleton-bg-color"></div>
-                  <div class="thumbnail skeleton-bg-color"></div>
-                  <div class="thumbnail skeleton-bg-color"></div>
+    <div class="loading" id="loading">
+      <div>
+        <div class="ico"></div>
+        <div class="text">加载中...</div>
+      </div>
+    </div>
+    <div class="popups" id="popups">
+      <div>
+        <div class="text">图片正在上传...<span class="count"></span></div>
+        <div class="progress">
+          <div class="progress-wrap-bar">
+            <div class="progress-wrap-bar-long progress-wrap-bar-more short-black-bar">
+              <div class="t-progress without-label">
+                <div class="progress-bar blue-bar" style="height: 12px;">
+                  <div class="bar-core" style="width: 0%; height: 12px;"></div>
                 </div>
               </div>
             </div>
-            <div class="shelf-title text-shell skeleton-bg-color"></div>
           </div>
         </div>
+        <a id="popupsConfirm" class="confirm" href="javascript:;" style="display:none">确认</a>
+        <a id="popupsClose" class="close" href="javascript:;">取消</a>
       </div>
     </div>
     <script src="<%= htmlWebpackPlugin.options.JSSDK_URL %>"></script>

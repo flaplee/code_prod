@@ -17,12 +17,13 @@ export default class Virtualprintlogin extends React.Component {
     handleOnClick(type){
         const self = this
         let taskCode = self.state.taskCode;
-        let argee = (type && type=='confirm') ? 1 : 0;
+        let argee = (type && type == 'confirm') ? 1 : 0;
         let loginData = new FormData();
         //loginData.append();
         //登陆授权
         fetch(mpURL + '/v1/app/user/loginAsk/reply/' + taskCode + '_' + argee +'', {
             method: 'POST',
+            timeout: 60000,
             headers: {
                 "MP_TOKEN": Cookies.load('token'),
             },
@@ -31,35 +32,15 @@ export default class Virtualprintlogin extends React.Component {
             function (response) {
                 if (response.status !== 200) {
                     deli.common.notification.hidePreloader();
-<<<<<<< HEAD
-                    deli.common.notification.prompt({
-                        "type": "error",
-                        "text": '网络错误，请重试',
-                        "duration": 2
-                    }, function (data) { }, function (resp) { });
-=======
                     deli.common.notification.toast({
                         "text": "网络错误，请重试",
                         "duration": 1.5
                     }, function (data) {}, function (resp) {});
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                     return;
                 }
                 response.json().then(function (json) {
                     deli.common.notification.hidePreloader();
                     if (json.code == 0) {
-<<<<<<< HEAD
-                        deli.common.notification.prompt({
-                            "type": "success",
-                            "text": '授权成功',
-                            "duration": 2
-                        }, function (data) {}, function (resp) {});
-                    } else {
-                        deli.common.notification.prompt({
-                            "type": "error",
-                            "text": json.msg,
-                            "duration": 2
-=======
                         deli.common.notification.toast({
                             "text": "授权成功",
                             "duration": 1.5
@@ -68,7 +49,6 @@ export default class Virtualprintlogin extends React.Component {
                         deli.common.notification.toast({
                             "text": json.msg,
                             "duration": 1.5
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
                         }, function (data) {}, function (resp) {});
                     }
                     self.setState({ redirectIndexNav: true }, function () {});
@@ -76,19 +56,11 @@ export default class Virtualprintlogin extends React.Component {
             }
         ).catch(function (err) {
             deli.common.notification.hidePreloader();
-<<<<<<< HEAD
-            deli.common.notification.prompt({
-                "type": "error",
-                "text": '网络错误，请重试',
-                "duration": 2
-            }, function (data) {}, function (resp) {});
-=======
             deli.common.notification.toast({
                 "text": "网络错误，请重试",
                 "duration": 1.5
             }, function (data) { }, function (resp) { });
             self.setState({ redirectIndexNav: true }, function () { });
->>>>>>> 9e0b17ae20adf7bedc0249ea638dee119df46197
         });
     }
     

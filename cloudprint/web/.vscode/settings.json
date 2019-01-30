@@ -3,5 +3,6 @@
   "prettier.eslintIntegration": true,
   "eslint.run": "onSave",
   "files.eol": "\n",
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "javascript.validate.enable": false
 }

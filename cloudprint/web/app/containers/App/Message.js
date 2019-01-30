@@ -1,22 +1,10 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import Message from 'components/Message';
-
-import { CLEAR_MESSAGES } from 'containers/App/constants/MessagesTypes';
-
+import Message from 'components/MessageV2';
 import { makeSelectMessages } from './selectors/messages';
 
 const mapStateToProps = createStructuredSelector({
-  messages: makeSelectMessages(),
+  message: makeSelectMessages(),
 });
 
-const mapDispatchToProps = dispatch => ({
-  clear: () => {
-    dispatch({ type: CLEAR_MESSAGES });
-  },
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Message);
+export default connect(mapStateToProps)(Message);

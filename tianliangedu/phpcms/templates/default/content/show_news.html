@@ -1,0 +1,89 @@
+{template "content","header"}
+<div id="service" style="display:block;">
+	<div class="service-box clearfix">
+		<div class="service-nav">
+			<ul class="course-inner">
+                <li class="item"><h4>理科辅导</h4><span>小学数学</span><span>初中理科</span><span>高中理科</span></li>
+                <li class="item"><h4>文科辅导</h4><span>小学语文</span><span>高中理科</span><span>初中文科</span></li>
+                <li class="item"><h4>兴趣爱好</h4><span>科技艺术</span><span>艺术体育</span><span>托管班</span><span>夏冬令营</span></li>
+	        </ul>
+			<div class="course-relate">
+				<p class="title">天亮咨询热线</p>
+				<div class="info">
+					<i class="iconfont">&#xe629;</i>
+					<div class="text">027-81771511</div>
+				</div>
+				<div class="line"></div>
+				<a class="inner" href="javascript:;">
+					<p>不知道该如何选择？</p>
+					<p><span>让咨询顾问主动联系你吧！</span></p>
+				</a>
+			</div>
+		</div>
+		<div class="service-cont">
+			<div class="service-crumb">
+				当前位置：<a href="{siteurl($siteid)}">首页</a><span> &gt; </span>{catpos($catid)}<span class="sup-title">正文</span>
+			</div>
+			<div class="service-detail details">
+				<div class="left">
+					<div class="tags clearfix">
+						{pc:block pos="tianliang_tags"}{/pc}
+					</div>
+					<div class="head">
+						<h3>{$title}</h3>
+						<p class="font_size12 font_color_gray mt10 mb20 textright">发布日期：{str_cut($inputtime,15,$dot='')}来源：<span class="blue">天亮教育</span></p>
+					</div>
+					<div class="description">
+						<p>摘要：{if $description}<div class="summary" >{$description}</div>{/if}</p>
+					</div>
+					<div class="text">
+						{if $allow_visitor==1}
+							{$content}
+							<!--内容关联投票-->
+							{if $voteid}<script language="javascript" src="{APP_PATH}index.php?m=vote&c=index&a=show&action=js&subjectid={$voteid}&type=2"></script>{/if}
+			                
+						{else}
+							<CENTER><a href="{APP_PATH}index.php?m=content&c=readpoint&allow_visitor={$allow_visitor}"><font color="red">阅读此信息需要您支付 <B><I>{$readpoint} {if $paytype}元{else}点{/if}</I></B>，点击这里支付</font></a></CENTER>
+						{/if}
+					</div>
+					<div class="copyright">
+						<p class="mb10">版权声明：</p>
+						<div>
+							<p>
+								本文章仅用于学习和交流目的，非商业转载请注明文章来源。对未经许可擅自使用者，本公司保留追究其法律责任的权利。如需转载或商业合作，请联系武汉天亮培优学校<span>tanliangedu@163.com</span>
+							</p>
+							<p>来源：<span>{$copyfrom}</span></p>
+						</div>
+					</div>
+					<div class="like_share" style="display:none;">
+						<div class="like"><p class="text">评论</p><p id="praise"><a href="#comment_iframe" id="comment">0</a></p><p class="addOne">+1</p></div>
+						<div class="share"><p class="text">分享</p><p id="share">11</p></div>
+						<div class="share_popup gray_transparent" style="display: none;">
+							<div class="frame">
+								<div class="bj-white">
+									<div class="fr"><p>分享到...</p><div class="bdsharebuttonbox bdshare-button-style0-16" data-tag="share_1" data-bd-bind="1496905528091"><a class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a></div></div>
+									<i class="icon-disappear" icon-bg="icon_disappear"></i>
+								</div>
+							</div>
+						</div>
+						<!--分享功能--><!--复制老网站中的分享功能即可-->
+						<div class="bdshre"></div>
+					</div>
+					<p class="font_size16 font_color_gray mt10 mb20">继续阅读</p>
+					<div class="else">
+						{pc:content action="hits" catid="$catid" num="3" order="monthviews DESC" cache="3600"}
+							{loop $data $r}
+							<a href="{$r[url]}" target="_blank" title="{$r[title]}">
+								<img src="{thumb($r[thumb], 240, 150)}" alt="{$r[title]}" title="{$r[title]}">
+								<p title="{$r[title]}">{str_cut($r[title],56,'...')}</p>
+							</a>
+								{/loop}
+						{/pc}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="{APP_PATH}framework/src/require.js" data-main="{APP_PATH}dev/page/service/service.js"></script>
+{template "content","footer"}

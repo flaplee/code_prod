@@ -1,0 +1,28 @@
+{template 'special', 'header'}
+<div id="special" style="display: block;">
+	<div id="right-topic" class="yuekan">
+		<div id="right-topic-list" class="yuekan-list">
+			{loop $types $t}
+				{pc:special action="content_list" specialid="$id" typeid="$t[typeid]" listorder="3" num="10"}
+					{loop $data $r}
+	                <div class="yuekan-item">
+						<div class="list-img">
+							<div class="list-img-ontext">{str_cut(date('Y',$r[inputtime]),12,$dot='')}<br>{str_cut(date('m月d日',$r[inputtime]),12,$dot='')}</div>
+						</div>
+						<a class="list-link clearfix" title="{$r['description']}" href="{$r['url']}" target="_blank">
+							<div class="m">
+								<img src="{thumb($r['thumb'], 545, 203)}" alt="" width="545" height="203">
+							</div>
+						</a>
+						<div class="list-text">
+							<div class="list-text-cont">{$r['description']}</div>
+						</div>
+						<div class="clear"></div>
+					</div>
+	            	{/loop}
+				{/pc}
+			{/loop}	
+		</div>
+	</div>
+</div>
+{template 'special', 'footer'}

@@ -1,0 +1,2 @@
+require.config({baseUrl:"/dev/",paths:{ready:"site/ready",plugin:"common/plugin",text:"common/text",about:"page/about",booking:"page/booking",course:"page/course",detail:"page/detail",detailnew:"page/detailnew",home:"page/home",list:"page/list",news:"page/news",service:"page/service",station:"page/station",samplePopup:"popup/samplePopup",index:"site/index",kernel:"site/kernel",pages:"site/pages",popups:"site/popups"}});
+//# sourceMappingURL=min.js.map

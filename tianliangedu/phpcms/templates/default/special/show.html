@@ -1,0 +1,18 @@
+{template "content","header"}
+<div id="special" style="display: block;">
+	<div id="right-topic" class="yuekan">
+	    <div class="col-auto">
+	        <div class="box">
+	            <h5 class="title-2">相关信息</h5>
+	            <ul class="content digg">
+				{pc:special action="content_list" specialid="$specialid" num="10" order="views DESC"}
+					{loop $data $r}
+						<li><a href="{$r[url]}" target="_blank">{str_cut($r[title], 32)}</a></li>
+					{/loop}
+				{/pc}
+	            </ul>
+	        </div>
+	    </div>
+    </div>
+</div>
+{template "special","footer"}

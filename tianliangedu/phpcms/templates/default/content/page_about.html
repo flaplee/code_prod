@@ -1,0 +1,14 @@
+{template "content","header"}
+<div id="about" style="display:block;">
+    <div class="about-box row clearfix">
+        {template "content","left_about"}
+        <div class="about-content fr">
+            <section>
+                <h3>{$title}</h3>
+                {$content}
+            </section>
+        </div>
+    </div>
+</div>
+<script src="{APP_PATH}framework/src/require.js" data-main="{APP_PATH}dev/page/about/about.js"></script>
+{template "content","footer"}

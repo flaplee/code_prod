@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=7" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="fragment" content="!" />
+<meta name="baidu-site-verification" content="s8lKq14hsa" />
+<title>{if isset($SEO['title']) && !empty($SEO['title'])}{$SEO['title']}{/if}{$SEO['site_title']}</title>
+<meta name="keywords" content="{$SEO['keyword']}">
+<meta name="description" content="{$SEO['description']}">
+<style>
+ body.loading * {
+    display: none;
+}
+body.loading #loading,
+body.loading #loading * {
+    display: block;
+}
+</style>
+<script type="text/javascript" src='{APP_PATH}framework/all.js'></script>
+</head>
+<body class="loading">
+    <div class="top-box">
+        <div class="row clearfix">
+            <div class="fl">
+                <i class="icon iconfont tianliangico">&#xe728;</i>
+                <a href="/">天亮培优学校</a>
+            </div>
+            <div class="fr">
+                <a href="{$CATEGORYS[27]['url']}">关于我们</a>
+                <a href="{$CATEGORYS[33]['url']}">客服中心</a>
+                <a href="{$CATEGORYS[13]['url']}">天亮社区</a>
+                <span><i class="icon iconfont phone">&#xe634;</i>资讯热线: 027-81771511</span>
+            </div>
+        </div>
+    </div>
+    <div class="header-box">
+        <div class="header-inner clearfix">
+            <div class="logo-box">
+                <a class="logo" href="/" title="天亮教育-天亮培优学校">天亮教育-天亮培优学校</a>
+            </div>
+            <div class="post-box">
+                <ul class="post-inner">
+                    <li class="item"><a href="javascript:;" title=""><i class="icon-weibo"></i>微博</a></li>
+                    <li class="item"><a href="javascript:;" title=""><i class="icon-weixin"></i>微信</a></li>
+                    <li class="item"><a href="javascript:;" title=""><i class="icon-cooperate"></i>商务合作</a></li>
+                </ul>
+                <div class="post-wrap">
+                    <a title="天亮教育-天亮教育培优平台" href="javascript:;" target="_blank">天亮教育-天亮教育培优平台订票</a>
+                </div>
+            </div>
+        </div>
+        <div class="header-nav">
+            <ul class="nav-box">
+                <li class="item item-course">天亮培优计划</li>
+                <li class="item"><a class="home-item" href="{siteurl($siteid)}">首页</a></li>
+                {pc:get sql="select * from phpcms_category where catid in(22,23,24,25)" return="data"}
+                    {loop $data $k $r}
+                        <li class="item {if $catid == $r['catid']}current{/if}">
+                            <a class="booking-item" href="{$CATEGORYS[$r['catid']]['url']}">{$r[catname]}</a>
+                        </li>
+                    {/loop}
+                {/pc}
+                {pc:get sql="select * from phpcms_category where catid in(13)" return="data"}
+                    {loop $data $k $r}    
+                        <li class="item {if $catid==$r['catid']}current{/if}">
+                            <a class="booking-item" href="{$CATEGORYS[$r['catid']]['url']}">{$r[catname]}</a>
+                        </li>    
+                    {/loop}
+                {/pc}
+            </ul>
+        </div>
+    </div>
+    <div id="page">

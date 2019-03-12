@@ -1,0 +1,34 @@
+<div class="about-nav fl">
+    <ul>
+        <li class="sb-tag">关于我们：</li>
+        <li class="sb-item">
+            <ul class="sub-tag">
+                {pc:get sql="select * from phpcms_category where catid in(27,28,29,30,31)" return="data"}
+                    {loop $data $k $r}    
+                        <li class="{if $catid==$r['catid']}cur{/if}"><a href="{$r[url]}">{$r[catname]}</a></li>
+                    {/loop}
+                {/pc}
+            </ul>
+        </li>
+        <li class="sb-tag">客服中心：</li>
+        <li class="sb-item">
+            <ul class="sub-tag">
+                {pc:get sql="select * from phpcms_category where catid in(33,34,35)" return="data"}
+                    {loop $data $k $r}    
+                        <li class="{if $catid==$r['catid']}cur{/if}"><a href="{$r[url]}">{$r[catname]}</a></li>
+                    {/loop}
+                {/pc}
+            </ul>
+        </li>
+        <li class="sb-tag">网站条款：</li>
+        <li class="sb-item">
+            <ul class="sub-tag">
+                {pc:get sql="select * from phpcms_category where catid in(37,38,39)" return="data"}
+                    {loop $data $k $r}    
+                        <li class="{if $catid==$r['catid']}cur{/if}"><a href="{$r[url]}">{$r[catname]}</a></li>
+                    {/loop}
+                {/pc}
+            </ul>
+        </li>
+    </ul>
+</div>

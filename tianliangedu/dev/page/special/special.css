@@ -1,0 +1,258 @@
+.header-box{
+  height:80px;
+}
+  #right-topic{
+    margin-top: 42px;
+  }
+  .yuekan-list{
+      width: 1160px;
+      padding: 20px;
+      margin: 0 auto;
+    }
+    .yuekan-item{
+      width: 960px;
+      padding-bottom: 30px;
+      border-bottom: 1px dashed #dfdfdf;
+      margin: 0 100px;
+      margin-bottom: 30px;
+    }
+    .list-img{
+      width:108px;
+      height: 108px;
+      padding: 20px 46px 75px 46px;
+      background: #f8f8f8 url(https://www.yiqihao.com/public/hao/themes/web/images/aboutus/topic/topicleft.png)no-repeat center 28px;
+      float:left;
+    }
+    .list-img-ontext{
+      font-weight: bold;
+      margin:40px auto 10px auto;
+      font-size: 14px;
+      color:#ffffff;
+      text-align: center;
+      width: 80px;
+      padding-left: 10px;
+      line-height: 24px;
+    }
+    .list-link{
+      display: inline-block;
+      float: left;
+    }
+    .list-text{
+    width:108px;
+    height: 108px;
+    padding: 20px 46px 75px 46px;
+    background: #f8f8f8;
+    float:left;
+    }
+    .list-text-cont{
+        margin: 40px 0px 0px 4px;
+      font-size: 14px;
+      line-height: 24px;
+      font-weight: bold;
+      color: #6c6c6c;
+      overflow: hidden;
+      height: 96px;
+    }
+    #right-topic .m {
+      width: 545px;
+      height: 203px;
+      float: left;
+      position: relative;
+  }
+    .related-topic .item a {
+      float: left;
+      width: 240px;
+      height: 240px;
+      margin-right: 30px;
+      display: inline-block;
+  }
+
+  .related-topic .item a img {
+      width: 240px;
+      height: 150px;
+      margin-bottom: 10px
+  }
+
+  .related-topic .item a p {
+      font-size: 14px;
+      line-height: 22px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden
+  }
+
+  .related-topic .item a:nth-child(3n) {
+      margin-right: 0
+  }
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.whiteblock {
+  height: 160px;
+}
+.content {
+  font-family: "å¾®è½¯é›…é»‘" !important;
+  font-size: 18px;
+  color: #333;
+  height: 4500px;
+  background: url(../img1/mainbg.png) no-repeat transparent;
+  background-size: 100% 4500px;
+}
+.wrap {
+  height: 4500px;
+  width: 1000px;
+  margin: 0 auto;
+  position: relative;
+}
+.cont {
+  width: 1000px;
+  left: 50%;
+  margin-left: -500px;
+  position: absolute;
+}
+.cont1 {
+  top: 500px;
+}
+.cont1 p {
+  width: 550px;
+  margin: 0 auto;
+  text-align: left;
+  line-height: 40px;
+}
+.cont1 .spetext {
+  color: #fff;
+  font-size: 22px;
+}
+.cont1 .footerp {
+  font-size: 12px;
+  text-align: right;
+}
+.cont2 {
+  top: 920px;
+}
+.cont2 p {
+  width: 450px;
+  padding-left: 200px;
+  text-align: left;
+  line-height: 40px;
+  font-size: 16px;
+  line-height: 28px;
+  text-indent: 2em;
+}
+.cont3 {
+  top: 1320px;
+}
+.cont3 p {
+  width: 450px;
+  padding-left: 400px;
+  text-align: left;
+  line-height: 40px;
+  font-size: 16px;
+  line-height: 28px;
+  text-indent: 2em;
+  color: #fff;
+}
+.cont4 {
+  top: 1680px;
+}
+.cont4 p {
+  width: 500px;
+  padding-left: 200px;
+  text-align: left;
+  line-height: 40px;
+  font-size: 16px;
+  line-height: 28px;
+  text-indent: 2em;
+  color: #fff;
+}
+.cont5 {
+  top: 2150px;
+}
+.cont5 p {
+  width: 500px;
+  padding-left: 400px;
+  text-align: left;
+  line-height: 40px;
+  font-size: 16px;
+  line-height: 28px;
+  text-indent: 2em;
+  color: #fff;
+}
+.cont6 {
+  top: 2550px;
+}
+.cont6 p {
+  width: 450px;
+  padding-left: 200px;
+  text-align: left;
+  line-height: 40px;
+  font-size: 16px;
+  line-height: 28px;
+  text-indent: 2em;
+  color: #fff;
+}
+.cont7 {
+  top: 2950px;
+}
+.cont7 p {
+  width: 500px;
+  padding-left: 400px;
+  text-align: left;
+  line-height: 40px;
+  font-size: 16px;
+  line-height: 28px;
+  text-indent: 2em;
+}
+.cont8 {
+  top: 3380px;
+}
+.cont8 p {
+  width: 450px;
+  padding-left: 200px;
+  text-align: left;
+  line-height: 40px;
+  font-size: 16px;
+  line-height: 28px;
+  text-indent: 2em;
+  color: #fff;
+}
+.cont9 {
+  top: 3780px;
+}
+.cont9 p {
+  width: 500px;
+  padding-left: 400px;
+  text-align: left;
+  line-height: 40px;
+  font-size: 16px;
+  line-height: 28px;
+  text-indent: 2em;
+  color: #fff;
+}
+.cont10 {
+  top: 4180px;
+}
+.cont10 p {
+  width: 450px;
+  padding-left: 200px;
+  text-align: left;
+  line-height: 40px;
+  font-size: 16px;
+  line-height: 28px;
+  text-indent: 2em;
+}
+.cont11 {
+  top: 4320px;
+  text-align: center;
+}
+.cont11 img {
+	display:inline-block;
+  width: 150px;
+}
+.cont11 a{
+  display:block;
+  text-align:center;
+}

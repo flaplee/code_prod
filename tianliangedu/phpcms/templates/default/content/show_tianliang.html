@@ -1,0 +1,131 @@
+{template "content","header"}
+<div id="detailnew" style="display:block;">
+	<div class="detail-box row clearfix">
+		<div class="detail-crumb">
+			当前位置：<a href="/#!home">首页</a>&gt;{catpos($catid)}&nbsp;&nbsp;<span class="sup-title">{$title}</span>
+		</div>
+		<div class="detail-cont">
+			<div class="detail-inner">
+				<div class="con details">
+					<div class="left">
+						<div class="tags clearfix">
+							{pc:block pos="tianliang_tags"}{/pc}
+						</div>
+						<div class="head">
+							<h3>{$title}</h3>
+							<p class="font_size12 font_color_gray mt10 mb20">发布日期：{str_cut($inputtime,15,$dot='')} 来源：<span class="blue">天亮教育</span></p>
+						</div>
+						{if $description}
+							<div class="description">
+								<p>摘要：{$description}</p>
+							</div>
+						{/if}
+						<div class="text">
+							{if $allow_visitor==1}
+								{$content}
+								<!--内容关联投票-->
+								{if $voteid}<script language="javascript" src="{APP_PATH}index.php?m=vote&c=index&a=show&action=js&subjectid={$voteid}&type=2"></script>{/if}
+				                
+							{else}
+								<CENTER><a href="{APP_PATH}index.php?m=content&c=readpoint&allow_visitor={$allow_visitor}"><font color="red">阅读此信息需要您支付 <B><I>{$readpoint} {if $paytype}元{else}点{/if}</I></B>，点击这里支付</font></a></CENTER>
+							{/if}
+							<div id="pages" class="text-c">{$pages}</div>
+							<p class="f14">
+				                <strong>上一篇：</strong><a href="{$previous_page[url]}">{$previous_page[title]}</a><br />
+				                <strong>下一篇：</strong><a href="{$next_page[url]}">{$next_page[title]}</a>
+				            </p>
+						</div>
+						<div class="copyright">
+							<p class="mb10">版权声明：</p>
+							<div>
+								<p>
+									本文章仅用于学习和交流目的，非商业转载请注明文章来源。对未经许可擅自使用者，本公司保留追究其法律责任的权利。如需转载或商业合作，请联系武汉天亮培优学校<span>tanliangedu@163.com</span>
+								</p>
+								<p>来源：<span>{$comefrom}</span></p>
+							</div>
+						</div>
+						<div class="like_share" style="display:none;">
+							<div class="like"><p class="text">赞</p><p id="praise">663</p><p class="addOne">+1</p></div>
+							<div class="share"><p class="text">分享</p><p id="share">11</p></div>
+							<div class="share_popup gray_transparent" style="display: none;">
+								<div class="frame">
+									<div class="bj-white">
+										<div class="fr"><p>分享到...</p><div class="bdsharebuttonbox bdshare-button-style0-16" data-tag="share_1" data-bd-bind="1496905528091"><a class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a></div></div>
+										<i class="icon-disappear" icon-bg="icon_disappear"></i>
+									</div>
+								</div>
+							</div>
+							<!--分享功能--><!--复制老网站中的分享功能即可-->
+							<div class="bdshre"></div>
+						</div>
+						<p class="font_size16 font_color_gray mt10 mb20">继续阅读</p>
+						<div class="else">
+						{pc:content action="relation" relation="$relation" id="$id" catid="$catid" num="5" keywords="$rs[keywords]"}
+						  <!-- {if $data} -->
+						    	{loop $data $r}
+						               <a href="{$r[url]}" target="_blank" title="{$r[title]}">
+										<img src="{thumb($r[thumb], 240, 150)}" title="{$r[title]}" alt="{$r[title]}">
+										<p>{$r[title]}</p>
+									</a>
+						        {/loop}
+							
+						  <!-- {/if} -->
+						{/pc}
+						</div>
+					</div>
+					<div class="right">
+						<div class="review">
+							<h6>相关项目</h6>
+							<div class="box">
+								{pc:content action="relation" relation="$relation" catid="$catid" num="2" keywords="$rs[keywords]"}
+									{loop $data $r}
+										<a href="{$r[url]}" title="{$r[title]}" target="_blank">
+											<img src="{$r[thumb]}" title="{$r[title]}" alt="{$r[title]}">
+											<p>{$r[title]}</p>
+										</a>
+									{/loop}
+								{/pc}
+							</div>
+						</div>
+						<div class="recommended">
+							<h6>相关推荐</h6>
+							<ul>
+								{pc:content  action="position" posid="10" order="listorder DESC" num="4"}
+								 {loop $data $key $val}
+									<li>
+										<a href="{$val['url']}"><i></i><p>{$val['title']}</p></a>
+									</li>
+								 {/loop}
+							</ul>
+						</div>
+						<div class="recommended history">
+							<h6>您的浏览记录</h6>
+							<ul>
+								{pc:content  action="hits" catid="$catid" num="10" order="views DESC" cache="3600"}
+									{loop $data $r}
+										<li>
+											<a href="{$r[url]}" target="_blank" title="{$r[title]}">
+												<i></i>
+												<p>{str_cut($r[title], 28, '')}</p>
+											</a>
+										</li>
+									{/loop}
+								{/pc}
+							</ul>
+						</div>
+						<div class="review">
+							<h6>扫一扫</h6>
+							<p class="font_size14 font_color_gray mb10 ml25">加入天亮家长群</p>
+							<img src="{APP_PATH}dev/page/detailnew/images/qrcode.png" width="227" height="225" alt="" class="ml25">
+							<p class="font_color_gray  mt10 ml25">获得更多</p>
+							<p class="font_color_gray ml25"> 天亮教育相关信息</p>
+							<p class="font_color_gray ml25">及免费活动机会</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="{APP_PATH}framework/src/require.js" data-main="{APP_PATH}dev/page/detailnew/detailnew.js"></script>
+{template "content","footer"}

@@ -1,0 +1,43 @@
+{template 'special', 'header'}
+<div class="main">
+	<div class="crumbs"><a href="">首页</a><span> &gt; </span> <a href="{APP_PATH}index.php?m=special&c=index&a=special">专题</a> <span> &gt; </span> <a href="{$url}">{$title}</a> </div>
+    <div class="box">
+        <h5>{$info[name]}</h5>
+        <div class="content">
+		{pc:special  action="content_list" specialid="$specialid" typeid="$typeid" listorder="3" page="$page" num="20"}
+            <ul class="list f14 lh26 row-2">
+			{loop $data $r}
+                <li>·<a href="{$r['url']}" target="_blank">{str_cut($r['title'], 40)}</a></li>
+				{/loop}
+            </ul>
+        </div>
+		<div id="pages" class="text-c">{$pages}</div>
+		{/pc}
+    </div>
+</div>
+<div id="special" style="display: block;">
+    <div id="right-topic" class="yuekan">
+    {pc:special  action="content_list" specialid="$specialid" typeid="$typeid" listorder="3" page="$page" num="20"}
+            <div id="right-topic-list" class="yuekan-list">
+            {loop $data $r}
+                <div class="yuekan-item">
+                    <div class="list-img">
+                        <div class="list-img-ontext">{str_cut(date('Y',$r[inputtime]),12,$dot='')}<br>{str_cut(date('m月d日',$r[inputtime]),12,$dot='')}</div>
+                    </div>
+                    <a class="list-link clearfix" href="{$r['url']}" target="_blank">
+                        <div class="m">
+                            <img src="{thumb($r['thumb'], 545, 203)}" alt="" width="545" height="203">
+                        </div>
+                    </a>
+                    <div class="list-text">
+                        <div class="list-text-cont">{$r['description']}</div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            {/loop}
+        </div>
+        <div id="pages" class="text-c">{$pages}</div>
+    {/pc}
+    </div>
+</div>
+{template 'special', 'footer'}

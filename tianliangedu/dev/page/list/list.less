@@ -1,0 +1,152 @@
+@import '../../config.less';
+#list{
+	background-color: #f1f1f1;
+	.course-box{
+		width: 1200px;
+			margin: 0 auto;
+		.course-nav{
+			width: 225px;
+			float:left;
+			.course-inner{
+			   	width: 225px;
+	            li{
+	            	font-size:16px;
+	                height:48px;
+	                background:#595959;
+	                cursor:pointer;
+	                padding:10px 20px 17px;
+	                color:#fff;
+	                &:hover{
+	                    background-color: #2f3437;
+	                }
+	                h4{
+	                    font-size: 16px;
+	                    height:22px;
+	                    line-height:22px;
+	                }
+	                span{
+	                    font-size: 12px;
+	                    height:20px;
+	                    line-height: 20px;
+	                    color:#bbb;
+	                    display:block;
+	                    float:left;
+	                    margin-right:10px;
+	                    padding: 0 5px 0 0;
+	                    &:hover{
+	                        color:#fd7c1a;
+	                    }
+	                }
+	            }
+	        }
+	        .course-relate{
+				width: 225px;height: 139px;background-color:#fd7c1a;padding-top: 13px;padding-bottom: 15px;
+				.title{text-align: center;padding-right: 19px;color: #fff;font-size: 16px;height: 20px;line-height: 20px;}
+				.info{
+					width: 225px;margin: 0 auto;height: 44px;position: relative;
+					i{
+						float: left;
+					    width: 46px;
+					    height: 44px;
+					    overflow: hidden;
+					    display: block;
+					    font-size: 40px;
+					    color: #fff;
+					    position: absolute;
+					    top: -10px;
+					    left: 5px;
+					    &:hover{
+					    	-webkit-animation: shake_s 5s infinite linear normal;
+			                -moz-animation: shake_s 5s infinite linear normal;
+			                -ms-animation: shake_s 5s infinite linear normal;
+			                animation: shake_s 2s infinite linear normal
+		                }
+					}
+					.text{font-size: 24px;font-weight: bold;color: #fff;float: right;padding-top: 13px;}
+				}
+				.line{width: 225px;height: 3px;background-color:#fff;margin: 0 auto;margin-top: 14px;}
+				.inner{
+					width: 225px;
+					margin: 0 auto;
+					padding-top: 9px;
+					color: #fff;
+					line-height: 31px;
+					font-size: 22px;
+					text-align: center;
+					display: block;
+					cursor: pointer;
+					text-decoration:none;
+					span{font-size: 14px;}
+				}
+			}
+		}
+		.course-cont{
+			width:950px;
+			float:left;
+			margin-left: 25px;
+			.course-crumb{
+				font-size: 14px;
+				height: 40px;
+				line-height: 40px;
+				color: #999;
+				text-align: left;
+				&>a{
+					color:#60ca6e;
+					margin: 0px 5px;
+				}
+			}
+			.course-detail{
+				ul.course-list{
+					width:950px;
+					margin:0 auto;
+					li{
+						background-color: #fff;
+						margin-bottom:15px;
+						a.item-img{
+							width:170px;
+							height:100px;
+							display:inline-block;
+							*display:inline;
+							*zoom:1;
+							float:left;
+						}
+						.item-info{
+							width: 750px;
+							height: 100px;
+							margin-left: 20px;
+							float: left;
+							strong{
+								color: #fd7c1a;
+							}
+							a.item-title{
+								font-size: 16px;
+								height:30px;
+								line-height:30px;
+								&:hover{
+									color: #fd7c1a;
+								}
+							}
+							.item-desc{
+							font-size: 14px;
+							text-indent: 24px;
+							line-height: 20px;
+							height: 60px;
+							overflow: hidden;
+								.item-detail{
+									color:#3090C9;
+								}
+							}
+						}
+						&:hover {
+							background-color:#fff;
+						    color: #323232;
+						    box-shadow: 0px 0px 10px 0px #ddd;
+						    margin-top: -1px;
+						    margin-bottom: 16px
+						}
+					}
+				}
+			}
+		}
+	}
+}

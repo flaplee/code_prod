@@ -1,0 +1,139 @@
+{template "content","header"}
+<div id="news" style="display: block;">
+    <div class="news-box row clearfix">
+        <div class="news-recent fl">
+            <div class="recent-inner">
+                <h2 class="recent-title">最新资讯</h2>
+                <div class="recent-info clearfix">
+                    <div class="recent-slide">
+                        <div class="slide-scroll">
+                            <div class="slide-wrap">
+                                <ul class="slide-scroll-list">
+                                    {pc:content  action="position" posid="1" order="listorder DESC" num="4"}
+                                        {php $i =0;}
+                                          {loop $data $key $val}
+                                        {php $i ++}
+                                        <li class="item  {if $i == 1}cur{/if}">
+                                          <div class="item-info"><a target="_blank" title="{$val['title']}" href="{$val['url']}"><img alt="{$val['title']}" src="{$val['thumb']}" class="scroll-img"></a><p class="item-bg"></p><p class="item-title"><a target="_blank" href="{$val['url']}">{$val['title']}</a></p></div>
+                                        </li>
+                                       {/loop}
+                                     {/pc}
+                                </ul>
+                                {pc:content  action="position" posid="1" order="listorder DESC" num="4"}
+                                    <ol>
+                                        {php $i =0;}
+                                          {loop $data $key $val}
+                                        {php $i ++}
+                                          <li class="{if $i == 1}cur{/if}">{$i}</li>
+                                        {/loop}
+                                    </ol>
+                                    <a href="javascript:;" class="slide-btn pre-btn"></a>
+                                    <a href="javascript:;" class="slide-btn next-btn"></a>
+                                {/pc}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recent-content">
+                    {pc:content  action="position" posid="2" order="listorder DESC" num="1"}
+                        {php $i =0;}
+                            {loop $data $key $val}
+                        {php $i ++}
+                            <div class="content-title">
+                                <div class="content-hd">
+                                    <a title="{$val['title']}" href="{$val['url']}">{$val['title']}</a></div>
+                                <div class="content-bd">&nbsp;&nbsp;{$val['description']}<a href="{$val['url']}">【查看详情】</a></div>
+                            </div>
+                        {/loop}
+                    {/pc}
+                    {pc:content action="position" posid="2" order="id DESC LIMIT 1,5--" num="5"}
+                        <ul class="content-list">
+                        {loop $data $key $val}
+                            <li><a title="{$val['title']}" href="{$val['url']}">{$val['title']}</a></li>
+                        {/loop}
+                        </ul>
+                    {/pc}
+                    </div>
+                </div>
+            </div>
+            <div class="recent-inner-por">
+                <div class="por-head clearfix">
+                    {php $j=1;}
+                    {loop subcat($catid) $v}
+                        {php if($v['type']!=0) continue;}
+                            <a class="{if $j == 1}cur{/if}" href="javascript:;" title="{$v[catname]}">{$v[catname]}</a>
+                        {$j++}
+                    {/loop}
+                </div>
+                <div class="por-body">
+                    {php $j=1;}
+                    {loop subcat($catid) $v}
+                        {php if($v['type']!=0) continue;}
+                        {pc:content action="lists" catid="$v[catid]" num="5" order="id DESC"}
+                            <ul class="por-list {if $j == 1}cur{/if}">
+                                {loop $data $v}
+                                    <li><a href="{$v[url]}" title="{$v[title]}"><p class="text-overflow">{$v[title]}</p><em>{str_cut(date('Y-m-d',$v[inputtime]),12,$dot='')}</em></a></li>
+                                {/loop}
+                            </ul>
+                         {/pc}
+                         {$j++}
+                    {/loop}
+                </div>
+            </div>
+        </div>
+        <div class="news-push fr">
+            <div class="push-outer">
+                <h2 class="push-title"><a href="javascript:;" target="_blank" style="color:#333">教学动态</a></h2>
+                <div class="push-info">
+                    <div class="push-wrap" style="overflow:hidden; position:relative; width:326px">
+                        <div class="push-inner">
+                            <ul class="push-inner-list" style="float: left; width: 326px;">
+                                {pc:content  action="lists" catid="21" order="listorder DESC" num="5"}
+                                    {loop $data $key $val}
+                                        <li>
+                                            <a href="{$val['url']}" title="{$val['title']}">{$val['title']}</a>
+                                        </li>
+                                    {/loop}
+                                {/pc}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="push-contro hide">
+                    <span class="prev">&lt;</span>
+                    <ul class="contro-list"><span class="on"></span><span class=""></span><span class=""></span></ul>
+                    <span class="next">&gt;</span>
+                </div>
+            </div>
+            <div class="push-outer">
+                <h2 class="push-title"><a href="javascript:;" target="_blank" style="color:#333">最新公告</a></h2>
+                <div class="push-info">
+                    <div class="push-wrap" style="overflow:hidden; position:relative; width:326px">
+                        <div class="push-inner">
+                            <ul class="push-inner-list" style="float: left; width: 326px;">
+                                {pc:content  action="lists" catid="20" order="listorder DESC" num="6"}
+                                    {php $i =0;}
+                                        {loop $data $key $val}
+                                    {php $i ++}
+                                        <li>
+                                            <a href="{$val['url']}" title="{$val['title']}">{$val['title']}</a>
+                                        </li>
+                                    {/loop}
+                                {/pc}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="push-contro hide">
+                    <span class="prev">&lt;</span>
+                    <ul class="contro-list"><span class="on"></span><span class=""></span><span class=""></span></ul>
+                    <span class="next">&gt;</span>
+                </div>
+            </div>
+            <div class="push-ads">
+                <a href="/" target="_blank" title="我是广告位置"><img src="{APP_PATH}dist/page/news/0.0.1/images/ad.jpg" width="350px" height="200px"></a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{APP_PATH}framework/src/require.js" data-main="{APP_PATH}dev/page/news/news.js"></script>
+{template "content","footer"}

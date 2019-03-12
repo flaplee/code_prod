@@ -1,0 +1,22 @@
+{template "content","header"}
+<div id="special" style="display: block;">
+    <div id="right-topic" class="yuekan">
+    	<div id="right-topic-list" class="yuekan-list">
+    		{$content}
+	    	<div class="related-topic">
+	    		<p class="font_size16 font_color_gray mt10 mb20">天亮推荐专题</p>
+		    	{pc:special action="content_list" specialid="$specialid" num="10" order="views DESC"}
+					{loop $data $r}
+						<div class="item clearfix">
+							<a href="{$r[url]}" target="_blank" title="{str_cut($r[title], 32)}">
+								<img src="{$r[thumb]}" title="{str_cut($r[title], 32)}" alt="{str_cut($r[title], 32)}">
+								<p>{str_cut($r[title], 32)}</p>
+							</a>
+						</div>
+					{/loop}
+				{/pc}
+			</div>
+    	</div>
+	</div>
+</div>
+{template "special","footer"}

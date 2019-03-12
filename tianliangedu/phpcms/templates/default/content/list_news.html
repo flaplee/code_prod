@@ -1,0 +1,98 @@
+{template "content","header"}
+<style>
+.course-detail .course-list>a:hover {
+    color: #323232;
+    box-shadow: 0px 0px 10px 0px #ddd;
+    margin-top: -1px;
+    margin-bottom: 21px
+}
+
+</style>
+<div id="list" style="display:block;">
+    <div class="course-box clearfix">
+        <div class="course-nav">
+            <ul class="course-inner">
+                <li class="item"><h4>理科辅导</h4><span>小学数学</span><span>初中理科</span><span>高中理科</span></li>
+                <li class="item"><h4>文科辅导</h4><span>小学语文</span><span>高中文科</span><span>初中文科</span></li>
+                <li class="item"><h4>兴趣爱好</h4><span>科技艺术</span><span>艺术体育</span><span>托管班</span><span>夏冬令营</span></li>
+            </ul>
+            <div class="course-relate">
+                <p class="title">天亮咨询热线</p>
+                <div class="info">
+                    <i class="iconfont">&#xe629;</i>
+                    <div class="text">027-81771511</div>
+                </div>
+                <div class="line"></div>
+                <a class="inner" href="javascript:;">
+                    <p>不知道该如何选择？</p>
+                    <p><span>让咨询顾问主动联系你吧！</span></p>
+                </a>
+            </div>
+        </div>
+        <div class="course-cont">
+            <div class="course-crumb">
+                当前位置：<a href="{siteurl($siteid)}">首页</a><span>&gt;</span>{catpos($catid)}<span class="sup-title">列表</span>
+            </div>
+            <div class="course-detail">
+                {pc:content action="lists" catid="$catid" num="25" order="id DESC" page="$page"}
+                    <ul class="course-list">
+                        {loop $data $r}
+                            <li class="item clearfix">
+                                <a class="item-img" href="{$r[url]}" target="_blank" title="" style="width:170px;height:100px;background:url('{$r[thumb]}') no-repeat center;background-size: 100%;"></a>
+                                <div class="item-info">
+                                    <strong>【{$CATEGORYS[$catid][catname]}动态】</strong>
+                                    <a class="item-title" href="{$r[url]}" target="_blank" title="{$r[title]}">{$r[title]}</a>
+                                    <span class="rt">{date('Y-m-d H:i:s',$r[inputtime])}</span>
+                                    <p class="item-desc">{$r[description]}<a class="item-detail" href="{$r[url]}" target="_blank" title="{$r[description]}">【详细】</a>
+                                    </p>
+                                    <p style="display:none;">{date('Y-m-d',$r[inputtime])}</p>
+                                </div>
+                            </li>
+                        {/loop}
+                    </ul>
+                    <div id="pages" class="text-c">{$pages}</div>
+                {/pc}
+            </div>
+        </div>
+    </div>
+</div>
+<!--main-->
+<div class="main" style="display:none;">
+	<div class="col-left">
+    	<div class="crumbs"><a href="{siteurl($siteid)}">首页</a><span> > </span>{catpos($catid)} 列表</div>
+    	{pc:content action="lists" catid="$catid" num="25" order="id DESC" page="$page"}
+        <ul class="list lh24 f14">
+{loop $data $r}
+	<li><span class="rt">{date('Y-m-d H:i:s',$r[inputtime])}</span>·<a href="{$r[url]}" target="_blank"{title_style($r[style])}>{$r[title]}</a></li>
+	{if $n%5==0}<li class="bk20 hr"></li>{/if}
+{/loop}
+        </ul>
+        <div id="pages" class="text-c">{$pages}</div>
+{/pc}
+  </div>
+    <div class="col-auto">
+        <div class="box">
+            <h5 class="title-2">频道总排行</h5>
+             {pc:content action="hits" catid="$catid" num="10" order="views DESC" cache="3600"}
+            <ul class="content digg">
+				{loop $data $r}
+					<li><a href="{$r[url]}" target="_blank">{$r[title]}</a></li>
+				{/loop}
+            </ul>
+            {/pc}
+        </div>
+        <div class="bk10"></div>
+        <div class="box">
+            <h5 class="title-2">频道本月排行</h5>
+             {pc:content action="hits" catid="$catid" num="8" order="monthviews DESC" cache="3600"}
+            <ul class="content rank">
+				{loop $data $r}
+				<li><span>{number_format($r[monthviews])}</span><a href="{$r[url]}"{title_style($r[style])} class="title" title="{$r[title]}">{str_cut($r[title],56,'...')}</a></li>
+				{/loop}
+            </ul>
+            {/pc}
+        </div>
+    </div>
+</div>
+<script src="{APP_PATH}framework/src/require.js" data-main="{APP_PATH}dev/page/list/list.js"></script>
+{template "content","footer"}

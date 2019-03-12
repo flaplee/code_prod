@@ -1,0 +1,346 @@
+@import '../../config.less';
+body.detail {
+    -background-color: #f1f2f6;
+}
+.detail-box{
+	.detail-crumb{
+		font-size: 14px;
+		height: 40px;
+		line-height: 40px;
+		color: #999;
+		text-align: left;
+		&>a{
+			color:#60ca6e;
+			margin: 0px 5px;
+		}
+	}
+	.detail-cont{
+		margin-bottom: 20px;
+		.detail-nav{
+			background-color: #f9f8fa;
+			border-top: 2px solid #38c249;
+			border-bottom: 1px solid #e5e5e7;
+			height: 40px;
+			position: relative;
+			.nav-text{
+				font-size: 18px;
+				color: #60ca6e;
+				height: 40px;
+				line-height: 40px;
+				text-indent: 20px;
+			}
+		}
+		.detail-inner{
+			color: #666;
+
+			.con {
+			    overflow: hidden;
+			    padding: 25px;
+				.left {
+				    width: 800px;
+				    margin-right: 90px
+				}
+			}
+
+			.con>* {
+			    float: left
+			}
+
+			.left {
+			    width: 165px;
+			    padding-left: 20px;
+			    margin-right: 55px
+			}
+
+			.left h5 {
+			    border-bottom: 3px solid #2aa26b;
+			    padding-bottom: 5px;
+			    margin-bottom: 15px
+			}
+
+			.left .nav {
+			    padding-bottom: 10px;
+			    border-bottom: 1px solid #cacaca
+			}
+
+			.left .nav a {
+			    display: block;
+			    font-size: 16px;
+			    line-height: 36px;
+			    position: relative
+			}
+
+			.left .nav a.checked {
+			    color: #2aa26b
+			}
+
+			.left .nav a.checked:after {
+			    content: '';
+			    position: absolute;
+			    top: 14px;
+			    left: -20px;
+			    width: 0;
+			    height: 0;
+			    border-top: 5px solid transparent;
+			    border-left: 10px solid #2aa26b;
+			    border-bottom: 5px solid transparent
+			}
+
+			.left .problem {
+			    position: relative;
+			    display: block
+			}
+
+			.left .problem i {
+			    position: relative;
+			    top: -5px;
+			    width: 20px;
+			    height: 14px;
+			    background: #2AA26B;
+			    border-radius: 3px;
+			    font-style: normal
+			}
+
+			.left .problem i:after {
+			    content: '';
+			    position: absolute;
+			    top: 12px;
+			    left: 3px;
+			    width: 0;
+			    height: 0;
+			    border-top: 7px solid #2aa26b;
+			    border-right: 7px solid transparent
+			}
+
+			.left .problem i:before {
+			    content: '?';
+			    position: absolute;
+			    left: 50%;
+			    margin-left: -0.4em;
+			    top: 0px;
+			    color: white;
+			    font-size: 0.6em
+			}
+
+			.left>.checked {
+			    color: #2aa26b
+			}
+
+			.left>.checked:after {
+			    content: '';
+			    position: absolute;
+			    top: 6px;
+			    left: -20px;
+			    width: 0;
+			    height: 0;
+			    border-top: 5px solid transparent;
+			    border-left: 10px solid #2aa26b;
+			    border-bottom: 5px solid transparent
+			}
+
+			.left>img {
+			    width: 90px;
+			    height: 90px
+			}
+
+			.center {
+			    width: 650px;
+			    margin-right: 40px
+			}
+
+			.center .title {
+			    margin-top: 22px;
+			    padding-bottom: 25px;
+			    border-bottom: 1px solid #ddd
+			}
+
+			.center .title .img {
+			    background: #f3f3f3;
+			    width: 650px;
+			    height: 300px;
+			    overflow: hidden;
+			    border: 1px solid #ddd
+			}
+
+			.center .title .img img {
+			    height: 300px
+			}
+
+			.center .title .fs18 {
+			    display: block
+			}
+
+			.center .title .font_size14 {
+			    line-height: 22px
+			}
+
+			.center .title .font_size12 {
+			    position: relative
+			}
+
+			.center .title .font_size12 span {
+			    margin: 0 5px
+			}
+
+			.center .title .font_size12 span:first-child {
+			    margin-left: 0
+			}
+
+			.center .title button {
+			    position: absolute;
+			    top: -4px;
+			    right: 0;
+			    background: #FF7272;
+			    color: white;
+			    width: 50px;
+			    height: 22px;
+			    line-height: 22px;
+			    text-align: center
+			}
+
+			.center .title:hover a {
+			    color: #2AA26B
+			}
+
+			.center .list li {
+			    padding-top: 20px;
+			    padding-bottom: 10px;
+			    border-bottom: 1px solid #ddd
+			}
+
+			.center .list li .font_size12 span:first-child {
+			    margin-left: 0
+			}
+
+			.center .list li .font_size12 span {
+			    margin: 0 5px
+			}
+
+			.center .list li>div {
+			    overflow: hidden
+			}
+
+			.center .list li>div>a {
+			    margin-right: 25px
+			}
+
+			.center .list li .img {
+			    display: inline-block;
+			    width: 238px;
+			    margin-bottom: 20px;
+			    overflow: hidden;
+			    border: 1px solid #ddd
+			}
+
+			.center .list li .img img {
+			    height: 150px
+			}
+
+			.center .list li div.fl {
+			    width: 385px
+			}
+
+			.center .list li div.fl a {
+			    display: block
+			}
+
+			.center .list li:hover div.fl a {
+			    color: #2AA26B
+			}
+
+			.center .sort {
+			    margin: 15px 0;
+			    font-size: 15px
+			}
+
+			.center .sort a.disabled {
+			    color: #888
+			}
+
+			.right {
+			    width: 215px;
+			    padding-top: 22px
+			}
+
+			.right>div h6 {
+			    font-size: 16px;
+			    padding-left: 20px;
+			    border-left: 5px solid #2AA26B
+			}
+
+			.right div+div {
+			    margin-top: 35px
+			}
+
+			.right .recommended ul {
+			    padding-top: 15px
+			}
+
+			.right .recommended li a {
+			    display: block;
+			    position: relative;
+			    padding-left: 24px;
+			    color: #888;
+			    margin-bottom: 10px
+			}
+
+			.right .recommended li a p {
+			    display: -webkit-box;
+			    -webkit-box-orient: vertical;
+			    -webkit-line-clamp: 2;
+			    overflow: hidden;
+			    line-height: 20px;
+			}
+
+			.right .recommended li a:hover {
+			    color: #2aa26b
+			}
+
+			.right .recommended li a:hover i {
+			    background: #2AA26B
+			}
+
+			.right .recommended li i {
+			    position: absolute;
+			    left: 0;
+			    top: 8px;
+			    width: 4px;
+			    height: 4px;
+			    background: #888;
+			    border-radius: 50%
+			}
+
+			.right .history li a p {
+			    display: -webkit-box;
+			    -webkit-box-orient: vertical;
+			    -webkit-line-clamp: 3;
+			    overflow: hidden
+			}
+
+			.right .review .box {
+			    margin-top: 15px
+			}
+
+			.right .review .box a {
+			    display: block;
+			    margin-bottom: 10px
+			}
+
+			.right .review .box a img {
+			    width: 115px;
+			    height: 70px;
+			    margin-bottom: 5px;
+			    border: 1px solid #e1e1e1
+			}
+
+			.right .review .box a p{
+				line-height: 20px;
+			}
+
+			.right .review .ml25 {
+			    margin-left: 25px;
+			    line-height: 24px;
+			}
+		}
+	}
+}

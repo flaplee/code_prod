@@ -1,0 +1,411 @@
+{template "content","header"}
+<!-- index start -->
+<style>
+  #home .entry-box .pro-league .league-event .prev,#home .entry-box .pro-league .league-event .next{
+    position: absolute;
+    top: 0;
+    right: 8px;
+    width: 8px;
+    height: 14px;
+ }
+ #home .entry-box .pro-league .league-event .prev{right: 28px;}
+</style>
+<div id="home" style="display: block;">
+  <div class="banner-box">
+      <div id="banner" class="banner">
+          <!-- banner 内容 -->
+          {pc:content  action="lists" catid="14" order="listorder DESC" num="5"}
+            {php $i =0;}
+              {loop $data $key $val}
+            {php $i ++}
+                <a class="slider-item {if $i == 1}current{/if}" href="{$val['linkurl']}" title="{$val['title']}" alt="{$val['title']}" target="_blank" style="z-index: 5; left: 0px;background-image: url(&quot;{$val['thumb']}&quot;);"></a>
+              {/loop}
+          {/pc}
+      </div>
+      <div class="banner-nav">
+          {pc:content  action="lists" catid="14" order="listorder DESC" num="5"}
+            {php $i =0;}
+              {loop $data $key $val}
+            {php $i ++}
+                <a class="btn-item {if $i == 1}current{/if}" href="javascript:;" target="_blank"></a>
+              {/loop}
+          {/pc}
+          <!-- <a class="btn-item current" href="javascript:;"></a>
+          <a class="btn-item" href="javascript:;"></a> -->
+      </div>
+      <div class="course-box">
+          <div class="course-wrap">
+              <ul class="course-inner course-inner01">
+                  <li class="item"><h4>学前教育</h4><span>天亮学前班</span>
+                    <dl style="display: none;"> 
+                        <dt>学前教育</dt>
+                        <dd>
+                            <a href="javascript:;" target="_blank">天亮学前班</a>
+                        </dd>
+                    </dl>
+                  </li>
+                  <li class="item"><h4>理科辅导</h4><span>小学数学</span><span>初中理科</span><span>高中理科</span>
+                    <dl style="display: none;">
+                        <dt>理科辅导</dt>
+                        <dd>
+                            <h4>小学数学</h4>
+                            <a href="javascript:;" target="_blank">一年级</a>
+                            <a href="javascript:;" target="_blank">二年级</a>
+                            <a href="javascript:;" target="_blank">三年级</a>
+                            <a href="javascript:;" target="_blank">四年级</a>
+                            <a href="javascript:;" target="_blank">五年级</a>
+                            <a href="javascript:;" target="_blank">六年级</a>
+                        </dd>
+                        <dd>
+                            <h4>初中物理</h4>
+                            <a href="javascript:;" target="_blank">初一年级</a>
+                            <a href="javascript:;" target="_blank">初二年级</a>
+                            <a href="javascript:;" target="_blank">初三年级</a>
+                        </dd>
+                        <dd>
+                            <h4>初中化学</h4>
+                            <a href="javascript:;" target="_blank">初一年级</a>
+                            <a href="javascript:;" target="_blank">初二年级</a>
+                            <a href="javascript:;" target="_blank">初三年级</a>
+                        </dd>                         
+                        
+                    </dl>
+                    <dl class="cddcll" style="display: none;">
+                         <dd>
+                            <h4>初中数学</h4>
+                            <a href="javascript:;" target="_blank">初一年级</a>
+                            <a href="javascript:;" target="_blank">初二年级</a>
+                            <a href="javascript:;" target="_blank">初三年级</a>
+                        </dd>
+                        <dd>
+                            <h4>高中物理</h4>
+                            <a href="javascript:;" target="_blank">高一年级</a>
+                            <a href="javascript:;" target="_blank">高二年级</a>
+                            <a href="javascript:;" target="_blank">高三年级</a>
+                        </dd>
+                        <dd>
+                            <h4>高中化学</h4>
+                            <a href="javascript:;" target="_blank">高一年级</a>
+                            <a href="javascript:;" target="_blank">高二年级</a>
+                            <a href="javascript:;" target="_blank">高三年级</a>
+                        </dd>
+                        <dd>
+                            <h4>高中数学</h4>
+                            <a href="javascript:;" target="_blank">高一年级</a>
+                            <a href="javascript:;" target="_blank">高二年级</a>
+                            <a href="javascript:;" target="_blank">高三年级</a>
+                        </dd>                         
+                    </dl>
+                  </li>
+                  <li class="item"><h4>文科辅导</h4><span>小学语文</span><span>初中文科</span><span>高中文科</span>
+                    <dl style="display: none;">
+                        <dt>文科辅导</dt>
+                        <dd>
+                            <h4>小学语文</h4>
+                            <a href="javascript:;" target="_blank">一年级</a>
+                            <a href="javascript:;" target="_blank">二年级</a>
+                            <a href="javascript:;" target="_blank">三年级</a>
+                            <a href="javascript:;" target="_blank">四年级</a>
+                            <a href="javascript:;" target="_blank">五年级</a>
+                            <a href="javascript:;" target="_blank">六年级</a>
+                        </dd>
+                        <dd>
+                            <h4>初中语文</h4>
+                           <a href="javascript:;" target="_blank">初一年级</a>
+                           <a href="javascript:;" target="_blank">初二年级</a>
+                           <a href="javascript:;" target="_blank">初三年级</a>
+                        </dd>
+                        <dd>
+                            <h4>初中英语</h4>
+                           <a href="javascript:;" target="_blank">初一年级</a>
+                           <a href="javascript:;" target="_blank">初二年级</a>
+                           <a href="javascript:;" target="_blank">初三年级</a>
+                        </dd>
+                    </dl>
+                  </li>
+                  <li class="item"><h4>外语培训</h4><span>少儿英语</span><span>中高级英语</span><span>精英英语</span><span>示范校英语</span>
+                    <dl style="display: none;">
+                        <dt>外语培训</dt>
+                        <dd>
+                            <h4>少儿英语</h4>
+                            <a href="javascript:;" target="_blank">悦思维长线</a>
+                            <a href="javascript:;" target="_blank">悦思维短线</a>
+                            <a href="javascript:;" target="_blank">剑桥英语</a>
+                            <a href="javascript:;" target="_blank">悦思维尖子</a>
+                            <a href="javascript:;" target="_blank">悦思维超素</a>
+                            <a href="javascript:;" target="_blank">欧文思外教口语</a>
+                            <a href="javascript:;" target="_blank">伦敦三一口语</a>
+                            <a href="javascript:;" target="_blank">少儿英语</a>
+                        </dd>
+                        <dd>
+                            <h4>中高级英语</h4>
+                            <a href="javascript:;" target="_blank">E概念英语</a>
+                            <a href="javascript:;" target="_blank">新概念英语</a>
+                            <a href="javascript:;" target="_blank">MSE英语</a>
+                            <a href="javascript:;" target="_blank">E语阅</a>
+                            <a href="javascript:;" target="_blank">伦敦三一口语</a>
+                        </dd>
+                        <dd>
+                            <h4>示范校英语</h4>
+                            <a href="javascript:;" target="_blank">示范校英语</a>
+                        </dd>
+                    </dl>
+                    <dl class="cddcll" style="display: none;">
+                        <dd>
+                            <h4>精英英语</h4>
+                            <a href="javascript:;" target="_blank">小学VIP精英英语</a>
+                            <a href="javascript:;" target="_blank">小学精英英语</a>
+                            <a href="javascript:;" target="_blank">初中VIP精英英语</a>
+                            <a href="javascript:;" target="_blank">初中精英英语</a>
+                            <a href="javascript:;" target="_blank">高中精英英语</a>
+                        </dd>
+                    </dl>
+                  </li>
+                  <li class="item"><h4>兴趣爱好</h4><span>科技艺术</span><span>艺术体育</span><span>托管班</span><span>夏冬令营</span>
+                    <dl style="display: none;">
+                        <dt>兴趣爱好</dt>
+                        <dd>
+                            <h4>科技艺术</h4>
+                            <a href="javascript:;" target="_blank">美术</a>
+                            <a href="javascript:;" target="_blank">书法</a>
+                            <a href="javascript:;" target="_blank">科技</a>
+                            <a href="javascript:;" target="_blank">口才</a>
+                        </dd>
+                        <dd>
+                            <h4>艺术体育</h4>
+                            <a href="javascript:;" target="_blank">舞蹈</a>
+                            <a href="javascript:;" target="_blank">体育</a>
+                            <a href="javascript:;" target="_blank">声乐</a>
+                        </dd>
+                        <dd>
+                            <h4>托管班</h4>
+                            <a href="javascript:;" target="_blank">寒暑假托管</a>
+                            <a href="javascript:;" target="_blank">平时托管</a>
+                        </dd>
+                      <dd>
+                          <h4>夏冬令营</h4>
+                          <a target="_self" href="javascript:;">暂无相关课程</a>
+                      </dd>                          
+                    </dl>
+                    <dl class="item-list-1" style="display: none;">
+                      <dd>
+                          <a target="_self" href="javascript:;">暂无相关课程</a>
+                      </dd>                          
+                    </dl>
+                    <dl class="item-list-2" style="display: none;">
+                        <dd>
+                          <a target="_self" href="javascript:;">暂无相关课程</a>
+                        </dd>
+                    </dl>
+                  </li>
+                  <li class="item"><h4>考级活动</h4><span>考级报名</span><span>活动类报名</span>
+                    <dl style="display: none;">
+                        <dt>考级活动</dt>
+                        <dd>
+                            <h4>考级报名</h4>
+                            <a target="_self" href="javascript:;">暂无相关课程</a>
+                        </dd>
+                        <dd>
+                            <h4>活动类报名</h4>
+                            <a target="_self" href="javascript:;">暂无相关课程</a>
+                        </dd>
+                    </dl>
+                  </li>                 
+              </ul>
+          </div>
+      </div>
+  </div>
+  <div class="entry-box clearfix">
+    <div class="hot-league fl">
+      <ul class="league-menu clearfix">
+        <li class="icons all active"><a href="javascript:;" target="_blank"><span class="link_box"><i class="icon iconfont">&#xe623;</i>语文</span></a></li>
+        <li class="icons lang"><a href="javascript:;" target="_blank"><span class="link_box"><i class="icon iconfont">&#xe62d;</i>数学</span></a></li>
+        <li class="icons learn"><a href="javascript:;" target="_blank"><span class="link_box"><i class="icon iconfont">&#xe644;</i>英语</span></a></li>
+        <li class="icons human"><a href="javascript:;" target="_blank"><span class="link_box"><i class="icon iconfont">&#xe674;</i>小学</span></a></li>
+        <li class="icons life"><a href="javascript:;" target="_blank"><span class="link_box"><i class="icon iconfont">&#xe646;</i>初中</span></a></li>
+        <li class="icons fun"><a href="javascript:;" target="_blank"><span class="link_box"><i class="icon iconfont">&#xe61e;</i>高中</span></a></li>
+      </ul>
+      <div class="league-news">
+        <div class="news-recent fl">
+          <div class="recent-inner">
+            <h2 class="recent-title"><a href="javascript:;" target="_blank">最新资讯</a></h2>
+            <div class="recent-info clearfix">
+              <div class="recent-slide">
+                <div class="slide-scroll">
+                  <div class="slide-wrap">
+                  <ul class="slide-scroll-list">
+                    {pc:content  action="position" posid="1" order="listorder DESC" num="4"}
+                        {php $i =0;}
+                          {loop $data $key $val}
+                        {php $i ++}
+                        <li class="item  {if $i == 1}cur{/if}">
+                          <div class="item-info"><a target="_blank" title="{$val['title']}" href="{$val['url']}"><img alt="{$val['title']}" src="{$val['thumb']}" class="scroll-img"></a><p class="item-bg"></p><p class="item-title"><a target="_blank" href="{$val['url']}">{$val['title']}</a></p></div>
+                        </li>
+                       {/loop}
+                     {/pc}
+                  </ul>
+                  {pc:content  action="position" posid="1" order="listorder DESC" num="4"}
+                    <ol>
+                        {php $i =0;}
+                          {loop $data $key $val}
+                        {php $i ++}
+                          <li class="{if $i == 1}cur{/if}">{$i}</li>
+                        {/loop}
+                    </ol>
+                    <a href="javascript:;" class="slide-btn pre-btn" style="display: block;"></a>
+                    <a href="javascript:;" class="slide-btn next-btn" style="display: block;"></a>
+                  {/pc}
+                  </div>
+                </div>
+              </div>
+              <div class="recent-content">
+                <div class="content-title">
+                  {pc:content  action="lists" catid="21" order="listorder DESC" num="1"}
+                    {loop $data $key $val}
+                      <div class="content-hd">
+                        <a title="{$val['title']}" href="{$val['url']}">{$val['title']}</a>
+                      </div>
+                      <div class="content-bd"> &nbsp;&nbsp;“ {$val['description']} ” <a href="{$val['url']}">【查看详情】</a></div>
+                    {/loop}
+                  {/pc}
+                </div>
+                <ul class="content-list">
+                  {pc:content  action="lists" catid="21" order="id DESC LIMIT 1,5--" num="5"}
+                    {loop $data $key $val}
+                      <li><a title="{$val['title']}" href="{$val['url']}">{$val['title']}</a></li>
+                    {/loop}
+                  {/pc}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <style>
+        </style>
+        <div class="news-course clearfix">
+          {pc:get sql="select * from phpcms_category where catid in(16,17,18)" return="data"} 
+              {loop $data $r} 
+                  <div class="course-item">
+                    {pc:content  action="lists" catid="$r[catid]" order="listorder DESC" num="5"}
+                      <div class="course-title">
+                        <a href="{$CATEGORYS[$r['catid']]['url']}" class="more" target="_blank"><img src="{APP_PATH}dev/page/home/images/gdxd.png"></a><a href="{$CATEGORYS[$r['catid']]['url']}" target="_blank">{$r['catname']}</a>
+                      </div>
+                      <div class="course-img">
+                        <a href="{$CATEGORYS[$r['catid']]['url']}" target="_blank"><img src="{thumb($r['image'],284,110)}"></a>
+                      </div>
+                      <ul class="course-list">
+                        {loop $data $key $val}
+                          <li><a href="{$val['url']}" target="_blank">{$val['title']}</a></li>
+                        {/loop}
+                      </ul>
+                    {/pc}
+                  </div>
+              {/loop}
+          {/pc}
+        </div>
+      </div>
+    </div>
+    <div class="pro-league fr">
+      <div class="league-team">
+          <a href="javascript:;" class="btn btn-green">组队去天亮培优学校</a>
+      </div>
+      <div class="league-latest">
+          <h3 class="recommend"><a href="javascript:;" target="_blank" title="今日推荐">今日推荐</a><i class="iconfont">&#xe606;</i></h3>
+          <ul class="latest-list">
+              {pc:content  action="position" posid="2" order="listorder DESC" num="4"}
+                {php $i =0;}
+                {loop $data $key $val}
+                {php $i ++}
+                  <li class="clearfix">
+                      <span class="{if $i <= 2}lv1{else}lv3{/if}">{$i}</span>
+                      <a href="{$val['url']}" class="latest-name" target="_blank" title="{$val['title']}">{$val['title']}</a>
+                  </li>
+                {/loop}
+              {/pc}
+          </ul>
+      </div>
+      <div class="league-event">
+          <h3><a href="javascript:;" target="_blank" title="天亮专题">天亮专题</a></h3>
+          {pc:special action="lists" siteid="$siteid" elite="1" listorder="2" num="2"}
+          {if (count($data,COUNT_NORMAL)) == 2 }
+          <a href="javascript:;" class="prev"><i class="iconfont">&#xe63e;</i></a>
+          <a href="javascript:;" class="next"><i class="iconfont">&#xe63e;</i></a>
+          {/if}
+          <ul style="width: 1080px;">
+                {loop $data $r}
+                  <li>
+                    <a class="ct_event_link" href="{$r['url']}" target="_blank" title="{$r['title']}">
+                        <img class="ct_event_img" src="{thumb($r['thumb'], 270, 110)}" alt="{$r['title']}">
+                        <span class="ct_event_title">{$r['title']}</span>
+                        <span class="ct_event_name" title="{$r['description']}">{$r['description']}</span>
+                    </a>
+                  </li>
+                {/loop}
+          </ul>
+          {/pc}
+      </div>
+      <div class="league-latest">
+          <h3><a href="javascript:;" target="_blank" title="天亮公告">天亮公告</a></h3>
+          <ul class="latest-list">
+              {pc:content  action="lists" catid="20" order="listorder DESC" num="6"}
+                {php $i =0;}
+                {loop $data $key $val}
+                {php $i ++}
+                  <li class="clearfix">
+                      <span class="{if $i <= 3}lv1{else}lv3{/if}">{$i}</span>
+                      <a href="{$val['url']}" class="latest-name" target="_blank" title="{$val['title']}">{$val['title']}</a>
+                  </li>
+                {/loop}
+              {/pc}
+          </ul>
+      </div>
+    </div>
+  </div>
+  <div class="about-box">
+      <h2 class="title">天亮培优学校，孩子的优质课程领袖</h2>
+      <hr class="half-line">
+      <div class="product-list clearfix">
+          <ul class="list clearfix">
+              <li class="item">
+                  <a target="_blank" href="javascript:;">
+                    <img src="{APP_PATH}dev/page/home/images/lx1.jpg" alt="">
+                    <div class="content">
+                        <div class="title course-title">天亮教育课程体系</div>
+                        <div class="info">天亮教育培优课程体系涵盖语文、数学、英语、物理、化学等课程。</div>
+                    </div>
+                  </a>
+              </li>
+              <li class="item">
+                  <a target="_blank" href="javascript:;">
+                    <img src="{APP_PATH}dev/page/home/images/lx2.jpg" alt="">
+                    <div class="content">
+                        <div class="title junior-title">小学课程体系</div>
+                        <div class="info">天亮教育小学课程体系注重培养孩子的人文素养，提高学生逻辑思维、发散思维的能力。涵盖巨人大语文、E概念英语、思维数学、特长等课程。</div>
+                    </div>
+                  </a>
+              </li>
+              <li class="item">
+                  <a target="_blank" href="javascript:;">
+                    <img src="{APP_PATH}dev/page/home/images/lx3.jpg" alt="">
+                    <div class="content">
+                        <div class="title middle-title">中学课程体系</div>
+                        <div class="info">天亮教育中学课程体系以学生为主体，在实践中培养学生发现问题、解决问题的能力与批判性思维。涵盖大语文、数学、欧文思英语等课程。</div>
+                    </div>
+                  </a>
+              </li>
+              <li class="item">
+                  <a target="_blank" href="javascript:;">
+                    <img src="{APP_PATH}dev/page/home/images/lx4.jpg" alt="">
+                    <div class="content">
+                        <div class="title vip-title">1对1课程体系</div>
+                        <div class="info">天亮教育1对1是一所规模较大、科目全面的个性化教育领航机构，汇聚众多名师，打造了一支专业化的教研团队。</div>
+                    </div>
+                  </a>
+              </li>
+          </ul>
+      </div>
+  </div>
+</div>
+<script src="{APP_PATH}framework/src/require.js" data-main="{APP_PATH}dev/page/home/home.js"></script>
+<!-- index end -->
+{template "content","footer"}

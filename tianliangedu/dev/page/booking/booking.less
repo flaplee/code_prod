@@ -1,0 +1,576 @@
+@import '../../config.less';
+body.booking{
+	background-color: #f1f2f6;
+}
+.booking-box{
+	.booking-title{
+		position: relative;
+	    height: 22px;
+	    padding: 25px 0;
+		.booking-title-text{
+			position: absolute;
+			left: 0;
+			top: 0;
+			z-index: 2;
+			width: 490px;
+			height: 72px
+		}
+		.booking-title-list {
+			position: absolute;
+			right: 300px;
+			.booking-nav {
+				float: left;
+				display: inline;
+				margin-right: -7px;
+				span {
+					display: block;
+					width: 79px;
+					height: 22px;
+					line-height: 22px;
+					text-align: center;
+					white-space: nowrap;
+					color: #fff;
+					font-size: 13px;
+				}
+			    .icon-step{
+			    	background-image: url('./images/icon_step.png');
+				    background-repeat: no-repeat;
+				    height: 22px;
+					width: 79px
+			    }
+			    .icon-step-cur{
+			    	background-position: -84px 0;
+			    }
+			}
+			.booking-nav-first span {
+				width: 78px
+			}
+		}
+	}
+	.booking-main{
+		width: 900px;
+		.booking-main-inner{
+			.inner-nav{
+				position: relative;
+				z-index: 9;
+				height: 45px;
+				border-top: 1px solid #e2e2e2;
+				border-bottom: 1px solid #e7e7e7;
+				_overflow: hidden;
+				background: #f9f8fa;
+				.inner-nav-item{
+					position: relative;
+					float: left;
+					margin-left: -1px;
+					overflow: visible;
+					a{
+						float: left;
+						height: 43px;
+						padding: 0 17px;
+						background-position: right -294px;
+						text-align: center;
+						line-height: 43px;
+						font-size: 18px;
+						color: #444;
+						&:hover{
+							text-decoration:none;
+						}
+					}
+				}
+				.inner-nav-item.cur{
+					a{
+						border: 1px solid #e8e8e8;
+						border-top: 2px solid #289600;
+						border-bottom-color: #fff;
+						padding: 0 13px;
+						font-weight: bold;
+						background: #fff;
+						color: #2b9700;
+						margin-top: -1px;
+					}
+				}
+			}
+			.inner-tip{
+				height: 34px;
+				line-height: 34px;
+				font-size: 14px;
+				color: #333;
+				margin-top: 20px;
+				strong{
+					color: #2b9700;
+					padding: 0 5px;
+				}
+				.inner-tip-con{
+					float: right;
+					color: #999;
+					font-size: 12px;
+				}
+				.inner-tip-tips{
+					color: #08CA88;
+					padding: 0 5px;
+				}
+			}
+			.inner-o-head{
+				height: 35px;
+				margin-bottom: -1px;
+				border: 1px solid #ddd;
+				background: #fafafa;
+				overflow: hidden;
+				line-height: 35px;
+				.head-list{
+					float: left;
+					width: 80%;
+					font-size: 14px;
+					.item{
+						float: left;
+						display: inline;
+						text-align: center;
+						a{
+							display: block;
+							color: #666;
+							&:hover{
+								text-decoration:none;
+							}
+						}
+					}
+					.item1{
+						    width: 16%;
+					}
+					.item2{
+						width: 20%;
+						margin-right: 14%;
+					}
+					.item3{
+						width: 20%;
+						margin-right: 12%;
+					}
+					.item4{
+						width: 18%;
+					}
+				}
+			}
+			.inner-o-body{
+				min-height: 600px;
+				.body-list{
+					.o-item{
+						font-size: 12px;
+						padding: 14px 0 6px;
+						margin-bottom: 9px;
+						border: 1px solid #ddd;
+						background: #fff;
+						.o-item-unit{
+							float: left;
+							text-align: center;
+							color: #666;
+						}
+						.o-item-name{
+							width: 130px;
+							overflow: hidden;
+							.o-item-name-up{
+								position: relative;
+								white-space: nowrap;
+								line-height: 26px;
+								text-align: center;
+								text-indent: 0;
+							}
+							.o-item-name-down{
+								white-space: nowrap;
+								overflow: hidden;
+								text-overflow: ellipsis;
+								line-height: 20px;
+							}
+						}
+						.o-item-start{
+							width: 15%;
+							.o-item-start-up{
+								color: #333;
+								font-size: 16px;
+								line-height: 26px;
+								font-weight: bold;
+								font-family: "Hiragino Sans GB",Tahoma,arial;
+							}
+							.o-item-start-down{
+								line-height: 20px;
+							}
+						}
+						.o-item-duration{
+							width: 85px;
+							margin-right: 2%;
+							.o-item-duration-up{
+								position: relative;
+								height: 12px;
+								margin-bottom: 14px;
+								padding-right: 17px;
+								background-image: url('./images/duration.png');
+								background-repeat: no-repeat;
+							}
+							.o-item-duration-down{
+								color: #999;
+							}
+						}
+						.o-item-end{
+							width: 15%;
+							.o-item-end-up{
+								color: #333;
+								font-size: 16px;
+								font-weight: bold;
+								font-family: "Hiragino Sans GB",Tahoma,arial;
+								line-height: 26px;
+							}
+							.o-item-end-down{
+								line-height: 20px;
+							}
+						}
+						.o-item-detail{
+							.o-item-detail-inner{
+								width: 44%;
+								padding-bottom: 10px;
+								.inner-tips{
+									padding-top: 10px;
+									width: 22%;
+									.inner-tips-up{
+										line-height: 20px;
+									}
+									.inner-tips-down{
+									    line-height: 20px;
+									}
+								}
+								.inner-price{
+									width: 85px;
+									margin-right: 66px;
+									padding-top: 10px;
+									.inner-price-up{
+										color: #f60;
+										font-size: 16px;
+										font-weight: bold;
+										.inner-price-detail{
+											color: #f60;
+											font-size: 16px;
+											font-weight: bold;
+											.price-mark{
+												color: #f60;
+												font-size: 16px;
+												font-weight: bold;
+												line-height: 26px;
+											}
+											.price-pay{
+												color: #f60;
+												font-size: 16px;
+												font-weight: bold;
+												line-height: 26px;
+											}
+										}
+									}
+									.inner-price-down{
+										position: relative;
+										color: #999;
+										text-align: center;
+										line-height: 20px;
+										.price-ticket{
+											position: absolute;
+											left: 85px;
+											bottom: 5px;
+											white-space: nowrap;
+											strong {
+												padding: 0 5px;
+												color: #f60;
+											}
+										}
+									}
+								}
+								.inner-btns{
+										width: 95px;
+										padding-top: 7px;
+										margin-left: 20px;
+									.inner-btns-up{
+										line-height: 26px;
+										.inner-btns-buy{
+											position: relative;
+											top: 4px;
+											display: inline-block;
+											width: 90px;
+											height: 26px;
+											background-color: #ff9419;
+											line-height: 26px;
+											text-align: center;
+											font-size: 12px;
+											color: #fff;
+											-moz-border-radius: 2px;
+											-webkit-border-radius: 2px;
+											border-radius: 2px;
+											&:hover{
+												text-decoration:none;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			.course-detail{
+				.course-list{
+					width: 900px;
+					margin:0 auto;
+					&>a {
+					    display: inline-block;
+					    width: 100%;
+					    height: 270px;
+						margin-bottom: 20px;
+					    background: #fafafa;
+					}
+
+					&>a:hover {
+					    color: #323232;
+					    box-shadow: 0px 0px 10px 0px #ddd;
+					    margin-top: -1px;
+					    margin-bottom: 21px
+					}
+
+					&>a:hover .join button {
+					    background: #22905e
+					}
+
+					.course-inner {
+					    width: 655px;
+					    height: 270px;
+					    padding-left: 25px
+					}
+
+					.course-inner ul {
+					    margin: 0 15px 0 10px;
+					    width: 200px;
+					    height: 160px
+					}
+
+					.course-inner ul li {
+					    width: 190px;
+					    list-style-type: disc;
+					    line-height: 24px;
+					    height:48px;
+					    padding-left: 10px
+					}
+
+					.course-inner h3 {
+					    height: 66px;
+					    margin: 20px 0 15px
+					}
+
+					.course-inner .speaker {
+					    width: 414px;
+					    height: 160px;
+					    overflow: hidden
+					}
+
+					.course-inner .speaker>div img {
+					    display: block;
+					    width: 64px;
+					    height: 64px;
+					    border: 1px solid #979797;
+					    border-radius: 50%
+					}
+
+					.course-inner .speaker .information {
+					    margin-left: 15px;
+					    width: 180px;
+					    line-height: 20px
+					}
+
+					.course-inner .speaker .information .text {
+					    margin: 10px 0;
+					    overflow: hidden
+					}
+
+					.course-inner .speaker .join {
+					    padding-left: 20px;
+					    border-left: 1px solid #e1e1e1
+					}
+
+					.course-inner .speaker .join button {
+					    margin: 10px 0;
+					    padding: 6px 30px;
+					    color: white;
+					    background: #2AA26B
+					}
+
+					.img {
+					    background: #f3f3f3;
+					    width: 200px;
+					    height: 270px;
+					    overflow: hidden
+					}
+
+					.img img {
+					    height: 270px;
+					}
+
+					.img_inside {
+					    position: relative;
+					    float: left;
+					    left: 50%;
+					    background: #f3f3f3
+					}
+
+					.img_inside img {
+					    width: auto;
+					     position:relative; 
+					    float: left;
+					    left: -50%;
+					}
+				}
+			}
+		}
+	}
+	.booking-side{
+		float: right;
+		width: 270px;
+		min-height: 270px;
+		.side-entry{
+			width: 268px;
+			position: relative;
+			z-index: 1;
+			width: 228px;
+			min-height: 200px;
+			border: 1px solid #e5e5e7;
+			background: #fff url(http://img.tuniucdn.com/img/201501061900/diy/list_loading.gif) center center no-repeat;
+			.entry-shadow{
+				position: absolute;
+				width: 277px;
+				height: 21px;
+				bottom: -12px;
+				left: -5px;
+				background-image: url('./images/shadow.png');
+				background-repeat: no-repeat;
+				background-position: 0 -20px;
+			}
+			.entry-title{
+				padding: 13px 0;
+				border-bottom: 1px solid #e7e7e7;
+				background: #f9f8fa;
+				.entry-inner{
+					font-size: 16px;
+					text-indent: 14px;
+				}
+			}
+			.entry-info{
+				position: relative;
+			    min-height: 251px;
+			    background: #fff url(http://img.tuniucdn.com/img/201501061900/diy/list_loading.gif) center center no-repeat;
+			}
+
+			.entry-content{
+
+			}
+			.content-box{
+				position: relative;
+				background: #fff;
+			}
+			.content-box-wrap{
+				height: 250px;
+			}
+			.wrap-scroll{
+				position: relative;
+				outline: 0;
+				height: 100%;
+				max-width: 100%;
+				overflow-y: auto;
+				overflow-x: hidden;
+				-webkit-overflow-scrolling: touch;
+				width: 100%;
+				zoom: 1;
+				scrollbar-base-color: #202020;
+				scrollbar-face-color: #3C3C3C;
+				scrollbar-arrow-color: #202020;
+				scrollbar-3dlight-color: #3C3C3C;
+				scrollbar-highlight-color: #3C3C3C;
+				scrollbar-shadow-color: #3C3C3C;
+				scrollbar-darkshadow-color: #3C3C3C;
+				scrollbar-track-color: #2D2D2D;
+			}
+			.wrap-scroll::-webkit-scrollbar {
+			    width: 5px;
+			    background-color: #fff;
+			}
+			.wrap-scroll::-webkit-scrollbar-button {
+			    display: none;
+			}
+			.wrap-scroll::-webkit-scrollbar-thumb {
+			    background: #555;
+			    border-radius: 5px;
+			}
+			.wrap-scroll::-webkit-scrollbar-track-piece {
+			    background: transparent;
+			}
+			.wrap-container{
+				overflow: hidden;
+				width: auto;
+				height: auto;
+				margin-right: 0;
+				-position: relative;
+				-top: 0px;
+				-left: 0px;
+			}
+			.wrap-list{
+				padding: 0 10px 10px;
+				position: relative;
+				margin-top: -1px;
+				.wrap-item{
+					min-height: 15px;
+					.wrap-item-header{
+						position: relative;
+						width: 100%;
+						height: 40px;
+						padding-top: 10px;
+						border-bottom: 1px solid #37c349;
+						line-height: 40px;
+						span{
+							position: relative;
+							display: block;
+							padding-left: 28px;
+							color: #666;
+							em{
+								position: relative;
+								z-index: 2;
+								font-size: 14px;
+							}
+							i{
+								position: absolute;
+								z-index: 1;
+								left: 2px;
+								top: 10px;
+								width: 20px;
+								height: 20px;
+							}
+						}
+						a{
+							position: absolute;
+							right: 10px;
+							top: 21px;
+							width: 38px;
+							height: 16px;
+							border: 1px solid #37c349;
+							background: #fff;
+							border-radius: 2px;
+							text-align: center;
+							line-height: 16px;
+							color: #37c349;
+							font-size: 12px;
+							&:hover{
+								text-decoration:none;
+							}
+						}
+					}
+					.wrap-item-header-blue{
+						border-bottom-color: #5094DD;
+					}
+				}
+			}
+		}
+		.side-entry-fixed{
+			left: 999.5px;
+			top: 0px;
+			position: fixed;
+		}
+	}
+}
